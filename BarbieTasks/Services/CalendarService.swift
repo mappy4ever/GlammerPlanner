@@ -10,11 +10,25 @@ final class CalendarService {
     var calendars: [EKCalendar] = []
     var events: [EKEvent] = []
 
-    private init() {}
+    private init() {
+        // Check if we already have authorization from a previous launch
+        let status = EKEventStore.authorizationStatus(for: .event)
+        if status == .fullAccess || status == .authorized {
+            hasAccess = true
+            loadCalendars()
+        }
+    }
 
     // MARK: - Authorization
 
     func requestAccess() async -> Bool {
+        // Already authorized — skip the system prompt
+        let status = EKEventStore.authorizationStatus(for: .event)
+        if status == .fullAccess || status == .authorized {
+            await MainActor.run { hasAccess = true }
+            loadCalendars()
+            return true
+        }
         do {
             let granted = try await store.requestFullAccessToEvents()
             await MainActor.run { hasAccess = granted }

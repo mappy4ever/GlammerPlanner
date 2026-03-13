@@ -1,165 +1,5 @@
 import SwiftUI
 
-// MARK: - Celebration Overlay
-
-struct CelebrationOverlay: View {
-    @Environment(Store.self) private var store
-    @Environment(AppSettings.self) private var settings
-
-    @State private var textOpacity: Double = 0
-    @State private var textOffset: CGFloat = 12
-    @State private var cardScale: CGFloat = 0.6
-    @State private var cardOpacity: Double = 0
-    @State private var glowOpacity: Double = 0
-    @State private var shimmerOffset: CGFloat = -200
-
-    private var reduced: Bool { settings.reduceAnimations }
-
-    var body: some View {
-        if let quote = store.celebrationQuote {
-            ZStack {
-                if reduced {
-                    // Reduced motion: simple text with fade only
-                    Text(quote.text)
-                        .font(.system(size: 17, weight: .bold, design: .rounded))
-                        .multilineTextAlignment(.center)
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 36)
-                        .padding(.vertical, 28)
-                        .background(
-                            RoundedRectangle(cornerRadius: 22)
-                                .fill(
-                                    LinearGradient(
-                                        colors: [Color.barbiePink, Color.barbieDeep],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-                        )
-                        .clipShape(RoundedRectangle(cornerRadius: 22))
-                        .opacity(cardOpacity)
-                        .frame(maxWidth: 340)
-                        .accessibilityLabel(quote.text)
-                        .accessibilityAddTraits(.isStaticText)
-                        .transition(.opacity)
-                } else {
-                    // Full celebration with glow, shimmer, and spring
-                    // Soft radial glow behind card
-                    Circle()
-                        .fill(
-                            RadialGradient(
-                                colors: [Color.barbiePink.opacity(0.25), .clear],
-                                center: .center,
-                                startRadius: 20,
-                                endRadius: 200
-                            )
-                        )
-                        .frame(width: 400, height: 400)
-                        .opacity(glowOpacity)
-                        .blur(radius: 30)
-
-                    // Main card
-                    VStack(spacing: 0) {
-                        // Quote text with fade-slide
-                        Text(quote.text)
-                            .font(.system(size: 17, weight: .bold, design: .rounded))
-                            .multilineTextAlignment(.center)
-                            .foregroundStyle(.white)
-                            .opacity(textOpacity)
-                            .offset(y: textOffset)
-                            .lineSpacing(4)
-                            .accessibilityLabel(quote.text)
-                            .accessibilityAddTraits(.isStaticText)
-                    }
-                    .padding(.horizontal, 36)
-                    .padding(.vertical, 28)
-                    .background(
-                        ZStack {
-                            // Base gradient
-                            RoundedRectangle(cornerRadius: 22)
-                                .fill(
-                                    LinearGradient(
-                                        colors: [Color.barbiePink, Color.barbieDeep, Color(hex: "#9B3A6A")],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-
-                            // Shimmer sweep
-                            RoundedRectangle(cornerRadius: 22)
-                                .fill(
-                                    LinearGradient(
-                                        colors: [.clear, .white.opacity(0.15), .clear],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
-                                .offset(x: shimmerOffset)
-                                .mask(RoundedRectangle(cornerRadius: 22))
-                        }
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 22))
-                    .shadow(color: Color.barbiePink.opacity(0.4), radius: 30, y: 10)
-                    .shadow(color: Color.barbieDeep.opacity(0.2), radius: 60, y: 20)
-                    .scaleEffect(cardScale)
-                    .opacity(cardOpacity)
-                    .frame(maxWidth: 340)
-                }
-            }
-            .onTapGesture {
-                withAnimation(.easeOut(duration: 0.3)) {
-                    store.celebrationQuote = nil
-                    store.showConfetti = false
-                }
-            }
-            .onAppear { animateIn() }
-        }
-    }
-
-    private func animateIn() {
-        if reduced {
-            // Simple opacity fade — no spring, no scale, no shimmer
-            cardScale = 1.0
-            textOffset = 0
-            withAnimation(.easeIn(duration: 0.3)) {
-                cardOpacity = 1.0
-                textOpacity = 1.0
-            }
-            return
-        }
-
-        // Card entrance — spring pop with satisfying bounce
-        withAnimation(.spring(response: 0.5, dampingFraction: 0.7, blendDuration: 0)) {
-            cardScale = 1.0
-            cardOpacity = 1.0
-        }
-
-        // Glow
-        withAnimation(.easeOut(duration: 0.6)) {
-            glowOpacity = 0.8
-        }
-
-        // Text — smooth reveal after card lands
-        withAnimation(.easeOut(duration: 0.5).delay(0.2)) {
-            textOpacity = 1.0
-            textOffset = 0
-        }
-
-        // Shimmer sweep across card
-        withAnimation(.easeInOut(duration: 0.8).delay(0.5)) {
-            shimmerOffset = 200
-        }
-
-        // Second shimmer
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
-            shimmerOffset = -200
-            withAnimation(.easeInOut(duration: 0.8)) {
-                shimmerOffset = 200
-            }
-        }
-    }
-}
-
 // MARK: - Confetti
 
 struct ConfettiView: View {
@@ -175,7 +15,6 @@ struct ConfettiView: View {
 
     var body: some View {
         if settings.reduceAnimations {
-            // Simple sparkle fallback
             SimpleSparkleView()
         } else {
             TimelineView(.animation) { timeline in
@@ -197,13 +36,12 @@ struct ConfettiView: View {
 
         let progress = age / p.lifetime
         let x = p.x * size.width + p.vx * age
-        let y = p.vy * age + 150 * age * age // gravity
-        let opacity = 1.0 - progress * progress * progress // slower fade
+        let y = p.vy * age + 150 * age * age
+        let opacity = 1.0 - progress * progress * progress
         let rotation = Angle.degrees(p.spin * age * 200)
 
         context.opacity = opacity
 
-        // Wobble for flutter effect
         let wobble = sin(age * p.wobbleSpeed) * p.wobbleAmount
 
         context.translateBy(x: x + wobble, y: y)
@@ -269,16 +107,16 @@ struct ConfettiView: View {
 
     private func starPath(size: CGFloat) -> Path {
         Path { path in
-            let points = 5
-            let outerRadius = size
-            let innerRadius = size * 0.4
-            for i in 0..<points * 2 {
-                let radius = i.isMultiple(of: 2) ? outerRadius : innerRadius
-                let angle = Double(i) * .pi / Double(points) - .pi / 2
-                let point = CGPoint(
-                    x: cos(angle) * radius,
-                    y: sin(angle) * radius
-                )
+            let points: Int = 5
+            let outerRadius: CGFloat = size
+            let innerRadius: CGFloat = size * 0.4
+            let totalPoints: Int = points * 2
+            for i in 0..<totalPoints {
+                let radius: CGFloat = i.isMultiple(of: 2) ? outerRadius : innerRadius
+                let angle: Double = Double(i) * .pi / Double(points) - .pi / 2
+                let px: CGFloat = cos(angle) * radius
+                let py: CGFloat = sin(angle) * radius
+                let point = CGPoint(x: px, y: py)
                 if i == 0 { path.move(to: point) }
                 else { path.addLine(to: point) }
             }
@@ -374,11 +212,11 @@ private struct SparkleSymbol: View {
             .opacity(visible ? 1 : 0)
             .onAppear {
                 let delay = Double.random(in: 0...0.5)
-                withAnimation(.spring(response: 0.4, dampingFraction: 0.5).delay(delay)) {
+                withAnimation(.smooth(duration: 0.4).delay(delay)) {
                     visible = true
                     scale = 1.0
                 }
-                withAnimation(.easeOut(duration: 0.6).delay(delay + 1.2)) {
+                withAnimation(.smooth(duration: 0.5).delay(delay + 1.2)) {
                     visible = false
                     scale = 0.3
                 }
@@ -388,20 +226,18 @@ private struct SparkleSymbol: View {
 
 // MARK: - Checkbox Completion Ripple
 
-/// A ripple ring that expands from the checkbox when a task is completed.
-/// Add this as an overlay on the checkbox.
 struct CheckmarkRipple: View {
     @State private var rippleScale: CGFloat = 0.5
-    @State private var rippleOpacity: Double = 0.6
+    @State private var rippleOpacity: Double = 0.5
 
     var body: some View {
         Circle()
-            .stroke(Color.barbiePink, lineWidth: 2)
+            .stroke(Color.barbiePink, lineWidth: 1.5)
             .frame(width: 20, height: 20)
             .scaleEffect(rippleScale)
             .opacity(rippleOpacity)
             .onAppear {
-                withAnimation(.easeOut(duration: 0.5)) {
+                withAnimation(.smooth(duration: 0.5)) {
                     rippleScale = 2.5
                     rippleOpacity = 0
                 }
@@ -411,8 +247,6 @@ struct CheckmarkRipple: View {
 
 // MARK: - Sparkle Burst (small, for inline use)
 
-/// A small burst of sparkles around a point. Use as overlay when something
-/// exciting happens (e.g., streak milestone).
 struct SparkleBurst: View {
     let count: Int
     @State private var fired = false
@@ -437,7 +271,7 @@ struct SparkleBurst: View {
             }
         }
         .onAppear {
-            withAnimation(.easeOut(duration: 0.5)) {
+            withAnimation(.smooth(duration: 0.5)) {
                 fired = true
             }
         }

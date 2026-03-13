@@ -23,8 +23,8 @@ struct TaskListView: View {
                         ForEach(tasks) { task in
                             TaskRowView(task: task)
                                 .transition(.asymmetric(
-                                    insertion: .opacity.combined(with: .move(edge: .top)).combined(with: .scale(scale: 0.97)),
-                                    removal: .opacity.combined(with: .scale(scale: 0.95))
+                                    insertion: .opacity.combined(with: .offset(y: -8)),
+                                    removal: .opacity.combined(with: .offset(x: 30))
                                 ))
                         }
                     }
@@ -32,10 +32,10 @@ struct TaskListView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 4)
                 .padding(.bottom, 60)
-                .animation(.spring(response: 0.35, dampingFraction: 0.8), value: tasks.count)
+                .animation(.smooth(duration: 0.35), value: tasks.count)
             }
         }
-        .background(Color(nsColor: .controlBackgroundColor))
+        .background(Color.blush)
         .onChange(of: store.focusQuickAdd) {
             if store.focusQuickAdd {
                 isQuickAddFocused = true
@@ -75,7 +75,7 @@ struct TaskListView: View {
                         .trim(from: 0, to: pct)
                         .stroke(Color.barbiePink, style: StrokeStyle(lineWidth: 3, lineCap: .round))
                         .rotationEffect(.degrees(-90))
-                        .animation(.easeOut(duration: 0.4), value: pct)
+                        .animation(.smooth(duration: 0.4), value: pct)
                     Text("\(Int(pct * 100))%")
                         .font(.system(size: 9, weight: .bold, design: .rounded))
                         .foregroundStyle(Color.inkSecondary)
@@ -98,7 +98,7 @@ struct TaskListView: View {
             HStack(spacing: 6) {
                 ForEach(SortOption.allCases) { opt in
                     Button {
-                        withAnimation(.easeOut(duration: 0.2)) { store.sortBy = opt; store.save() }
+                        withAnimation(.smooth(duration: 0.25)) { store.sortBy = opt; store.save() }
                     } label: {
                         Text(opt.label)
                             .font(.system(size: 11, weight: .bold, design: .rounded))
@@ -116,7 +116,7 @@ struct TaskListView: View {
                 // List / Kanban toggle
                 HStack(spacing: 2) {
                     Button {
-                        withAnimation(.easeOut(duration: 0.2)) { store.viewMode = .list }
+                        withAnimation(.smooth(duration: 0.25)) { store.viewMode = .list }
                     } label: {
                         Group {
                             if store.viewMode == .list {
@@ -135,7 +135,7 @@ struct TaskListView: View {
                     .accessibilityAddTraits(store.viewMode == .list ? .isSelected : [])
 
                     Button {
-                        withAnimation(.easeOut(duration: 0.2)) { store.viewMode = .kanban }
+                        withAnimation(.smooth(duration: 0.25)) { store.viewMode = .kanban }
                     } label: {
                         Group {
                             if store.viewMode == .kanban {
@@ -157,7 +157,7 @@ struct TaskListView: View {
 
                 if store.isEditableView {
                     Button {
-                        withAnimation(.easeOut(duration: 0.2)) { store.showCompleted.toggle(); store.save() }
+                        withAnimation(.smooth(duration: 0.25)) { store.showCompleted.toggle(); store.save() }
                     } label: {
                         HStack(spacing: 4) {
                             if store.showCompleted { Image(systemName: "checkmark").font(.system(size: 9, weight: .bold)) }
@@ -195,17 +195,21 @@ struct TaskListView: View {
                 BarbieIcon.QuickAdd(size: 20)
                     .accessibilityHidden(true)
 
-                TextField("Add a task... (try \"Buy milk tomorrow !!\")", text: $quickAddText)
+                TextField("Add a task...", text: $quickAddText)
                     .textFieldStyle(.plain)
                     .font(.system(size: 14, weight: .medium, design: .rounded))
                     .focused($isQuickAddFocused)
                     .onSubmit {
                         if !quickAddText.isEmpty {
-                            withAnimation(.easeOut(duration: 0.25)) {
+                            withAnimation(.smooth(duration: 0.3)) {
                                 store.addTask(title: quickAddText)
                                 quickAddText = ""
                             }
                         }
+                    }
+                    .onExitCommand {
+                        quickAddText = ""
+                        isQuickAddFocused = false
                     }
             }
             .padding(.horizontal, 20)
@@ -220,7 +224,7 @@ struct TaskListView: View {
                         if let date = parsed.dueDate {
                             HStack(spacing: 3) {
                                 Image(systemName: "calendar").font(.system(size: 9))
-                                Text(date.formatted(.dateTime.month(.abbreviated).day()))
+                                Text(datePreviewText(date))
                             }
                             .font(.system(size: 10, weight: .bold, design: .rounded))
                             .foregroundStyle(Color.barbiePink)
@@ -295,7 +299,7 @@ struct TaskListView: View {
 
     private var emptyState: some View {
         let (icon, title, subtitle) = emptyContent
-        VStack(spacing: 10) {
+        return VStack(spacing: 10) {
             BarbieIcon.EmptyState(systemName: icon, size: 36)
             Text(title)
                 .font(.system(size: 18, weight: .bold, design: .rounded))
@@ -343,6 +347,17 @@ struct TaskListView: View {
         case .savedFilter:          Image(systemName: "line.3.horizontal.decrease.circle").font(.system(size: 20)).foregroundStyle(Color.barbiePink)
         case .stats:                BarbieIcon.Stats(size: 20)
         }
+    }
+
+    private func datePreviewText(_ date: Date) -> String {
+        let cal = Calendar.current
+        let hasTime = !cal.isDate(date, equalTo: cal.startOfDay(for: date), toGranularity: .minute)
+        let dateStr = date.formatted(.dateTime.month(.abbreviated).day())
+        if hasTime {
+            let timeStr = date.formatted(.dateTime.hour().minute())
+            return "\(dateStr) \(timeStr)"
+        }
+        return dateStr
     }
 
     private var emptyContent: (String, String, String) {

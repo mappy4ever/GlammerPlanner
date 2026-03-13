@@ -148,7 +148,7 @@ struct OnboardingView: View {
             }
 
             VStack(spacing: 8) {
-                Text("Glammer Planner")
+                Text("Slay List")
                     .font(.system(size: 34, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
@@ -160,7 +160,7 @@ struct OnboardingView: View {
                     .opacity(appeared ? 1 : 0)
                     .offset(y: appeared ? 0 : 12)
 
-                Text("My Slay List")
+                Text("Your chicest way to slay")
                     .font(.system(size: 15, weight: .medium, design: .rounded))
                     .foregroundStyle(Color.barbieRose)
                     .opacity(appeared ? 1 : 0)

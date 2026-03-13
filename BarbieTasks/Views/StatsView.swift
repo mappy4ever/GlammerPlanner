@@ -44,6 +44,41 @@ struct StatsView: View {
                     )
                 }
 
+                // Second row of stat cards
+                HStack(spacing: 12) {
+                    statCard(
+                        title: "Best Streak",
+                        value: "\(store.bestStreak)",
+                        unit: store.bestStreak == 1 ? "day" : "days",
+                        icon: "star.fill",
+                        color: .gold
+                    )
+
+                    statCard(
+                        title: "Completion Rate",
+                        value: "\(Int(store.completionRate * 100))%",
+                        unit: "of all tasks",
+                        icon: "chart.pie.fill",
+                        color: .barbiePink
+                    )
+
+                    statCard(
+                        title: "Overdue",
+                        value: "\(store.overdueCount)",
+                        unit: store.overdueCount == 1 ? "task" : "tasks",
+                        icon: "exclamationmark.triangle.fill",
+                        color: store.overdueCount > 0 ? Color(hex: "#C25050") : .barbieRose
+                    )
+
+                    statCard(
+                        title: "Active Tasks",
+                        value: "\(store.incompleteTasks.count)",
+                        unit: "remaining",
+                        icon: "list.bullet",
+                        color: .barbieDeep
+                    )
+                }
+
                 // Daily completion chart
                 dailyCompletionCard
 

@@ -30,7 +30,7 @@ struct DetailView: View {
             }
             .padding(20)
         }
-        .background(Color.blush.opacity(0.3))
+        .background(Color.blush)
         .onAppear { syncFields() }
         .onChange(of: task.id) { syncFields() }
     }
@@ -162,16 +162,18 @@ struct DetailView: View {
             fieldRow(icon: "tag", label: "Tags") {
                 HStack(spacing: 4) {
                     ForEach(store.tagsForTask(task)) { tag in
-                        HStack(spacing: 3) {
+                        HStack(spacing: 4) {
+                            Circle().fill(tag.color).frame(width: 6, height: 6)
                             Text(tag.name)
                             Button { store.update(task.id) { $0.tagIds.removeAll { $0 == tag.id } } } label: {
-                                Image(systemName: "xmark").font(.system(size: 8, weight: .bold))
+                                Image(systemName: "xmark").font(.system(size: 7, weight: .bold))
                             }.buttonStyle(.plain)
                         }
-                        .font(.system(size: 10, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 8).padding(.vertical, 3)
-                        .background(tag.color, in: Capsule())
+                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        .foregroundStyle(tag.color)
+                        .padding(.horizontal, 8).padding(.vertical, 4)
+                        .background(tag.color.opacity(0.12), in: Capsule())
+                        .overlay(Capsule().strokeBorder(tag.color.opacity(0.25), lineWidth: 0.5))
                     }
 
                     let availableTags = store.tags.filter { !task.tagIds.contains($0.id) }
@@ -273,7 +275,7 @@ struct DetailView: View {
                 .scrollContentBackground(.hidden)
                 .padding(10)
                 .frame(minHeight: 80, maxHeight: 200)
-                .background(Color.white, in: RoundedRectangle(cornerRadius: 10))
+                .background(Color.blushMid, in: RoundedRectangle(cornerRadius: 10))
                 .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.petal, lineWidth: 1))
                 .onChange(of: editNotes) {
                     if editNotes != task.notes { store.update(task.id) { $0.notes = editNotes } }
@@ -440,14 +442,36 @@ struct DetailView: View {
 
     private var footerSection: some View {
         HStack {
-            Text("Created \(task.createdAt.formatted(.dateTime.month(.abbreviated).day().year()))")
-                .font(.system(size: 11, weight: .medium, design: .rounded)).foregroundStyle(Color.inkMuted)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Created \(task.createdAt.formatted(.dateTime.month(.abbreviated).day().year()))")
+                    .font(.system(size: 11, weight: .medium, design: .rounded)).foregroundStyle(Color.inkMuted)
+                if task.updatedAt != task.createdAt {
+                    Text("Modified \(task.updatedAt.formatted(.relative(presentation: .named)))")
+                        .font(.system(size: 10, weight: .medium, design: .rounded)).foregroundStyle(Color.inkMuted.opacity(0.7))
+                }
+            }
             Spacer()
+            Button {
+                store.saveAsTemplateTaskId = task.id
+            } label: {
+                Label("Template", systemImage: "doc.on.doc")
+                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Color.inkMuted)
+                    .padding(.horizontal, 10).padding(.vertical, 5)
+                    .background(Color.blush, in: Capsule())
+            }.buttonStyle(.plain)
+            Button { store.duplicateTask(task.id) } label: {
+                Label("Duplicate", systemImage: "plus.square.on.square")
+                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Color.inkMuted)
+                    .padding(.horizontal, 10).padding(.vertical, 5)
+                    .background(Color.blush, in: Capsule())
+            }.buttonStyle(.plain)
             Button { store.trashTask(task.id) } label: {
                 Label("Delete", systemImage: "trash")
-                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+                    .font(.system(size: 11, weight: .semibold, design: .rounded))
                     .foregroundStyle(Color.inkMuted)
-                    .padding(.horizontal, 12).padding(.vertical, 6)
+                    .padding(.horizontal, 10).padding(.vertical, 5)
                     .background(Color.blush, in: Capsule())
             }.buttonStyle(.plain)
         }

@@ -9,11 +9,25 @@ final class RemindersService {
     var hasAccess = false
     var reminderLists: [EKCalendar] = []
 
-    private init() {}
+    private init() {
+        // Check if we already have authorization from a previous launch
+        let status = EKEventStore.authorizationStatus(for: .reminder)
+        if status == .fullAccess || status == .authorized {
+            hasAccess = true
+            loadLists()
+        }
+    }
 
     // MARK: - Authorization
 
     func requestAccess() async -> Bool {
+        // Already authorized — skip the system prompt
+        let status = EKEventStore.authorizationStatus(for: .reminder)
+        if status == .fullAccess || status == .authorized {
+            await MainActor.run { hasAccess = true }
+            loadLists()
+            return true
+        }
         do {
             let granted = try await store.requestFullAccessToReminders()
             await MainActor.run { hasAccess = granted }

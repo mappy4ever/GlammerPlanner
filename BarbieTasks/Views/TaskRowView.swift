@@ -24,7 +24,7 @@ struct TaskRowView: View {
                     .foregroundStyle(task.isDone ? Color.inkMuted : Color.inkPrimary)
                     .strikethrough(task.isDone, color: .inkMuted)
                     .lineLimit(2)
-                    .animation(.easeOut(duration: 0.3), value: task.isDone)
+                    .animation(.smooth(duration: 0.3), value: task.isDone)
 
                 if hasMeta { metaBadges }
             }
@@ -100,10 +100,10 @@ struct TaskRowView: View {
         .onChange(of: task.isDone) { old, new in
             if new && !old {
                 // Flash pink on completion
-                withAnimation(.easeOut(duration: 0.15)) {
+                withAnimation(.smooth(duration: 0.15)) {
                     completionFlash = 0.15
                 }
-                withAnimation(.easeOut(duration: 0.5).delay(0.2)) {
+                withAnimation(.smooth(duration: 0.5).delay(0.15)) {
                     completionFlash = 0
                 }
             }
@@ -117,7 +117,7 @@ struct TaskRowView: View {
                     store.selectedTaskIds.insert(task.id)
                 }
             } else {
-                withAnimation(.easeOut(duration: 0.15)) {
+                withAnimation(.smooth(duration: 0.2)) {
                     store.selectedTaskId = (store.selectedTaskId == task.id) ? nil : task.id
                 }
             }
@@ -142,16 +142,16 @@ struct TaskRowView: View {
     private var checkbox: some View {
         Button {
             let wasDone = task.isDone
-            withAnimation(.spring(response: 0.35, dampingFraction: 0.6)) {
+            withAnimation(.smooth(duration: 0.3)) {
                 store.toggleTask(task.id)
             }
             // Trigger bounce + ripple only on completion
             if !wasDone {
                 showRipple = true
-                withAnimation(.spring(response: 0.25, dampingFraction: 0.4)) {
-                    checkBounce = 1.3
+                withAnimation(.spring(response: 0.2, dampingFraction: 0.5)) {
+                    checkBounce = 1.2
                 }
-                withAnimation(.spring(response: 0.25, dampingFraction: 0.5).delay(0.15)) {
+                withAnimation(.smooth(duration: 0.2).delay(0.12)) {
                     checkBounce = 1.0
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
@@ -256,11 +256,17 @@ struct TaskRowView: View {
 
             // Tags
             ForEach(store.tagsForTask(task).prefix(3)) { tag in
-                Text(tag.name)
-                    .font(.system(size: 10, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 6).padding(.vertical, 1)
-                    .background(tag.color, in: Capsule())
+                HStack(spacing: 3) {
+                    Circle()
+                        .fill(tag.color)
+                        .frame(width: 5, height: 5)
+                    Text(tag.name)
+                }
+                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                .foregroundStyle(tag.color)
+                .padding(.horizontal, 7).padding(.vertical, 2)
+                .background(tag.color.opacity(0.12), in: Capsule())
+                .overlay(Capsule().strokeBorder(tag.color.opacity(0.25), lineWidth: 0.5))
             }
 
             if let sub = task.subtaskProgress {

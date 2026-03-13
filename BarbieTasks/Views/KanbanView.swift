@@ -146,7 +146,7 @@ struct KanbanView: View {
             )
             .shadow(color: isHovered ? Color.barbiePink.opacity(0.15) : Color.clear, radius: 8, y: 3)
             .scaleEffect(isHovered ? 1.02 : 1.0)
-            .animation(.easeOut(duration: 0.15), value: isHovered)
+            .animation(.smooth(duration: 0.2), value: isHovered)
             .contentShape(RoundedRectangle(cornerRadius: 8))
             .onHover { isHovered = $0 }
             .onTapGesture { onTap() }

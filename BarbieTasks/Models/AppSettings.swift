@@ -3,8 +3,10 @@ import SwiftUI
 
 @Observable
 final class AppSettings {
-    // Appearance
-    @ObservationIgnored @AppStorage("appearance") var appearance: String = "system"  // "light"/"dark"/"system"
+    // Appearance — stored property so @Observable can track changes
+    var appearance: String = UserDefaults.standard.string(forKey: "appearance") ?? "system" {
+        didSet { UserDefaults.standard.set(appearance, forKey: "appearance") }
+    }
     @ObservationIgnored @AppStorage("reduceAnimations") var reduceAnimations: Bool = false
 
     // Pomodoro
@@ -23,7 +25,10 @@ final class AppSettings {
     @ObservationIgnored @AppStorage("remindersSyncEnabled") var remindersSyncEnabled: Bool = false
 
     // General
-    @ObservationIgnored @AppStorage("hasCompletedOnboarding") var hasCompletedOnboarding: Bool = false
+    var hasCompletedOnboarding: Bool {
+        get { UserDefaults.standard.bool(forKey: "hasCompletedOnboarding") }
+        set { UserDefaults.standard.set(newValue, forKey: "hasCompletedOnboarding") }
+    }
     @ObservationIgnored @AppStorage("defaultView") var defaultView: String = "inbox"
 
     var preferredColorScheme: ColorScheme? {

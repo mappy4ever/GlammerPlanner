@@ -11,7 +11,7 @@ struct SidebarView: View {
             HStack {
                 Spacer()
                 VStack(spacing: 1) {
-                    Text("Glammer Planner")
+                    Text("Slay List")
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundStyle(
                             LinearGradient(
@@ -189,6 +189,26 @@ struct SidebarView: View {
                 }
             }
 
+            // Overdue alert
+            if store.overdueCount > 0 {
+                HStack(spacing: 6) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.system(size: 10))
+                        .foregroundStyle(Color(hex: "#C25050"))
+                    Text("\(store.overdueCount) overdue")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color(hex: "#C25050"))
+                }
+                .padding(.horizontal, 10).padding(.vertical, 5)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(hex: "#FBEAEA").opacity(0.6), in: RoundedRectangle(cornerRadius: 8))
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+                .onTapGesture {
+                    store.selectedView = .smartList(.today)
+                }
+            }
+
             // Footer
             Section {
                 // New items
@@ -222,7 +242,7 @@ struct SidebarView: View {
         }
         .listStyle(.sidebar)
         .scrollContentBackground(.hidden)
-        .background(Color.blush.opacity(0.5))
+        .background(Color.blush)
         .onChange(of: store.selectedView) {
             store.selectedTaskIds = []
         }

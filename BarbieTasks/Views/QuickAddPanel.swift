@@ -98,8 +98,8 @@ struct QuickAddPanelView: View {
             // Natural language preview
             if let result = parsedResult {
                 HStack(spacing: 8) {
-                    if let title = result.title, !title.isEmpty {
-                        previewPill(label: "Task", value: title, icon: "checkmark.circle")
+                    if !result.title.isEmpty {
+                        previewPill(label: "Task", value: result.title, icon: "checkmark.circle")
                     }
                     if let date = result.dueDate {
                         previewPill(
@@ -108,14 +108,14 @@ struct QuickAddPanelView: View {
                             icon: "calendar"
                         )
                     }
-                    if let priority = result.priority {
-                        previewPill(label: "Priority", value: priority, icon: "flag.fill")
+                    if result.priority > 0 {
+                        previewPill(label: "Priority", value: "\(result.priority)", icon: "flag.fill")
                     }
                     if let project = result.projectName {
                         previewPill(label: "Project", value: project, icon: "folder")
                     }
-                    if let tags = result.tagNames, !tags.isEmpty {
-                        previewPill(label: "Tags", value: tags.joined(separator: ", "), icon: "tag")
+                    if !result.tagNames.isEmpty {
+                        previewPill(label: "Tags", value: result.tagNames.joined(separator: ", "), icon: "tag")
                     }
                 }
                 .font(.system(size: 12, weight: .medium, design: .rounded))

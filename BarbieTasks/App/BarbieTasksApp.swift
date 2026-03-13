@@ -169,7 +169,7 @@ struct MenuBarView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Glammer Planner")
+            Text("Slay List")
                 .font(.system(size: 13, weight: .bold, design: .rounded))
 
             TextField("Quick add...", text: $quickText)
@@ -203,7 +203,7 @@ struct MenuBarView: View {
 
             Divider()
 
-            Button("Open Glammer Planner") {
+            Button("Open Slay List") {
                 NSApplication.shared.activate(ignoringOtherApps: true)
             }
 

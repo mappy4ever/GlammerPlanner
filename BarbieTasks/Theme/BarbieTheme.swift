@@ -6,23 +6,24 @@ import SwiftUI
 
 extension Color {
     // Primary
-    static let barbiePink     = Color("BarbiePink",     bundle: nil, default: Color(hex: "#D4577A"))
-    static let barbieDeep     = Color("BarbieDeep",     bundle: nil, default: Color(hex: "#B8436A"))
-    static let barbieRose     = Color("BarbieRose",     bundle: nil, default: Color(hex: "#C9667E"))
+    static let barbiePink     = Color("BarbiePink",     bundle: nil, default: Color(hex: "#E84887"))
+    static let barbieDeep     = Color("BarbieDeep",     bundle: nil, default: Color(hex: "#D42F74"))
+    static let barbieRose     = Color("BarbieRose",     bundle: nil, default: Color(hex: "#F06098"))
 
     // Surfaces
-    static let blush          = Color(light: Color(hex: "#FDF5F7"), dark: Color(hex: "#1F1118"))
-    static let blushMid       = Color(light: Color(hex: "#F9E8ED"), dark: Color(hex: "#2A1620"))
-    static let roseGold       = Color(hex: "#C4938E")
+    static let blush          = Color(light: Color(hex: "#FFF0F5"), dark: Color(hex: "#35102A"))
+    static let blushMid       = Color(light: Color(hex: "#FFD6E8"), dark: Color(hex: "#4D1838"))
+    static let blushDeep      = Color(light: Color(hex: "#FFDAEB"), dark: Color(hex: "#3D1430"))
+    static let roseGold       = Color(hex: "#E8A0B0")
 
     // Text
-    static let inkPrimary     = Color(light: Color(hex: "#3D2B33"), dark: Color(hex: "#F0E0E5"))
-    static let inkSecondary   = Color(light: Color(hex: "#7A5C66"), dark: Color(hex: "#C4A0AB"))
-    static let inkMuted       = Color(light: Color(hex: "#B8949E"), dark: Color(hex: "#7A5C66"))
+    static let inkPrimary     = Color(light: Color(hex: "#3D1028"), dark: Color(hex: "#FFD6E8"))
+    static let inkSecondary   = Color(light: Color(hex: "#8A3060"), dark: Color(hex: "#F0A0C0"))
+    static let inkMuted       = Color(light: Color(hex: "#C07090"), dark: Color(hex: "#B06888"))
 
     // Borders
-    static let petal          = Color(light: Color(hex: "#EFCDD5"), dark: Color(hex: "#3D2530"))
-    static let petalLight     = Color(light: Color(hex: "#F7E3E8"), dark: Color(hex: "#2F1A24"))
+    static let petal          = Color(light: Color(hex: "#F5A0C0"), dark: Color(hex: "#6E2850"))
+    static let petalLight     = Color(light: Color(hex: "#FFCCE0"), dark: Color(hex: "#5A2042"))
 
     // Priority
     static let priHigh        = Color(hex: "#D4577A")
@@ -88,7 +89,7 @@ struct ChicButtonStyle: ButtonStyle {
             .foregroundStyle(.white)
             .clipShape(Capsule())
             .scaleEffect(configuration.isPressed ? 0.96 : 1)
-            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+            .animation(.smooth(duration: 0.15), value: configuration.isPressed)
     }
 }
 
@@ -102,6 +103,6 @@ struct ChicSecondaryButtonStyle: ButtonStyle {
             .foregroundStyle(Color.barbieDeep)
             .clipShape(Capsule())
             .scaleEffect(configuration.isPressed ? 0.96 : 1)
-            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+            .animation(.smooth(duration: 0.15), value: configuration.isPressed)
     }
 }

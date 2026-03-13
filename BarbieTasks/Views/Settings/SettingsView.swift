@@ -176,7 +176,7 @@ struct SettingsView: View {
 
             Section("About") {
                 HStack {
-                    Text("Glammer Planner")
+                    Text("Slay List")
                         .font(.system(size: 13, weight: .bold, design: .rounded))
                     Spacer()
                     Text("Version 1.0")

@@ -199,7 +199,7 @@ final class Store {
     var incompleteTasks: [BarbieTask] { activeTasks.filter { !$0.isDone } }
 
     var currentViewTasks: [BarbieTask] {
-        let key = "\(selectedView.hashValue)-\(searchText)-\(sortBy)-\(showCompleted)-\(tasks.hashValue)"
+        let key = "\(selectedView.hashValue)-\(searchText)-\(sortBy)-\(showCompleted)-\(viewMode)-\(tasks.hashValue)"
         if let cached = cachedViewTasks, cachedViewKey == key {
             return cached
         }
@@ -255,8 +255,8 @@ final class Store {
             result = []
         }
 
-        // Hide completed unless toggled
-        if !showCompleted {
+        // Hide completed unless toggled (kanban always shows done for its Done column)
+        if !showCompleted && viewMode != .kanban {
             switch selectedView {
             case .smartList(.logbook), .smartList(.trash), .smartList(.today):
                 break
@@ -357,6 +357,38 @@ final class Store {
         tasks.filter { $0.isDone && $0.doneAt != nil && Calendar.current.isDateInToday($0.doneAt!) }.count
     }
 
+    var overdueCount: Int {
+        activeTasks.filter { $0.isOverdue }.count
+    }
+
+    var bestStreak: Int {
+        let cal = Calendar.current
+        var best = 0
+        var current = 0
+        // Check last 365 days
+        for offset in (0..<365).reversed() {
+            let day = cal.date(byAdding: .day, value: -offset, to: cal.startOfDay(for: Date()))!
+            let end = cal.date(byAdding: .day, value: 1, to: day)!
+            let count = tasks.filter {
+                guard let d = $0.doneAt else { return false }
+                return d >= day && d < end
+            }.count
+            if count > 0 {
+                current += 1
+                best = max(best, current)
+            } else {
+                current = 0
+            }
+        }
+        return best
+    }
+
+    var completionRate: Double {
+        let total = activeTasks.count
+        guard total > 0 else { return 0 }
+        return Double(activeTasks.filter(\.isDone).count) / Double(total)
+    }
+
     // MARK: - Sorted Collections
 
     var sortedProjects: [BarbieProject] {
@@ -449,7 +481,7 @@ final class Store {
             if case .project(let pid) = selectedView { task.projectId = pid }
         }
 
-        withAnimation(.easeOut(duration: 0.25)) {
+        withAnimation(.smooth(duration: 0.3)) {
             tasks.append(task)
         }
 
@@ -482,6 +514,10 @@ final class Store {
         guard let idx = tasks.firstIndex(where: { $0.id == id }) else { return }
         let snapshot = tasks[idx]
         let wasCompleting = !tasks[idx].isDone
+
+        // Before toggling, count other undone tasks to detect "all done" milestone
+        let othersUndone = wasCompleting ? currentViewTasks.filter { !$0.isDone && $0.id != id }.count : -1
+
         tasks[idx].isDone.toggle()
         tasks[idx].doneAt = tasks[idx].isDone ? Date() : nil
         tasks[idx].updatedAt = Date()
@@ -490,13 +526,9 @@ final class Store {
         var spawnedTaskId: UUID?
 
         if tasks[idx].isDone {
-            triggerCelebration()
-
-            // Check if all tasks in the current view are now done
-            let remaining = currentViewTasks.filter { !$0.isDone }
-            if remaining.isEmpty && !currentViewTasks.isEmpty {
-                celebrationQuote = Quote(text: "Every. Single. Task. DONE. You absolute legend.")
-                showConfetti = true
+            // Only celebrate when ALL tasks in the current view are now done
+            if othersUndone == 0 {
+                triggerCelebration(message: "Every. Single. Task. DONE. You absolute legend.")
             }
 
             NotificationService.shared.cancelReminder(taskId: id)
@@ -1216,17 +1248,17 @@ final class Store {
 
     // MARK: - Celebration
 
-    private func triggerCelebration() {
-        let q = inspirationalQuotes.randomElement()!
-        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+    private func triggerCelebration(message: String? = nil) {
+        let q = message.map { Quote(text: $0) } ?? inspirationalQuotes.randomElement()!
+        withAnimation(.smooth(duration: 0.4)) {
             celebrationQuote = q
             showConfetti = true
         }
-        // Quote stays for 4 seconds then fades out gracefully
-        DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
-            withAnimation(.easeOut(duration: 0.6)) { self.celebrationQuote = nil }
+        // Banner fades out after 3 seconds
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            withAnimation(.smooth(duration: 0.5)) { self.celebrationQuote = nil }
         }
-        // Confetti lasts a bit longer so particles finish falling
+        // Confetti finishes falling
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
             self.showConfetti = false
         }
@@ -1297,11 +1329,7 @@ final class Store {
     func setTaskStatus(_ id: UUID, to status: BarbieTask.Status) {
         guard let idx = tasks.firstIndex(where: { $0.id == id }) else { return }
         let snapshot = tasks[idx]
-        let oldStatus = tasks[idx].status
         tasks[idx].status = status
-        if status == .done && oldStatus != .done {
-            triggerCelebration()
-        }
 
         let newStatus = status
         registerUndo(name: "Change Status") { [weak self] in
@@ -1339,7 +1367,7 @@ final class Store {
             if case .project(let pid) = selectedView { task.projectId = pid }
         }
 
-        withAnimation(.easeOut(duration: 0.25)) {
+        withAnimation(.smooth(duration: 0.3)) {
             tasks.append(task)
         }
 
