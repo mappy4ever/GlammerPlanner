@@ -39,7 +39,9 @@ struct TaskRowView: View {
         .background(rowBackground)
         .overlay(alignment: .topLeading) { multiSelectBadge }
         .scaleEffect(rowScale)
+        .shadow(color: isHovered ? Color.barbiePink.opacity(0.08) : .clear, radius: 8, y: 2)
         .onHover { isHovered = $0 }
+        .animation(.smooth(duration: 0.2), value: isHovered)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(taskAccessibilityLabel)
         .accessibilityAction(.default) { completeTask() }

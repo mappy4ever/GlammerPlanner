@@ -22,7 +22,10 @@ final class CalendarService {
     // MARK: - Authorization
 
     func requestAccess() async -> Bool {
-        // Already authorized — skip the system prompt
+        // Already have access from this session — skip everything
+        if hasAccess { return true }
+
+        // Check system authorization status
         let status = EKEventStore.authorizationStatus(for: .event)
         if status == .fullAccess || status == .authorized {
             await MainActor.run { hasAccess = true }
