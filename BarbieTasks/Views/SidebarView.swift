@@ -11,7 +11,7 @@ struct SidebarView: View {
             HStack {
                 Spacer()
                 VStack(spacing: 1) {
-                    Text("Glam Plan")
+                    Text("Glammer Planner")
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundStyle(
                             LinearGradient(

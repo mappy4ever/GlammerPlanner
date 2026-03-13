@@ -249,7 +249,7 @@ struct BarbieTasksWidget: Widget {
                 }
             }
         }
-        .configurationDisplayName("Glam Plan")
+        .configurationDisplayName("Glammer Planner")
         .description("My Slay List \u{2014} today\u{2019}s tasks at a glance.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }

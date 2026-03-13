@@ -139,10 +139,10 @@ struct ContentView: View {
             return .ignored
         }
         .onChange(of: store.selectedView) {
-            NSApp.mainWindow?.title = "\(store.currentViewLabel) \u{2014} Glam Plan"
+            NSApp.mainWindow?.title = "\(store.currentViewLabel) \u{2014} Glammer Planner"
         }
         .onAppear {
-            NSApp.mainWindow?.title = "\(store.currentViewLabel) \u{2014} Glam Plan"
+            NSApp.mainWindow?.title = "\(store.currentViewLabel) \u{2014} Glammer Planner"
         }
     }
 }

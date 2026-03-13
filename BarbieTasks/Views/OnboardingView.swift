@@ -148,7 +148,7 @@ struct OnboardingView: View {
             }
 
             VStack(spacing: 8) {
-                Text("Glam Plan")
+                Text("Glammer Planner")
                     .font(.system(size: 34, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(

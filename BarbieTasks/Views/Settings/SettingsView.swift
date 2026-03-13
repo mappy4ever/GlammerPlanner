@@ -141,7 +141,7 @@ struct SettingsView: View {
                     guard let data = store.exportJSON() else { return }
                     let panel = NSSavePanel()
                     panel.allowedContentTypes = [.json]
-                    panel.nameFieldStringValue = "GlamPlan-Backup.json"
+                    panel.nameFieldStringValue = "GlammerPlanner-Backup.json"
                     if panel.runModal() == .OK, let url = panel.url {
                         try? data.write(to: url)
                     }
@@ -176,7 +176,7 @@ struct SettingsView: View {
 
             Section("About") {
                 HStack {
-                    Text("Glam Plan")
+                    Text("Glammer Planner")
                         .font(.system(size: 13, weight: .bold, design: .rounded))
                     Spacer()
                     Text("Version 1.0")
