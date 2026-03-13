@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @Environment(Store.self) private var store
     @Environment(AppSettings.self) private var settings
+    @State private var columnVisibility: NavigationSplitViewVisibility = .all
 
     var body: some View {
         @Bindable var store = store
@@ -80,6 +81,12 @@ struct ContentView: View {
             }
             .onChange(of: store.selectedView) {
                 NSApp.mainWindow?.title = "\(store.currentViewLabel) \u{2014} Slay List"
+                if case .stats = store.selectedView {
+                    store.selectedTaskId = nil
+                }
+                if case .smartList(.calendar) = store.selectedView {
+                    store.selectedTaskId = nil
+                }
             }
             .onAppear {
                 NSApp.mainWindow?.title = "\(store.currentViewLabel) \u{2014} Slay List"
@@ -91,7 +98,7 @@ struct ContentView: View {
         @Bindable var store = store
 
         ZStack {
-            NavigationSplitView(columnVisibility: .constant(.all)) {
+            NavigationSplitView(columnVisibility: $columnVisibility) {
                 SidebarView()
                     .navigationSplitViewColumnWidth(min: 200, ideal: 230, max: 280)
             } content: {
@@ -199,17 +206,24 @@ struct ContentView: View {
             VStack {
                 HStack(spacing: 12) {
                     Image(systemName: "sparkles")
-                        .font(.system(size: 16, weight: .semibold))
+                        .font(.system(size: 20, weight: .semibold))
                         .foregroundStyle(Color.barbiePink)
                         .symbolEffect(.bounce, value: quote.text)
                     Text(quote.text)
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
-                        .foregroundStyle(Color.inkPrimary)
+                        .font(.system(size: 17, weight: .bold, design: .rounded))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [Color.barbieDeep, Color.barbiePink, Color.barbieRose],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
                         .lineLimit(2)
                     Spacer(minLength: 0)
                     Image(systemName: "sparkles")
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.system(size: 16, weight: .semibold))
                         .foregroundStyle(Color.barbiePink.opacity(0.6))
+                        .symbolEffect(.bounce, value: quote.text)
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 14)

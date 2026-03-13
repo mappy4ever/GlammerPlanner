@@ -11,19 +11,19 @@ extension Color {
     static let barbieRose     = Color("BarbieRose",     bundle: nil, default: Color(hex: "#F06098"))
 
     // Surfaces
-    static let blush          = Color(light: Color(hex: "#FFF0F5"), dark: Color(hex: "#35102A"))
-    static let blushMid       = Color(light: Color(hex: "#FFD6E8"), dark: Color(hex: "#4D1838"))
-    static let blushDeep      = Color(light: Color(hex: "#FFDAEB"), dark: Color(hex: "#3D1430"))
+    static let blush          = Color(light: Color(hex: "#FFF0F6"), dark: Color(hex: "#35102A"))
+    static let blushMid       = Color(light: Color(hex: "#FFD0E5"), dark: Color(hex: "#4D1838"))
+    static let blushDeep      = Color(light: Color(hex: "#FFD4E9"), dark: Color(hex: "#3D1430"))
     static let roseGold       = Color(hex: "#E8A0B0")
 
     // Text
     static let inkPrimary     = Color(light: Color(hex: "#3D1028"), dark: Color(hex: "#FFD6E8"))
     static let inkSecondary   = Color(light: Color(hex: "#8A3060"), dark: Color(hex: "#F0A0C0"))
-    static let inkMuted       = Color(light: Color(hex: "#C07090"), dark: Color(hex: "#B06888"))
+    static let inkMuted       = Color(light: Color(hex: "#C06888"), dark: Color(hex: "#B06888"))
 
     // Borders
     static let petal          = Color(light: Color(hex: "#F5A0C0"), dark: Color(hex: "#6E2850"))
-    static let petalLight     = Color(light: Color(hex: "#FFCCE0"), dark: Color(hex: "#5A2042"))
+    static let petalLight     = Color(light: Color(hex: "#FFC4DC"), dark: Color(hex: "#5A2042"))
 
     // Priority
     static let priHigh        = Color(hex: "#D4577A")

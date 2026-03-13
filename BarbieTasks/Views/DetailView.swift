@@ -28,7 +28,7 @@ struct DetailView: View {
                 Divider().padding(.vertical, 16)
                 footerSection
             }
-            .padding(20)
+            .padding(16)
         }
         .background(Color.blush)
         .onAppear { syncFields() }
@@ -65,7 +65,7 @@ struct DetailView: View {
             .accessibilityHint("Double tap to toggle completion")
 
             TextField("Task title...", text: $editTitle, axis: .vertical)
-                .font(.system(size: 18, weight: .bold, design: .rounded))
+                .font(.system(size: 16, weight: .bold, design: .rounded))
                 .foregroundStyle(Color.inkPrimary)
                 .textFieldStyle(.plain)
                 .lineLimit(1...4)
@@ -128,17 +128,18 @@ struct DetailView: View {
 
             // Priority
             fieldRow(icon: "arrow.up.arrow.down", label: "Priority") {
-                HStack(spacing: 6) {
+                HStack(spacing: 4) {
                     ForEach(BarbieTask.Priority.allCases) { p in
                         Button {
                             withAnimation(.easeOut(duration: 0.15)) { store.update(task.id) { $0.priority = p } }
                         } label: {
-                            Text(p.label)
-                                .font(.system(size: 11, weight: .bold, design: .rounded))
-                                .padding(.horizontal, 10).padding(.vertical, 5)
-                                .background(task.priority == p ? priorityColor(p) : Color.blush, in: Capsule())
+                            prioritySymbol(p)
+                                .frame(width: 28, height: 28)
+                                .background(task.priority == p ? priorityColor(p) : Color.blush, in: Circle())
                                 .foregroundStyle(task.priority == p ? .white : Color.inkSecondary)
-                        }.buttonStyle(.plain)
+                        }
+                        .buttonStyle(.plain)
+                        .help(p.label)
                     }
                 }
             }
@@ -160,7 +161,7 @@ struct DetailView: View {
 
             // Tags
             fieldRow(icon: "tag", label: "Tags") {
-                HStack(spacing: 4) {
+                FlowLayout(spacing: 4) {
                     ForEach(store.tagsForTask(task)) { tag in
                         HStack(spacing: 4) {
                             Circle().fill(tag.color).frame(width: 6, height: 6)
@@ -249,9 +250,9 @@ struct DetailView: View {
     }
 
     private func fieldRow<Content: View>(icon: String, label: String, @ViewBuilder content: () -> Content) -> some View {
-        HStack(alignment: .center, spacing: 8) {
-            Image(systemName: icon).font(.system(size: 13)).foregroundStyle(Color.inkMuted).frame(width: 20)
-            Text(label).font(.system(size: 12, weight: .semibold, design: .rounded)).foregroundStyle(Color.inkMuted).frame(width: 54, alignment: .leading)
+        HStack(alignment: .center, spacing: 6) {
+            Image(systemName: icon).font(.system(size: 12)).foregroundStyle(Color.inkMuted).frame(width: 18)
+            Text(label).font(.system(size: 11, weight: .semibold, design: .rounded)).foregroundStyle(Color.inkMuted).frame(width: 44, alignment: .leading)
             content()
             Spacer(minLength: 0)
         }
@@ -260,6 +261,24 @@ struct DetailView: View {
     private func priorityColor(_ p: BarbieTask.Priority) -> Color {
         switch p {
         case .none: return .petal; case .low: return .priLow; case .medium: return .priMed; case .high: return .priHigh
+        }
+    }
+
+    @ViewBuilder
+    private func prioritySymbol(_ p: BarbieTask.Priority) -> some View {
+        switch p {
+        case .none:
+            Image(systemName: "minus")
+                .font(.system(size: 11, weight: .bold))
+        case .low:
+            Image(systemName: "arrow.down")
+                .font(.system(size: 11, weight: .bold))
+        case .medium:
+            Image(systemName: "equal")
+                .font(.system(size: 11, weight: .bold))
+        case .high:
+            Image(systemName: "arrow.up")
+                .font(.system(size: 11, weight: .bold))
         }
     }
 
@@ -475,5 +494,47 @@ struct DetailView: View {
                     .background(Color.blush, in: Capsule())
             }.buttonStyle(.plain)
         }
+    }
+}
+
+// MARK: - Flow Layout
+
+private struct FlowLayout: Layout {
+    var spacing: CGFloat = 4
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let result = arrange(proposal: proposal, subviews: subviews)
+        return result.size
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let result = arrange(proposal: proposal, subviews: subviews)
+        for (index, position) in result.positions.enumerated() {
+            subviews[index].place(at: CGPoint(x: bounds.minX + position.x, y: bounds.minY + position.y), proposal: .unspecified)
+        }
+    }
+
+    private func arrange(proposal: ProposedViewSize, subviews: Subviews) -> (positions: [CGPoint], size: CGSize) {
+        let maxWidth = proposal.width ?? .infinity
+        var positions: [CGPoint] = []
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+        var rowHeight: CGFloat = 0
+        var maxX: CGFloat = 0
+
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if x + size.width > maxWidth && x > 0 {
+                x = 0
+                y += rowHeight + spacing
+                rowHeight = 0
+            }
+            positions.append(CGPoint(x: x, y: y))
+            rowHeight = max(rowHeight, size.height)
+            x += size.width + spacing
+            maxX = max(maxX, x)
+        }
+
+        return (positions, CGSize(width: maxX, height: y + rowHeight))
     }
 }

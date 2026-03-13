@@ -49,7 +49,9 @@ struct KanbanView: View {
         .dropDestination(for: String.self) { droppedItems, _ in
             guard let idString = droppedItems.first,
                   let id = UUID(uuidString: idString) else { return false }
-            store.setTaskStatus(id, to: status)
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
+                store.setTaskStatus(id, to: status)
+            }
             return true
         } isTargeted: { isTargeted in
             if isTargeted {
@@ -145,7 +147,7 @@ struct KanbanView: View {
                     .strokeBorder(isSelected ? Color.barbiePink : Color.petal, lineWidth: isSelected ? 1.5 : 0.5)
             )
             .shadow(color: isHovered ? Color.barbiePink.opacity(0.15) : Color.clear, radius: 8, y: 3)
-            .scaleEffect(isHovered ? 1.02 : 1.0)
+            .scaleEffect(isHovered ? 1.04 : 1.0)
             .animation(.smooth(duration: 0.2), value: isHovered)
             .contentShape(RoundedRectangle(cornerRadius: 8))
             .onHover { isHovered = $0 }

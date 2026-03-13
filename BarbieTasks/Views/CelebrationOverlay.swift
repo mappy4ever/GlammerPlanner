@@ -125,7 +125,7 @@ struct ConfettiView: View {
     }
 
     private func spawnParticles() {
-        let count = 60
+        let count = 100
         let now = Date.timeIntervalSinceReferenceDate
         particles = (0..<count).map { i in
             let shapes: [ConfettiShape] = [.rect, .rect, .circle, .heart, .star, .diamond]

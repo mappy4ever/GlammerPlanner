@@ -32,6 +32,7 @@ final class Store {
     var showCommandPalette: Bool = false
     var celebrationQuote: Quote?
     var showConfetti: Bool = false
+    private var celebrationQueue: [(quote: Quote, confetti: Bool)] = []
     private var completionStreak: Int = 0
     var toastMessage: String?
     var showTemplateManager: Bool = false
@@ -1262,23 +1263,38 @@ final class Store {
     // MARK: - Celebration
 
     private func triggerCelebration(message: String? = nil, withConfetti: Bool = false) {
-        // Don't stack celebrations
-        guard celebrationQuote == nil else { return }
-
         let q = message.map { Quote(text: $0) } ?? inspirationalQuotes.randomElement()!
-        // Set directly — the calling site already wraps in withAnimation
-        celebrationQuote = q
-        if withConfetti {
+
+        if celebrationQuote != nil {
+            // Queue it
+            celebrationQueue.append((quote: q, confetti: withConfetti))
+            return
+        }
+
+        showCelebration(q, confetti: withConfetti)
+    }
+
+    private func showCelebration(_ quote: Quote, confetti: Bool) {
+        celebrationQuote = quote
+        if confetti {
             showConfetti = true
         }
 
-        // Banner fades out after 3 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
             withAnimation(.smooth(duration: 0.5)) { self?.celebrationQuote = nil }
-        }
-        if withConfetti {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) { [weak self] in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                 self?.showConfetti = false
+                self?.showNextCelebration()
+            }
+        }
+    }
+
+    private func showNextCelebration() {
+        guard !celebrationQueue.isEmpty else { return }
+        let next = celebrationQueue.removeFirst()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                self?.showCelebration(next.quote, confetti: next.confetti)
             }
         }
     }

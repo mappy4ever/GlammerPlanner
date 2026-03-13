@@ -14,7 +14,7 @@ enum SmartList: String, CaseIterable, Identifiable, Codable, Hashable {
         case .upcoming: "Upcoming"
         case .calendar: "Calendar"
         case .anytime: "All Tasks"
-        case .logbook: "Logbook"
+        case .logbook: "Slayed Tasks"
         case .trash: "Trash"
         }
     }
