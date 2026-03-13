@@ -11,6 +11,7 @@ final class Store {
     var pomodoroSessions: [PomodoroSession] = []
     var templates: [TaskTemplate] = []
     var savedFilters: [SavedFilter] = []
+    var routines: [Routine] = []
 
     // MARK: - View State
 
@@ -155,6 +156,7 @@ final class Store {
         var pomodoroSessions: [PomodoroSession]
         var templates: [TaskTemplate] = []  // default for backward compat
         var savedFilters: [SavedFilter] = []  // default for backward compat
+        var routines: [Routine] = []  // default for backward compat
         var selectedView: ViewSelection
         var sortBy: SortOption
         var showCompleted: Bool
@@ -167,6 +169,7 @@ final class Store {
             pomodoroSessions: pomodoroSessions,
             templates: templates,
             savedFilters: savedFilters,
+            routines: routines,
             selectedView: selectedView, sortBy: sortBy,
             showCompleted: showCompleted
         )
@@ -189,6 +192,7 @@ final class Store {
         store.pomodoroSessions = data.pomodoroSessions
         store.templates = data.templates
         store.savedFilters = data.savedFilters
+        store.routines = data.routines
         store.selectedView = data.selectedView
         store.sortBy = data.sortBy
         store.showCompleted = data.showCompleted
@@ -1426,6 +1430,53 @@ final class Store {
         save()
     }
 
+    // MARK: - Routines
+
+    var showRoutineManager: Bool = false
+
+    var todayRoutines: [Routine] {
+        routines.filter(\.isForToday)
+    }
+
+    func addRoutine(_ routine: Routine) {
+        routines.append(routine)
+        save()
+    }
+
+    func deleteRoutine(_ id: UUID) {
+        routines.removeAll { $0.id == id }
+        save()
+    }
+
+    func updateRoutine(_ id: UUID, _ mutation: (inout Routine) -> Void) {
+        guard let idx = routines.firstIndex(where: { $0.id == id }) else { return }
+        mutation(&routines[idx])
+        save()
+    }
+
+    func activateRoutine(_ id: UUID) {
+        guard let routine = routines.first(where: { $0.id == id }) else { return }
+        let today = Calendar.current.startOfDay(for: Date())
+        var maxOrder = tasks.map(\.sortOrder).max() ?? 0
+
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.65)) {
+            for rt in routine.tasks {
+                var task = BarbieTask(title: rt.title)
+                task.priority = rt.priority
+                task.projectId = rt.projectId
+                task.tagIds = rt.tagIds
+                task.notes = rt.notes
+                task.dueDate = today
+                maxOrder += 1
+                task.sortOrder = maxOrder
+                tasks.append(task)
+            }
+        }
+
+        save()
+        triggerCelebration(message: "\(routine.name) loaded! Time to slay.", withConfetti: false)
+    }
+
     // MARK: - Import / Export
 
     func exportJSON() -> Data? {
@@ -1434,6 +1485,7 @@ final class Store {
             pomodoroSessions: pomodoroSessions,
             templates: templates,
             savedFilters: savedFilters,
+            routines: routines,
             selectedView: .smartList(.inbox), sortBy: sortBy,
             showCompleted: showCompleted
         )

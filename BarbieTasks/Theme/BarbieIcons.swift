@@ -311,6 +311,23 @@ enum BarbieIcon {
         }
     }
 
+    /// Routines — repeat circle with gradient
+    struct Routines: View {
+        var size: CGFloat = 16
+        var body: some View {
+            ZStack {
+                Image(systemName: "repeat.circle.fill")
+                    .font(.system(size: size, weight: .medium))
+                    .foregroundStyle(
+                        LinearGradient(colors: [Color.barbiePink, Color.barbieRose],
+                                       startPoint: .topLeading, endPoint: .bottomTrailing)
+                    )
+            }
+            .frame(width: size + 4, height: size + 4)
+            .accessibilityHidden(true)
+        }
+    }
+
     /// Command palette — magnifying glass with gradient
     struct Search: View {
         var size: CGFloat = 16

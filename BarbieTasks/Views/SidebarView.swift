@@ -19,7 +19,7 @@ struct SidebarView: View {
                                 startPoint: .leading, endPoint: .trailing
                             )
                         )
-                    Text("My Slay List")
+                    Text("Get it done, gorgeously")
                         .font(.system(size: 10, weight: .semibold, design: .rounded))
                         .foregroundStyle(Color.inkMuted)
                 }
@@ -70,6 +70,28 @@ struct SidebarView: View {
                     }
                 }
                 .font(.system(size: 13, weight: .semibold, design: .rounded))
+
+                // Routines
+                Button { store.showRoutineManager = true } label: {
+                    Label {
+                        HStack {
+                            Text("Routines")
+                            Spacer()
+                            if !store.todayRoutines.isEmpty {
+                                Text("\(store.todayRoutines.count)")
+                                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                                    .foregroundStyle(Color.inkMuted)
+                                    .padding(.horizontal, 7)
+                                    .padding(.vertical, 2)
+                                    .background(Color.petal.opacity(0.5), in: Capsule())
+                            }
+                        }
+                    } icon: {
+                        BarbieIcon.Routines(size: 14)
+                    }
+                }
+                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                .buttonStyle(.plain)
             }
 
             // Projects — simple flat list

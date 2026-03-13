@@ -373,7 +373,7 @@ struct TaskListView: View {
 
     private var emptyContent: (String, String, String) {
         switch store.selectedView {
-        case .smartList(.inbox):    return ("tray",              "Inbox Zero",      "Add a task to get started.")
+        case .smartList(.inbox):    return ("tray",              "Slay List Zero",  "Add a task to get started.")
         case .smartList(.today):    return ("sun.max",           "Free Day",        "Nothing due today.")
         case .smartList(.upcoming): return ("calendar.badge.clock", "All Clear",    "No upcoming deadlines.")
         case .smartList(.anytime):  return ("list.bullet",       "Fresh Start",     "Add something fabulous.")

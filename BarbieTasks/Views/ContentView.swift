@@ -21,6 +21,9 @@ struct ContentView: View {
             .sheet(isPresented: $store.showTemplateManager) {
                 TemplateManagerView()
             }
+            .sheet(isPresented: $store.showRoutineManager) {
+                RoutinesView()
+            }
             .sheet(isPresented: $store.showNewFilter) {
                 FilterEditorView()
             }
