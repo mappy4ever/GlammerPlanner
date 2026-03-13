@@ -375,6 +375,7 @@
 				CURRENT_PROJECT_VERSION = 202603130331;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Slay List";
+				INFOPLIST_KEY_CFBundleName = "Slay List";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Slay List shows your calendar events alongside tasks.";
 				INFOPLIST_KEY_NSRemindersUsageDescription = "Slay List can import and sync with Apple Reminders.";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -384,6 +385,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mappy4ever.BarbieTasks;
+				PRODUCT_NAME = "Slay List";
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.9;
 			};
@@ -517,6 +519,7 @@
 				CURRENT_PROJECT_VERSION = 202603130331;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Slay List";
+				INFOPLIST_KEY_CFBundleName = "Slay List";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Slay List shows your calendar events alongside tasks.";
 				INFOPLIST_KEY_NSRemindersUsageDescription = "Slay List can import and sync with Apple Reminders.";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -526,6 +529,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mappy4ever.BarbieTasks;
+				PRODUCT_NAME = "Slay List";
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.9;
 			};

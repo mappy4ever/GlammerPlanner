@@ -30,6 +30,8 @@ targets:
         CODE_SIGN_ENTITLEMENTS: BarbieTasks/BarbieTasks.entitlements
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: "Slay List"
+        INFOPLIST_KEY_CFBundleName: "Slay List"
+        PRODUCT_NAME: "Slay List"
         INFOPLIST_KEY_NSCalendarsUsageDescription: "Slay List shows your calendar events alongside tasks."
         INFOPLIST_KEY_NSRemindersUsageDescription: "Slay List can import and sync with Apple Reminders."
     postBuildScripts:

@@ -45,7 +45,6 @@ struct ContentView: View {
                     store.selectedTaskId = nil
                     return .handled
                 }
-                // Remove focus from any text field
                 NSApp.keyWindow?.makeFirstResponder(nil)
                 return .handled
             }
@@ -65,7 +64,7 @@ struct ContentView: View {
             }
             .onKeyPress(.space) {
                 if !store.showCommandPalette, let id = store.selectedTaskId {
-                    withAnimation(.smooth(duration: 0.3)) {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.65)) {
                         store.toggleTask(id)
                     }
                     return .handled
@@ -97,8 +96,8 @@ struct ContentView: View {
                     .navigationSplitViewColumnWidth(min: 200, ideal: 230, max: 280)
             } content: {
                 contentColumn
-                    .animation(.smooth(duration: 0.3), value: store.selectedView)
-                    .animation(.smooth(duration: 0.3), value: store.viewMode)
+                    .animation(.spring(response: 0.35, dampingFraction: 0.85), value: store.selectedView)
+                    .animation(.spring(response: 0.3, dampingFraction: 0.8), value: store.viewMode)
                     .navigationSplitViewColumnWidth(min: 300, ideal: 420, max: .infinity)
             } detail: {
                 if let task = store.selectedTask {
@@ -133,6 +132,7 @@ struct ContentView: View {
                 }
             }
 
+            // --- Overlays (all non-interactive ones MUST pass through hits) ---
             overlayViews
         }
     }
@@ -157,56 +157,94 @@ struct ContentView: View {
         }
     }
 
+    // MARK: - Overlays
+    // CRITICAL: Every decorative overlay MUST have .allowsHitTesting(false)
+    // or it will block ALL clicks on the content below.
+
     @ViewBuilder
     private var overlayViews: some View {
-        // Celebration banner — slides in at top, feels part of the content
-        if let quote = store.celebrationQuote {
-            VStack {
-                HStack(spacing: 10) {
-                    Image(systemName: "sparkles")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(Color.barbiePink)
-                    Text(quote.text)
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
-                        .foregroundStyle(Color.inkPrimary)
-                        .lineLimit(2)
-                    Spacer(minLength: 0)
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.blushMid)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .strokeBorder(Color.barbiePink.opacity(0.3), lineWidth: 1)
-                        )
-                )
-                .padding(.horizontal, 16)
-                .padding(.top, 8)
-                .transition(.move(edge: .top).combined(with: .opacity))
-                .allowsHitTesting(false)
+        // Celebration banner
+        celebrationBanner
+            .allowsHitTesting(false)
 
-                Spacer()
-            }
-        }
-
-        // Confetti
+        // Confetti particles
         if store.showConfetti {
             ConfettiView()
                 .allowsHitTesting(false)
+                .transition(.opacity)
         }
 
-        // Command palette
+        // Command palette (interactive — no hit-testing bypass)
         if store.showCommandPalette {
             CommandPalette()
         }
 
-        // Bulk action bar
+        // Bulk action bar (interactive — only the bar itself, not the spacer)
         if store.selectedTaskIds.count > 1 {
             VStack {
                 Spacer()
                 BulkActionBar()
+            }
+            .allowsHitTesting(false) // Let hits pass through spacer
+            .overlay(alignment: .bottom) {
+                // Re-enable hit testing on just the bar itself
+                BulkActionBar()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var celebrationBanner: some View {
+        if let quote = store.celebrationQuote {
+            VStack {
+                HStack(spacing: 12) {
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(Color.barbiePink)
+                        .symbolEffect(.bounce, value: quote.text)
+                    Text(quote.text)
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color.inkPrimary)
+                        .lineLimit(2)
+                    Spacer(minLength: 0)
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(Color.barbiePink.opacity(0.6))
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 14)
+                .background(
+                    RoundedRectangle(cornerRadius: 14)
+                        .fill(
+                            LinearGradient(
+                                colors: [Color.blushMid, Color.blushMid.opacity(0.95)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14)
+                                .strokeBorder(
+                                    LinearGradient(
+                                        colors: [Color.barbiePink.opacity(0.4), Color.barbieRose.opacity(0.2)],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    ),
+                                    lineWidth: 1.5
+                                )
+                        )
+                        .shadow(color: Color.barbiePink.opacity(0.15), radius: 12, y: 4)
+                )
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+                .transition(
+                    .asymmetric(
+                        insertion: .move(edge: .top).combined(with: .opacity).combined(with: .scale(scale: 0.95)),
+                        removal: .opacity.combined(with: .scale(scale: 0.98))
+                    )
+                )
+
+                Spacer()
             }
         }
     }
@@ -264,7 +302,7 @@ private struct ToastView: View {
                 }
             }
             .onAppear {
-                withAnimation(.smooth(duration: 0.3)) {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                     toastScale = 1.0
                 }
             }

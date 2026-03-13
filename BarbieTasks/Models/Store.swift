@@ -32,6 +32,7 @@ final class Store {
     var showCommandPalette: Bool = false
     var celebrationQuote: Quote?
     var showConfetti: Bool = false
+    private var completionStreak: Int = 0
     var toastMessage: String?
     var showTemplateManager: Bool = false
     var saveAsTemplateTaskId: UUID?
@@ -526,9 +527,21 @@ final class Store {
         var spawnedTaskId: UUID?
 
         if tasks[idx].isDone {
-            // Only celebrate when ALL tasks in the current view are now done
+            completionStreak += 1
+
+            // Every completion gets a quote, streaks get confetti
             if othersUndone == 0 {
-                triggerCelebration(message: "Every. Single. Task. DONE. You absolute legend.")
+                triggerCelebration(message: "Every. Single. Task. DONE. You absolute legend.", withConfetti: true)
+            } else if completionStreak.isMultiple(of: 3) {
+                let streakMessages = [
+                    "HAT TRICK! Three in a row, you're on FIRE!",
+                    "Triple threat energy! Keep that streak going!",
+                    "Three down, unstoppable vibes only!",
+                    "Streak mode: ACTIVATED. You're slaying!",
+                ]
+                triggerCelebration(message: streakMessages.randomElement()!, withConfetti: true)
+            } else {
+                triggerCelebration()
             }
 
             NotificationService.shared.cancelReminder(taskId: id)
@@ -1248,21 +1261,25 @@ final class Store {
 
     // MARK: - Celebration
 
-    private func triggerCelebration(message: String? = nil) {
+    private func triggerCelebration(message: String? = nil, withConfetti: Bool = false) {
         // Don't stack celebrations
         guard celebrationQuote == nil else { return }
 
         let q = message.map { Quote(text: $0) } ?? inspirationalQuotes.randomElement()!
+        // Set directly — the calling site already wraps in withAnimation
         celebrationQuote = q
-        showConfetti = true
+        if withConfetti {
+            showConfetti = true
+        }
 
         // Banner fades out after 3 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
             withAnimation(.smooth(duration: 0.5)) { self?.celebrationQuote = nil }
         }
-        // Confetti finishes falling
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) { [weak self] in
-            self?.showConfetti = false
+        if withConfetti {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) { [weak self] in
+                self?.showConfetti = false
+            }
         }
     }
 

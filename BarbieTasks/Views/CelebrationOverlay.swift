@@ -227,21 +227,40 @@ private struct SparkleSymbol: View {
 // MARK: - Checkbox Completion Ripple
 
 struct CheckmarkRipple: View {
-    @State private var rippleScale: CGFloat = 0.5
-    @State private var rippleOpacity: Double = 0.5
+    @State private var ripple1Scale: CGFloat = 0.5
+    @State private var ripple1Opacity: Double = 0.6
+    @State private var ripple2Scale: CGFloat = 0.5
+    @State private var ripple2Opacity: Double = 0.4
 
     var body: some View {
-        Circle()
-            .stroke(Color.barbiePink, lineWidth: 1.5)
-            .frame(width: 20, height: 20)
-            .scaleEffect(rippleScale)
-            .opacity(rippleOpacity)
-            .onAppear {
-                withAnimation(.smooth(duration: 0.5)) {
-                    rippleScale = 2.5
-                    rippleOpacity = 0
-                }
+        ZStack {
+            // First ripple — fast
+            Circle()
+                .stroke(
+                    LinearGradient(colors: [.barbiePink, .barbieRose], startPoint: .top, endPoint: .bottom),
+                    lineWidth: 2
+                )
+                .frame(width: 20, height: 20)
+                .scaleEffect(ripple1Scale)
+                .opacity(ripple1Opacity)
+
+            // Second ripple — delayed, wider
+            Circle()
+                .stroke(Color.barbiePink.opacity(0.5), lineWidth: 1)
+                .frame(width: 20, height: 20)
+                .scaleEffect(ripple2Scale)
+                .opacity(ripple2Opacity)
+        }
+        .onAppear {
+            withAnimation(.smooth(duration: 0.45)) {
+                ripple1Scale = 3.0
+                ripple1Opacity = 0
             }
+            withAnimation(.smooth(duration: 0.6).delay(0.08)) {
+                ripple2Scale = 4.0
+                ripple2Opacity = 0
+            }
+        }
     }
 }
 
@@ -251,29 +270,37 @@ struct SparkleBurst: View {
     let count: Int
     @State private var fired = false
 
-    init(count: Int = 6) {
+    init(count: Int = 8) {
         self.count = count
     }
+
+    private static let colors: [Color] = [
+        .barbiePink, .barbieRose, .gold, Color(hex: "#FFD54F"), Color(hex: "#FF80AB"),
+    ]
 
     var body: some View {
         ZStack {
             ForEach(0..<count, id: \.self) { i in
                 let angle = Double(i) / Double(count) * 360
-                Image(systemName: "sparkle")
-                    .font(.system(size: 8, weight: .bold))
-                    .foregroundStyle(Color.barbiePink.opacity(0.8))
+                let color = Self.colors[i % Self.colors.count]
+                let icons = ["sparkle", "heart.fill", "star.fill", "sparkle"]
+                Image(systemName: icons[i % icons.count])
+                    .font(.system(size: CGFloat.random(in: 6...10), weight: .bold))
+                    .foregroundStyle(color)
                     .offset(
-                        x: fired ? cos(angle * .pi / 180) * 18 : 0,
-                        y: fired ? sin(angle * .pi / 180) * 18 : 0
+                        x: fired ? cos(angle * .pi / 180) * CGFloat.random(in: 16...26) : 0,
+                        y: fired ? sin(angle * .pi / 180) * CGFloat.random(in: 16...26) : 0
                     )
-                    .scaleEffect(fired ? 0.3 : 0.8)
+                    .scaleEffect(fired ? 0.2 : 1.0)
                     .opacity(fired ? 0 : 1)
+                    .rotationEffect(.degrees(fired ? Double.random(in: -90...90) : 0))
             }
         }
         .onAppear {
-            withAnimation(.smooth(duration: 0.5)) {
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
                 fired = true
             }
         }
     }
 }
+

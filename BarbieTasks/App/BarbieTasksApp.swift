@@ -150,7 +150,7 @@ struct BarbieTasksApp: App {
     // MARK: - URL Scheme
 
     private func handleURL(_ url: URL) {
-        guard url.scheme == "barbietasks" else { return }
+        guard url.scheme == "barbietasks" || url.scheme == "slaylist" else { return }
         switch url.host {
         case "add":
             if let title = url.queryValue(for: "title") {

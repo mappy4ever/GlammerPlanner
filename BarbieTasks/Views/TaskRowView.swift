@@ -13,8 +13,51 @@ struct TaskRowView: View {
     @State private var isHovered = false
     @State private var showDeleteConfirm = false
     @State private var completionFlash: Double = 0
+    @State private var rowScale: CGFloat = 1.0
 
     var body: some View {
+        rowContent
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .background(rowBackground)
+            .overlay(alignment: .topLeading) { multiSelectBadge }
+            .scaleEffect(rowScale)
+            .onHover { isHovered = $0 }
+            .contentShape(Rectangle())
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(taskAccessibilityLabel)
+            .accessibilityAction(.default) { completeTask() }
+            .onChange(of: task.isDone) { old, new in
+                if new && !old {
+                    // Pink flash + slight scale punch on completion
+                    withAnimation(.spring(response: 0.15, dampingFraction: 0.5)) {
+                        completionFlash = 0.3
+                        rowScale = 0.97
+                    }
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.6).delay(0.15)) {
+                        completionFlash = 0
+                        rowScale = 1.0
+                    }
+                }
+            }
+            .simultaneousGesture(TapGesture().onEnded {
+                handleRowTap()
+            })
+            .contextMenu { contextMenuItems }
+            .draggable(task.id.uuidString)
+            .confirmationDialog("Delete permanently?", isPresented: $showDeleteConfirm) {
+                Button("Delete Forever", role: .destructive) {
+                    store.permanentlyDelete(task.id)
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("This task will be permanently removed and cannot be recovered.")
+            }
+    }
+
+    // MARK: - Row Content
+
+    private var rowContent: some View {
         HStack(alignment: .top, spacing: 10) {
             checkbox
 
@@ -31,14 +74,12 @@ struct TaskRowView: View {
 
             Spacer(minLength: 4)
 
-            // Recurrence indicator
             if task.recurrence != nil && !task.isDone {
                 Image(systemName: "repeat")
                     .font(.system(size: 10))
                     .foregroundStyle(Color.inkMuted)
             }
 
-            // Attachment indicator
             if !task.attachments.isEmpty {
                 Image(systemName: "paperclip")
                     .font(.system(size: 10))
@@ -58,7 +99,9 @@ struct TaskRowView: View {
                 if isTrashView {
                     showDeleteConfirm = true
                 } else {
-                    store.trashTask(task.id)
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        store.trashTask(task.id)
+                    }
                 }
             } label: {
                 Image(systemName: isTrashView ? "xmark" : "trash")
@@ -67,70 +110,57 @@ struct TaskRowView: View {
             }
             .buttonStyle(.plain)
             .opacity(isSelected || isHovered ? 1 : 0)
+            .animation(.smooth(duration: 0.15), value: isHovered)
             .help(isTrashView ? "Delete" : "Trash")
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
-        .background(
-            ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(isSelected ? Color.blush : (isHovered ? Color.blush.opacity(0.5) : Color.clear))
+    }
 
-                // Completion flash
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.barbiePink.opacity(completionFlash))
-            }
-        )
-        .overlay(alignment: .topLeading) {
-            if store.selectedTaskIds.contains(task.id) && store.selectedTaskIds.count > 1 {
-                HStack {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 14))
-                        .foregroundStyle(Color.barbiePink)
-                    Spacer()
-                }
+    // MARK: - Background
+
+    private var rowBackground: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 10)
+                .fill(isSelected ? Color.blush : (isHovered ? Color.blush.opacity(0.5) : Color.clear))
+                .animation(.smooth(duration: 0.15), value: isHovered)
+
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.barbiePink.opacity(completionFlash))
+        }
+    }
+
+    @ViewBuilder
+    private var multiSelectBadge: some View {
+        if store.selectedTaskIds.contains(task.id) && store.selectedTaskIds.count > 1 {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 14))
+                .foregroundStyle(Color.barbiePink)
                 .padding(.leading, 4)
-            }
+                .transition(.scale.combined(with: .opacity))
         }
-        .onHover { isHovered = $0 }
-        .contentShape(Rectangle())
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(taskAccessibilityLabel)
-        .accessibilityAction(.default) { store.toggleTask(task.id) }
-        .onChange(of: task.isDone) { old, new in
-            if new && !old {
-                // Flash pink on completion
-                withAnimation(.smooth(duration: 0.15)) {
-                    completionFlash = 0.15
-                }
-                withAnimation(.smooth(duration: 0.5).delay(0.15)) {
-                    completionFlash = 0
-                }
-            }
+    }
+
+    // MARK: - Row Tap (selection, NOT completion)
+
+    /// Called by simultaneousGesture — only handles selection, never completion.
+    /// The checkbox Button handles completion separately.
+    @State private var ignoreNextTap = false
+
+    private func handleRowTap() {
+        // If the checkbox was just tapped, skip selection logic
+        guard !ignoreNextTap else {
+            ignoreNextTap = false
+            return
         }
-        .simultaneousGesture(TapGesture().onEnded {
-            if NSEvent.modifierFlags.contains(.command) {
-                // Multi-select
-                if store.selectedTaskIds.contains(task.id) {
-                    store.selectedTaskIds.remove(task.id)
-                } else {
-                    store.selectedTaskIds.insert(task.id)
-                }
+        if NSEvent.modifierFlags.contains(.command) {
+            if store.selectedTaskIds.contains(task.id) {
+                store.selectedTaskIds.remove(task.id)
             } else {
-                withAnimation(.smooth(duration: 0.2)) {
-                    store.selectedTaskId = (store.selectedTaskId == task.id) ? nil : task.id
-                }
+                store.selectedTaskIds.insert(task.id)
             }
-        })
-        .contextMenu { contextMenuItems }
-        .draggable(task.id.uuidString)
-        .confirmationDialog("Delete permanently?", isPresented: $showDeleteConfirm) {
-            Button("Delete Forever", role: .destructive) {
-                store.permanentlyDelete(task.id)
+        } else {
+            withAnimation(.smooth(duration: 0.2)) {
+                store.selectedTaskId = (store.selectedTaskId == task.id) ? nil : task.id
             }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("This task will be permanently removed and cannot be recovered.")
         }
     }
 
@@ -138,31 +168,49 @@ struct TaskRowView: View {
 
     @State private var checkBounce: CGFloat = 1.0
     @State private var showRipple = false
+    @State private var showSparkle = false
+
+    private func completeTask() {
+        ignoreNextTap = true
+        let wasDone = task.isDone
+
+        // Toggle immediately — no delays, no race conditions
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.65)) {
+            store.toggleTask(task.id)
+        }
+
+        if !wasDone {
+            // Checkbox juice
+            showRipple = true
+            showSparkle = true
+
+            withAnimation(.spring(response: 0.12, dampingFraction: 0.3)) {
+                checkBounce = 1.5
+            }
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.5).delay(0.08)) {
+                checkBounce = 1.0
+            }
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                showRipple = false
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                showSparkle = false
+            }
+        }
+    }
 
     private var checkbox: some View {
         Button {
-            let wasDone = task.isDone
-            withAnimation(.smooth(duration: 0.3)) {
-                store.toggleTask(task.id)
-            }
-            // Trigger bounce + ripple only on completion
-            if !wasDone {
-                showRipple = true
-                withAnimation(.spring(response: 0.2, dampingFraction: 0.5)) {
-                    checkBounce = 1.2
-                }
-                withAnimation(.smooth(duration: 0.2).delay(0.12)) {
-                    checkBounce = 1.0
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-                    showRipple = false
-                }
-            }
+            completeTask()
         } label: {
             ZStack {
-                // Ripple ring
                 if showRipple {
                     CheckmarkRipple()
+                }
+
+                if showSparkle {
+                    SparkleBurst(count: 8)
                 }
 
                 Circle()
@@ -254,7 +302,6 @@ struct TaskRowView: View {
                 .lineLimit(1)
             }
 
-            // Tags
             ForEach(store.tagsForTask(task).prefix(3)) { tag in
                 HStack(spacing: 3) {
                     Circle()
@@ -301,8 +348,6 @@ struct TaskRowView: View {
         return Color.blush
     }
 
-    // MARK: - Context Menu
-
     // MARK: - Accessibility
 
     private var taskAccessibilityLabel: String {
@@ -319,6 +364,8 @@ struct TaskRowView: View {
         }
         return parts.joined(separator: ", ")
     }
+
+    // MARK: - Context Menu
 
     @ViewBuilder
     private var contextMenuItems: some View {
