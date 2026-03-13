@@ -14,53 +14,63 @@ struct TaskRowView: View {
     @State private var showDeleteConfirm = false
     @State private var completionFlash: Double = 0
     @State private var rowScale: CGFloat = 1.0
+    @State private var checkBounce: CGFloat = 1.0
+    @State private var showRipple = false
+    @State private var showSparkle = false
 
     var body: some View {
-        rowContent
-            .padding(.horizontal, 12)
-            .padding(.vertical, 10)
-            .background(rowBackground)
-            .overlay(alignment: .topLeading) { multiSelectBadge }
-            .scaleEffect(rowScale)
-            .onHover { isHovered = $0 }
-            .contentShape(Rectangle())
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel(taskAccessibilityLabel)
-            .accessibilityAction(.default) { completeTask() }
-            .onChange(of: task.isDone) { old, new in
-                if new && !old {
-                    // Pink flash + slight scale punch on completion
-                    withAnimation(.spring(response: 0.15, dampingFraction: 0.5)) {
-                        completionFlash = 0.3
-                        rowScale = 0.97
-                    }
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.6).delay(0.15)) {
-                        completionFlash = 0
-                        rowScale = 1.0
-                    }
+        // KEY DESIGN: Checkbox and action buttons are SEPARATE from the
+        // selectable area. No shared gesture recognizers. No conflicts.
+        // The checkbox ALWAYS works, no matter what.
+        HStack(alignment: .top, spacing: 0) {
+            // ── Checkbox: standalone, no gesture conflicts ──
+            checkboxButton
+                .zIndex(1)
+
+            // ── Selectable area: title, badges, indicators ──
+            selectableArea
+                .padding(.leading, 10)
+
+            // ── Action buttons: trash/restore, also standalone ──
+            actionButtons
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .background(rowBackground)
+        .overlay(alignment: .topLeading) { multiSelectBadge }
+        .scaleEffect(rowScale)
+        .onHover { isHovered = $0 }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(taskAccessibilityLabel)
+        .accessibilityAction(.default) { completeTask() }
+        .onChange(of: task.isDone) { old, new in
+            if new && !old {
+                withAnimation(.spring(response: 0.15, dampingFraction: 0.5)) {
+                    completionFlash = 0.3
+                    rowScale = 0.97
+                }
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.6).delay(0.15)) {
+                    completionFlash = 0
+                    rowScale = 1.0
                 }
             }
-            .simultaneousGesture(TapGesture().onEnded {
-                handleRowTap()
-            })
-            .contextMenu { contextMenuItems }
-            .draggable(task.id.uuidString)
-            .confirmationDialog("Delete permanently?", isPresented: $showDeleteConfirm) {
-                Button("Delete Forever", role: .destructive) {
-                    store.permanentlyDelete(task.id)
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("This task will be permanently removed and cannot be recovered.")
+        }
+        .contextMenu { contextMenuItems }
+        .draggable(task.id.uuidString)
+        .confirmationDialog("Delete permanently?", isPresented: $showDeleteConfirm) {
+            Button("Delete Forever", role: .destructive) {
+                store.permanentlyDelete(task.id)
             }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This task will be permanently removed and cannot be recovered.")
+        }
     }
 
-    // MARK: - Row Content
+    // MARK: - Selectable Area (title, badges — handles row selection on tap)
 
-    private var rowContent: some View {
-        HStack(alignment: .top, spacing: 10) {
-            checkbox
-
+    private var selectableArea: some View {
+        HStack(alignment: .top, spacing: 4) {
             VStack(alignment: .leading, spacing: 3) {
                 Text(task.title)
                     .font(.system(size: 14, weight: .semibold, design: .rounded))
@@ -85,7 +95,30 @@ struct TaskRowView: View {
                     .font(.system(size: 10))
                     .foregroundStyle(Color.inkMuted)
             }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            // This ONLY handles selection — never completion.
+            // Checkbox is a separate view with its own Button.
+            if NSEvent.modifierFlags.contains(.command) {
+                if store.selectedTaskIds.contains(task.id) {
+                    store.selectedTaskIds.remove(task.id)
+                } else {
+                    store.selectedTaskIds.insert(task.id)
+                }
+            } else {
+                withAnimation(.smooth(duration: 0.2)) {
+                    store.selectedTaskId = (store.selectedTaskId == task.id) ? nil : task.id
+                }
+            }
+        }
+    }
 
+    // MARK: - Action Buttons (trash, restore — separate hit targets)
+
+    @ViewBuilder
+    private var actionButtons: some View {
+        HStack(spacing: 4) {
             if isTrashView {
                 Button { store.restoreTask(task.id) } label: {
                     Image(systemName: "arrow.uturn.backward")
@@ -139,48 +172,16 @@ struct TaskRowView: View {
         }
     }
 
-    // MARK: - Row Tap (selection, NOT completion)
-
-    /// Called by simultaneousGesture — only handles selection, never completion.
-    /// The checkbox Button handles completion separately.
-    @State private var ignoreNextTap = false
-
-    private func handleRowTap() {
-        // If the checkbox was just tapped, skip selection logic
-        guard !ignoreNextTap else {
-            ignoreNextTap = false
-            return
-        }
-        if NSEvent.modifierFlags.contains(.command) {
-            if store.selectedTaskIds.contains(task.id) {
-                store.selectedTaskIds.remove(task.id)
-            } else {
-                store.selectedTaskIds.insert(task.id)
-            }
-        } else {
-            withAnimation(.smooth(duration: 0.2)) {
-                store.selectedTaskId = (store.selectedTaskId == task.id) ? nil : task.id
-            }
-        }
-    }
-
-    // MARK: - Checkbox
-
-    @State private var checkBounce: CGFloat = 1.0
-    @State private var showRipple = false
-    @State private var showSparkle = false
+    // MARK: - Checkbox (ALWAYS works — isolated Button, no shared gestures)
 
     private func completeTask() {
-        ignoreNextTap = true
         let wasDone = task.isDone
 
-        // Toggle immediately — no delays, no race conditions
         withAnimation(.spring(response: 0.3, dampingFraction: 0.65)) {
             store.toggleTask(task.id)
         }
 
         if !wasDone {
-            // Checkbox juice
             showRipple = true
             showSparkle = true
 
@@ -200,7 +201,7 @@ struct TaskRowView: View {
         }
     }
 
-    private var checkbox: some View {
+    private var checkboxButton: some View {
         Button {
             completeTask()
         } label: {
@@ -236,9 +237,10 @@ struct TaskRowView: View {
                 }
             }
             .scaleEffect(checkBounce)
+            .frame(width: 28, height: 28) // Generous tap target
+            .contentShape(Circle().scale(1.5)) // Even bigger hit area
         }
         .buttonStyle(.plain)
-        .padding(.top, 1)
         .accessibilityLabel(task.isDone ? "Completed" : "Incomplete")
         .accessibilityHint("Double tap to toggle completion")
     }
