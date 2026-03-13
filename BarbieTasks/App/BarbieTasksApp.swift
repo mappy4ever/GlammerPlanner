@@ -7,6 +7,7 @@ struct BarbieTasksApp: App {
     @State private var store = Store.load()
     @State private var settings = AppSettings()
     @State private var showShortcuts = false
+    @StateObject private var updaterService = UpdaterService()
 
     var body: some Scene {
         // Main window
@@ -111,6 +112,13 @@ struct BarbieTasksApp: App {
                     .keyboardShortcut("4")
             }
 
+            CommandGroup(after: .appInfo) {
+                Button("Check for Updates...") {
+                    updaterService.checkForUpdates()
+                }
+                .disabled(!updaterService.canCheckForUpdates)
+            }
+
             CommandGroup(replacing: .help) {
                 Button("Keyboard Shortcuts") {
                     showShortcuts = true
@@ -123,6 +131,7 @@ struct BarbieTasksApp: App {
             SettingsView()
                 .environment(store)
                 .environment(settings)
+                .environmentObject(updaterService)
         }
 
         // Menu bar quick-add

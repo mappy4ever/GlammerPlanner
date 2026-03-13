@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(Store.self) private var store
     @Environment(AppSettings.self) private var settings
+    @EnvironmentObject private var updaterService: UpdaterService
 
     var body: some View {
         TabView {
@@ -179,10 +180,23 @@ struct SettingsView: View {
                     Text("Slay List")
                         .font(.system(size: 13, weight: .bold, design: .rounded))
                     Spacer()
-                    Text("Version 1.0")
-                        .font(.system(size: 12, design: .rounded))
-                        .foregroundStyle(.secondary)
+                    if let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,
+                       let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String {
+                        Text("Version \(version) (\(build))")
+                            .font(.system(size: 12, design: .rounded))
+                            .foregroundStyle(.secondary)
+                    }
                 }
+
+                Toggle("Automatically check for updates", isOn: Binding(
+                    get: { updaterService.automaticallyChecksForUpdates },
+                    set: { updaterService.automaticallyChecksForUpdates = $0 }
+                ))
+
+                Button("Check for Updates...") {
+                    updaterService.checkForUpdates()
+                }
+                .disabled(!updaterService.canCheckForUpdates)
 
                 Button("Show Onboarding") {
                     settings.hasCompletedOnboarding = false

@@ -199,18 +199,21 @@ struct TaskListView: View {
                     .textFieldStyle(.plain)
                     .font(.system(size: 14, weight: .medium, design: .rounded))
                     .focused($isQuickAddFocused)
-                    .onSubmit {
-                        if !quickAddText.isEmpty {
-                            withAnimation(.smooth(duration: 0.3)) {
-                                store.addTask(title: quickAddText)
-                                quickAddText = ""
-                            }
-                        }
-                    }
+                    .onSubmit { submitQuickAdd() }
                     .onExitCommand {
                         quickAddText = ""
                         isQuickAddFocused = false
                     }
+
+                if !quickAddText.isEmpty {
+                    Button { submitQuickAdd() } label: {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.system(size: 18))
+                            .foregroundStyle(Color.barbiePink)
+                    }
+                    .buttonStyle(.plain)
+                    .transition(.scale.combined(with: .opacity))
+                }
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 10)
@@ -346,6 +349,14 @@ struct TaskListView: View {
         case .tag:                  BarbieIcon.Tag(size: 20)
         case .savedFilter:          Image(systemName: "line.3.horizontal.decrease.circle").font(.system(size: 20)).foregroundStyle(Color.barbiePink)
         case .stats:                BarbieIcon.Stats(size: 20)
+        }
+    }
+
+    private func submitQuickAdd() {
+        guard !quickAddText.isEmpty else { return }
+        withAnimation(.smooth(duration: 0.3)) {
+            store.addTask(title: quickAddText)
+            quickAddText = ""
         }
     }
 

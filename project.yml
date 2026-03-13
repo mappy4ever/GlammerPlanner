@@ -1,0 +1,40 @@
+name: BarbieTasks
+options:
+  bundleIdPrefix: com.mappy4ever
+  deploymentTarget:
+    macOS: "14.0"
+  xcodeVersion: "16.0"
+  createIntermediateGroups: true
+
+packages:
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    from: "2.6.4"
+
+targets:
+  BarbieTasks:
+    type: application
+    platform: macOS
+    sources:
+      - path: BarbieTasks
+        excludes:
+          - "**/.DS_Store"
+    dependencies:
+      - package: Sparkle
+    settings:
+      base:
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "5.9"
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        CODE_SIGN_ENTITLEMENTS: BarbieTasks/BarbieTasks.entitlements
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: "Slay List"
+        INFOPLIST_KEY_NSCalendarsUsageDescription: "Slay List shows your calendar events alongside tasks."
+        INFOPLIST_KEY_NSRemindersUsageDescription: "Slay List can import and sync with Apple Reminders."
+    postBuildScripts:
+      - name: "Inject Sparkle Keys into Info.plist"
+        script: |
+          PLIST="${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}"
+          /usr/libexec/PlistBuddy -c "Add :SUPublicEDKey string 'EHEH4xRuex6WuC1pPc9iVzUtveF9FGOLoRP+3zkscZ8='" "$PLIST" 2>/dev/null || /usr/libexec/PlistBuddy -c "Set :SUPublicEDKey 'EHEH4xRuex6WuC1pPc9iVzUtveF9FGOLoRP+3zkscZ8='" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Add :SUFeedURL string 'https://raw.githubusercontent.com/mappy4ever/GlammerPlanner/main/appcast.xml'" "$PLIST" 2>/dev/null || /usr/libexec/PlistBuddy -c "Set :SUFeedURL 'https://raw.githubusercontent.com/mappy4ever/GlammerPlanner/main/appcast.xml'" "$PLIST"

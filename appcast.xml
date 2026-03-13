@@ -1,0 +1,10 @@
+<?xml version="1.0" standalone="yes"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>Slay List Updates</title>
+    <link>https://github.com/mappy4ever/GlammerPlanner</link>
+    <description>Updates for Slay List</description>
+    <language>en</language>
+    <!-- Add new <item> entries here when releasing updates -->
+  </channel>
+</rss>

@@ -1249,18 +1249,20 @@ final class Store {
     // MARK: - Celebration
 
     private func triggerCelebration(message: String? = nil) {
+        // Don't stack celebrations
+        guard celebrationQuote == nil else { return }
+
         let q = message.map { Quote(text: $0) } ?? inspirationalQuotes.randomElement()!
-        withAnimation(.smooth(duration: 0.4)) {
-            celebrationQuote = q
-            showConfetti = true
-        }
+        celebrationQuote = q
+        showConfetti = true
+
         // Banner fades out after 3 seconds
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-            withAnimation(.smooth(duration: 0.5)) { self.celebrationQuote = nil }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
+            withAnimation(.smooth(duration: 0.5)) { self?.celebrationQuote = nil }
         }
         // Confetti finishes falling
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
-            self.showConfetti = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) { [weak self] in
+            self?.showConfetti = false
         }
     }
 

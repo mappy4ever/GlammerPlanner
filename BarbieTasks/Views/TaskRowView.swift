@@ -108,7 +108,7 @@ struct TaskRowView: View {
                 }
             }
         }
-        .onTapGesture {
+        .simultaneousGesture(TapGesture().onEnded {
             if NSEvent.modifierFlags.contains(.command) {
                 // Multi-select
                 if store.selectedTaskIds.contains(task.id) {
@@ -121,7 +121,7 @@ struct TaskRowView: View {
                     store.selectedTaskId = (store.selectedTaskId == task.id) ? nil : task.id
                 }
             }
-        }
+        })
         .contextMenu { contextMenuItems }
         .draggable(task.id.uuidString)
         .confirmationDialog("Delete permanently?", isPresented: $showDeleteConfirm) {

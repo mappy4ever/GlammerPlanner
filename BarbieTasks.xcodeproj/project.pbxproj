@@ -1,0 +1,577 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		02208B1E6B284485A8CBF0FE /* CelebrationOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F93F80C88A3804B11682DE /* CelebrationOverlay.swift */; };
+		1012F79C6644B3D7FBED728D /* TaskTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD811FEE35A96D3BDF6A644 /* TaskTemplate.swift */; };
+		16288BFBD563B944229C62D9 /* BarbieTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29F3C191C935D2CD12064B64 /* BarbieTask.swift */; };
+		1954A4C7095810285AA7E34C /* SavedFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15B84E26B362ADB4F1C1199D /* SavedFilter.swift */; };
+		1A9722DCA09A65E9CEAAB031 /* NaturalDateParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C04CBEFAC037EF2669B0E82 /* NaturalDateParser.swift */; };
+		201D1E4894F5152239D1D70A /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 65E92A7BDC42F4DECB615834 /* Sparkle */; };
+		326F142DB0031ECCB19F25D2 /* BarbieProject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41BECBE8937374E4E9652876 /* BarbieProject.swift */; };
+		339DE7CEEBE66BBA4A61E27A /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E8831E1CD42ABB7E6360873 /* StatsView.swift */; };
+		34B6D239AD20C6DA24A524CB /* CalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD634844AAA66D9E7D13D4B /* CalendarService.swift */; };
+		3824A0E623628C439EC09B6B /* TaskAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF8A81B58A532F0531599CC /* TaskAttachment.swift */; };
+		49C41B1B0A0AEEC8D725C6FA /* BarbieTasksApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7616AE0078CEACCE1BF9B503 /* BarbieTasksApp.swift */; };
+		549DFF44FBF3D2AC65BDC8FD /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEA14BFA5F8BAAE592050193 /* CalendarView.swift */; };
+		5B621F49BEA9362927E73684 /* TaskRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42A64217470BCFD484BBC8C8 /* TaskRowView.swift */; };
+		5EEF3CFA8EE5A1BFD759DB1B /* BarbieTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15134DF5115F0EA5BDBAECCD /* BarbieTheme.swift */; };
+		66A6D5D3C8D6B23DED64D338 /* FilterEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C232C4CE1EB9BE84E38D5C0 /* FilterEditorView.swift */; };
+		6EB6210FA2E037B4F519A7E4 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 704A24E0CAF5AC7646430571 /* AppSettings.swift */; };
+		74681ECE26848D35B1FEFAA4 /* RemindersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 132E2A4EC73C265CE091432E /* RemindersService.swift */; };
+		768CDD530480CBC655F1700A /* TaskListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F368AD48293781254709C8 /* TaskListView.swift */; };
+		773F54B9ED0E5986EB95E30E /* RecurrenceRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B98A532036B369B839E6D5 /* RecurrenceRule.swift */; };
+		78DC4DF8F36B524D5040CCA9 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2F78492937FB85A1BF75EDC /* NotificationService.swift */; };
+		7F7111C7F415FB3E524CEDD6 /* KanbanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608154ACF5F714CC8ADBB383 /* KanbanView.swift */; };
+		87279FC78F7BCD063171FC51 /* BulkActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966F2F9380559D6F8D0E306B /* BulkActionBar.swift */; };
+		8ED7C50A97AA1C6B214A4A96 /* QuickAddPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C35AE79097CE399A5F1B16 /* QuickAddPanel.swift */; };
+		937FEDC664F2CCB3428CEBF7 /* TemplateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67A87C9FEBCCA207B7F94D8 /* TemplateManager.swift */; };
+		A9F00DE430C69CA854B4CABC /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357FEAB2DFCE2AD72FBC0DF /* DetailView.swift */; };
+		AA6A93C493BBF1A85BD0676A /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E4ADB40E2C746207CA5EC8A /* Store.swift */; };
+		ACCE6FD406A432FAC9FE57E9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D305978C0A54B0A7C9DAA26D /* Assets.xcassets */; };
+		AE0AEEAA0977759F7D40E211 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A716CB6036E4E3F234EE5B00 /* ContentView.swift */; };
+		B50F67C8BAF54D34A8293C1A /* BarbieIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356944FAAE7B72875BA47762 /* BarbieIcons.swift */; };
+		BBD1852DDA959AE1DFE3A490 /* PomodoroSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CB326E61F07BDFA3C2BD2FF /* PomodoroSession.swift */; };
+		C255283B3D9A0F8EC7CC1479 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FAA33B28F2A4AB6121CCAB /* OnboardingView.swift */; };
+		C90B2CE9F4E8B0DFFF391EC3 /* BarbieTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72191E9DFEEDB984CD06CCC4 /* BarbieTag.swift */; };
+		D4252CDF3A424282343C2A4D /* CommandPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3F912D12B1146BFD3E7DC6 /* CommandPalette.swift */; };
+		D440F5E9A1CA15B640C91853 /* PomodoroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42DAFA2DAB2EED744242AB64 /* PomodoroView.swift */; };
+		E1AD5D210D0348AF9A07A56F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A6E5BE2D07ABDC3D9406C41 /* SettingsView.swift */; };
+		E49DAAC796775C17EA78D087 /* NewProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78496CC078A708E36BF797C4 /* NewProjectView.swift */; };
+		EABA671C559EC8918C33D4FE /* UpdaterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A614604B9566B331C17E9B /* UpdaterService.swift */; };
+		F527A83E1C5FC6489192F8AA /* HotkeyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A050B18A0DAEFE98985ED38 /* HotkeyService.swift */; };
+		F8B53AE5071F5A2247EB8EFD /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7E9B54B52918139B040649C /* SidebarView.swift */; };
+		F91B8CE1E612234FCDB0DD40 /* TagEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FE7B16F840464307F7A5C0 /* TagEditor.swift */; };
+		F9E8291C145E41FE8C339214 /* SmartList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45A1FF276D9A56BA6C944C5D /* SmartList.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0A3F912D12B1146BFD3E7DC6 /* CommandPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandPalette.swift; sourceTree = "<group>"; };
+		0E4ADB40E2C746207CA5EC8A /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
+		132E2A4EC73C265CE091432E /* RemindersService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersService.swift; sourceTree = "<group>"; };
+		15134DF5115F0EA5BDBAECCD /* BarbieTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarbieTheme.swift; sourceTree = "<group>"; };
+		15B84E26B362ADB4F1C1199D /* SavedFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedFilter.swift; sourceTree = "<group>"; };
+		18C35AE79097CE399A5F1B16 /* QuickAddPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddPanel.swift; sourceTree = "<group>"; };
+		1C04CBEFAC037EF2669B0E82 /* NaturalDateParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NaturalDateParser.swift; sourceTree = "<group>"; };
+		1CD811FEE35A96D3BDF6A644 /* TaskTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTemplate.swift; sourceTree = "<group>"; };
+		21F368AD48293781254709C8 /* TaskListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListView.swift; sourceTree = "<group>"; };
+		29F3C191C935D2CD12064B64 /* BarbieTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarbieTask.swift; sourceTree = "<group>"; };
+		2AD634844AAA66D9E7D13D4B /* CalendarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarService.swift; sourceTree = "<group>"; };
+		356944FAAE7B72875BA47762 /* BarbieIcons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarbieIcons.swift; sourceTree = "<group>"; };
+		3E8831E1CD42ABB7E6360873 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
+		41BECBE8937374E4E9652876 /* BarbieProject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarbieProject.swift; sourceTree = "<group>"; };
+		41F93F80C88A3804B11682DE /* CelebrationOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CelebrationOverlay.swift; sourceTree = "<group>"; };
+		42A64217470BCFD484BBC8C8 /* TaskRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRowView.swift; sourceTree = "<group>"; };
+		42DAFA2DAB2EED744242AB64 /* PomodoroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PomodoroView.swift; sourceTree = "<group>"; };
+		45A1FF276D9A56BA6C944C5D /* SmartList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartList.swift; sourceTree = "<group>"; };
+		4A050B18A0DAEFE98985ED38 /* HotkeyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyService.swift; sourceTree = "<group>"; };
+		5A6E5BE2D07ABDC3D9406C41 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		608154ACF5F714CC8ADBB383 /* KanbanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KanbanView.swift; sourceTree = "<group>"; };
+		6C232C4CE1EB9BE84E38D5C0 /* FilterEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterEditorView.swift; sourceTree = "<group>"; };
+		6CB326E61F07BDFA3C2BD2FF /* PomodoroSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PomodoroSession.swift; sourceTree = "<group>"; };
+		704A24E0CAF5AC7646430571 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		72191E9DFEEDB984CD06CCC4 /* BarbieTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarbieTag.swift; sourceTree = "<group>"; };
+		7616AE0078CEACCE1BF9B503 /* BarbieTasksApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarbieTasksApp.swift; sourceTree = "<group>"; };
+		78496CC078A708E36BF797C4 /* NewProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewProjectView.swift; sourceTree = "<group>"; };
+		81FAA33B28F2A4AB6121CCAB /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		82A614604B9566B331C17E9B /* UpdaterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdaterService.swift; sourceTree = "<group>"; };
+		966F2F9380559D6F8D0E306B /* BulkActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkActionBar.swift; sourceTree = "<group>"; };
+		A3B98A532036B369B839E6D5 /* RecurrenceRule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurrenceRule.swift; sourceTree = "<group>"; };
+		A716CB6036E4E3F234EE5B00 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B2F78492937FB85A1BF75EDC /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		B357FEAB2DFCE2AD72FBC0DF /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
+		B7E9B54B52918139B040649C /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
+		B945A07305E42D15B257D415 /* BarbieTasks.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BarbieTasks.entitlements; sourceTree = "<group>"; };
+		BCF8A81B58A532F0531599CC /* TaskAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskAttachment.swift; sourceTree = "<group>"; };
+		C5CD5277E9E802177B5C1C55 /* BarbieTasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BarbieTasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D305978C0A54B0A7C9DAA26D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E0FE7B16F840464307F7A5C0 /* TagEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagEditor.swift; sourceTree = "<group>"; };
+		E67A87C9FEBCCA207B7F94D8 /* TemplateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateManager.swift; sourceTree = "<group>"; };
+		FEA14BFA5F8BAAE592050193 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A349AEDAC378E12633805536 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				201D1E4894F5152239D1D70A /* Sparkle in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		264DA7CC80D092313F1748C0 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				704A24E0CAF5AC7646430571 /* AppSettings.swift */,
+				41BECBE8937374E4E9652876 /* BarbieProject.swift */,
+				72191E9DFEEDB984CD06CCC4 /* BarbieTag.swift */,
+				29F3C191C935D2CD12064B64 /* BarbieTask.swift */,
+				6CB326E61F07BDFA3C2BD2FF /* PomodoroSession.swift */,
+				A3B98A532036B369B839E6D5 /* RecurrenceRule.swift */,
+				15B84E26B362ADB4F1C1199D /* SavedFilter.swift */,
+				45A1FF276D9A56BA6C944C5D /* SmartList.swift */,
+				0E4ADB40E2C746207CA5EC8A /* Store.swift */,
+				BCF8A81B58A532F0531599CC /* TaskAttachment.swift */,
+				1CD811FEE35A96D3BDF6A644 /* TaskTemplate.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		2F903C4D65EEFD55126B1043 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C5CD5277E9E802177B5C1C55 /* BarbieTasks.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		385BC635D1868B67993A3B84 = {
+			isa = PBXGroup;
+			children = (
+				8B5FCE70B7F84CE5383EB044 /* BarbieTasks */,
+				2F903C4D65EEFD55126B1043 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4E3D099637AFBD4787A5D114 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				7616AE0078CEACCE1BF9B503 /* BarbieTasksApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		51E678B7DC409FDD8975C851 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				356944FAAE7B72875BA47762 /* BarbieIcons.swift */,
+				15134DF5115F0EA5BDBAECCD /* BarbieTheme.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		704A5FDEC1F0668E4D1B741D /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				5A6E5BE2D07ABDC3D9406C41 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		8B5FCE70B7F84CE5383EB044 /* BarbieTasks */ = {
+			isa = PBXGroup;
+			children = (
+				D305978C0A54B0A7C9DAA26D /* Assets.xcassets */,
+				B945A07305E42D15B257D415 /* BarbieTasks.entitlements */,
+				4E3D099637AFBD4787A5D114 /* App */,
+				264DA7CC80D092313F1748C0 /* Models */,
+				D808C315FB3BC703B95AAFC3 /* Services */,
+				51E678B7DC409FDD8975C851 /* Theme */,
+				A0193F88AD9A654EF167EB47 /* Utilities */,
+				A8715AF0DE68E69D2098D029 /* Views */,
+			);
+			path = BarbieTasks;
+			sourceTree = "<group>";
+		};
+		A0193F88AD9A654EF167EB47 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				1C04CBEFAC037EF2669B0E82 /* NaturalDateParser.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		A8715AF0DE68E69D2098D029 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				966F2F9380559D6F8D0E306B /* BulkActionBar.swift */,
+				FEA14BFA5F8BAAE592050193 /* CalendarView.swift */,
+				41F93F80C88A3804B11682DE /* CelebrationOverlay.swift */,
+				0A3F912D12B1146BFD3E7DC6 /* CommandPalette.swift */,
+				A716CB6036E4E3F234EE5B00 /* ContentView.swift */,
+				B357FEAB2DFCE2AD72FBC0DF /* DetailView.swift */,
+				6C232C4CE1EB9BE84E38D5C0 /* FilterEditorView.swift */,
+				608154ACF5F714CC8ADBB383 /* KanbanView.swift */,
+				78496CC078A708E36BF797C4 /* NewProjectView.swift */,
+				81FAA33B28F2A4AB6121CCAB /* OnboardingView.swift */,
+				42DAFA2DAB2EED744242AB64 /* PomodoroView.swift */,
+				18C35AE79097CE399A5F1B16 /* QuickAddPanel.swift */,
+				B7E9B54B52918139B040649C /* SidebarView.swift */,
+				3E8831E1CD42ABB7E6360873 /* StatsView.swift */,
+				E0FE7B16F840464307F7A5C0 /* TagEditor.swift */,
+				21F368AD48293781254709C8 /* TaskListView.swift */,
+				42A64217470BCFD484BBC8C8 /* TaskRowView.swift */,
+				E67A87C9FEBCCA207B7F94D8 /* TemplateManager.swift */,
+				704A5FDEC1F0668E4D1B741D /* Settings */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D808C315FB3BC703B95AAFC3 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				2AD634844AAA66D9E7D13D4B /* CalendarService.swift */,
+				4A050B18A0DAEFE98985ED38 /* HotkeyService.swift */,
+				B2F78492937FB85A1BF75EDC /* NotificationService.swift */,
+				132E2A4EC73C265CE091432E /* RemindersService.swift */,
+				82A614604B9566B331C17E9B /* UpdaterService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		20620FE19178D4F1F5A1B1BC /* BarbieTasks */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5A122B58817C6198C97A6373 /* Build configuration list for PBXNativeTarget "BarbieTasks" */;
+			buildPhases = (
+				354ECFF723D214D6E9FA304A /* Sources */,
+				06E1BF827106EC291525B311 /* Resources */,
+				A349AEDAC378E12633805536 /* Frameworks */,
+				997790BDD3803C02D0171CFE /* Inject Sparkle Keys into Info.plist */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BarbieTasks;
+			packageProductDependencies = (
+				65E92A7BDC42F4DECB615834 /* Sparkle */,
+			);
+			productName = BarbieTasks;
+			productReference = C5CD5277E9E802177B5C1C55 /* BarbieTasks.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		263579C12E3056EF6652977E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = A5515DFB1E9313828558699F /* Build configuration list for PBXProject "BarbieTasks" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 385BC635D1868B67993A3B84;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				07294BE5ABB5CBD6C5C49F1E /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 2F903C4D65EEFD55126B1043 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				20620FE19178D4F1F5A1B1BC /* BarbieTasks */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		06E1BF827106EC291525B311 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ACCE6FD406A432FAC9FE57E9 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		997790BDD3803C02D0171CFE /* Inject Sparkle Keys into Info.plist */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Inject Sparkle Keys into Info.plist";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "PLIST=\"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n/usr/libexec/PlistBuddy -c \"Add :SUPublicEDKey string 'EHEH4xRuex6WuC1pPc9iVzUtveF9FGOLoRP+3zkscZ8='\" \"$PLIST\" 2>/dev/null || /usr/libexec/PlistBuddy -c \"Set :SUPublicEDKey 'EHEH4xRuex6WuC1pPc9iVzUtveF9FGOLoRP+3zkscZ8='\" \"$PLIST\"\n/usr/libexec/PlistBuddy -c \"Add :SUFeedURL string 'https://raw.githubusercontent.com/mappy4ever/GlammerPlanner/main/appcast.xml'\" \"$PLIST\" 2>/dev/null || /usr/libexec/PlistBuddy -c \"Set :SUFeedURL 'https://raw.githubusercontent.com/mappy4ever/GlammerPlanner/main/appcast.xml'\" \"$PLIST\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		354ECFF723D214D6E9FA304A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6EB6210FA2E037B4F519A7E4 /* AppSettings.swift in Sources */,
+				B50F67C8BAF54D34A8293C1A /* BarbieIcons.swift in Sources */,
+				326F142DB0031ECCB19F25D2 /* BarbieProject.swift in Sources */,
+				C90B2CE9F4E8B0DFFF391EC3 /* BarbieTag.swift in Sources */,
+				16288BFBD563B944229C62D9 /* BarbieTask.swift in Sources */,
+				49C41B1B0A0AEEC8D725C6FA /* BarbieTasksApp.swift in Sources */,
+				5EEF3CFA8EE5A1BFD759DB1B /* BarbieTheme.swift in Sources */,
+				87279FC78F7BCD063171FC51 /* BulkActionBar.swift in Sources */,
+				34B6D239AD20C6DA24A524CB /* CalendarService.swift in Sources */,
+				549DFF44FBF3D2AC65BDC8FD /* CalendarView.swift in Sources */,
+				02208B1E6B284485A8CBF0FE /* CelebrationOverlay.swift in Sources */,
+				D4252CDF3A424282343C2A4D /* CommandPalette.swift in Sources */,
+				AE0AEEAA0977759F7D40E211 /* ContentView.swift in Sources */,
+				A9F00DE430C69CA854B4CABC /* DetailView.swift in Sources */,
+				66A6D5D3C8D6B23DED64D338 /* FilterEditorView.swift in Sources */,
+				F527A83E1C5FC6489192F8AA /* HotkeyService.swift in Sources */,
+				7F7111C7F415FB3E524CEDD6 /* KanbanView.swift in Sources */,
+				1A9722DCA09A65E9CEAAB031 /* NaturalDateParser.swift in Sources */,
+				E49DAAC796775C17EA78D087 /* NewProjectView.swift in Sources */,
+				78DC4DF8F36B524D5040CCA9 /* NotificationService.swift in Sources */,
+				C255283B3D9A0F8EC7CC1479 /* OnboardingView.swift in Sources */,
+				BBD1852DDA959AE1DFE3A490 /* PomodoroSession.swift in Sources */,
+				D440F5E9A1CA15B640C91853 /* PomodoroView.swift in Sources */,
+				8ED7C50A97AA1C6B214A4A96 /* QuickAddPanel.swift in Sources */,
+				773F54B9ED0E5986EB95E30E /* RecurrenceRule.swift in Sources */,
+				74681ECE26848D35B1FEFAA4 /* RemindersService.swift in Sources */,
+				1954A4C7095810285AA7E34C /* SavedFilter.swift in Sources */,
+				E1AD5D210D0348AF9A07A56F /* SettingsView.swift in Sources */,
+				F8B53AE5071F5A2247EB8EFD /* SidebarView.swift in Sources */,
+				F9E8291C145E41FE8C339214 /* SmartList.swift in Sources */,
+				339DE7CEEBE66BBA4A61E27A /* StatsView.swift in Sources */,
+				AA6A93C493BBF1A85BD0676A /* Store.swift in Sources */,
+				F91B8CE1E612234FCDB0DD40 /* TagEditor.swift in Sources */,
+				3824A0E623628C439EC09B6B /* TaskAttachment.swift in Sources */,
+				768CDD530480CBC655F1700A /* TaskListView.swift in Sources */,
+				5B621F49BEA9362927E73684 /* TaskRowView.swift in Sources */,
+				1012F79C6644B3D7FBED728D /* TaskTemplate.swift in Sources */,
+				937FEDC664F2CCB3428CEBF7 /* TemplateManager.swift in Sources */,
+				EABA671C559EC8918C33D4FE /* UpdaterService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		34E669B88C01B2890D491FED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = BarbieTasks/BarbieTasks.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Slay List";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Slay List shows your calendar events alongside tasks.";
+				INFOPLIST_KEY_NSRemindersUsageDescription = "Slay List can import and sync with Apple Reminders.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mappy4ever.BarbieTasks;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		61A85019B19DB1862D5014D9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		958170F91A55362C7A6F83F0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		C3ACDA22230318E75B41A9C3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = BarbieTasks/BarbieTasks.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Slay List";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Slay List shows your calendar events alongside tasks.";
+				INFOPLIST_KEY_NSRemindersUsageDescription = "Slay List can import and sync with Apple Reminders.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mappy4ever.BarbieTasks;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5A122B58817C6198C97A6373 /* Build configuration list for PBXNativeTarget "BarbieTasks" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				34E669B88C01B2890D491FED /* Debug */,
+				C3ACDA22230318E75B41A9C3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A5515DFB1E9313828558699F /* Build configuration list for PBXProject "BarbieTasks" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				61A85019B19DB1862D5014D9 /* Debug */,
+				958170F91A55362C7A6F83F0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		07294BE5ABB5CBD6C5C49F1E /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.6.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		65E92A7BDC42F4DECB615834 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 07294BE5ABB5CBD6C5C49F1E /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 263579C12E3056EF6652977E /* Project object */;
+}
