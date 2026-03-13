@@ -5,6 +5,32 @@
     <link>https://github.com/mappy4ever/GlammerPlanner</link>
     <description>Updates for Slay List</description>
     <language>en</language>
-    <!-- Add new <item> entries here when releasing updates -->
+    <item>
+      <title>Version 1.1</title>
+      <sparkle:version>202603130331</sparkle:version>
+      <sparkle:shortVersionString>1.1</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+      <pubDate>Fri, 13 Mar 2026 03:31:45 -0400</pubDate>
+      <description><![CDATA[
+        <h2>What's New in 1.1</h2>
+        <ul>
+          <li>Auto-update support — future updates install automatically</li>
+          <li>Sparkle integration for seamless patch delivery</li>
+          <li>Fixed checkbox requiring hold instead of single click</li>
+          <li>Added visible + button for quick task adding</li>
+          <li>Enhanced natural language parsing (times, relative dates)</li>
+          <li>Undo/redo toolbar buttons</li>
+          <li>Expanded stats dashboard</li>
+          <li>Pink light mode theme</li>
+          <li>Sidebar overdue alert</li>
+          <li>App icon now displays correctly</li>
+        </ul>
+      ]]></description>
+      <enclosure
+        url="https://github.com/mappy4ever/GlammerPlanner/releases/download/v1.1/SlayList-1.1.zip"
+        type="application/octet-stream"
+        sparkle:edSignature="UoNq2I5UOyY+f6n5unwzXUPYEvW1f8Yxwldh1EqdmI+AfFkQbCSsnwfrU714Iu0soblJK64UYASCvy1QeO6DBQ==" length="2456607"
+      />
+    </item>
   </channel>
 </rss>
