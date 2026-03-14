@@ -1301,9 +1301,9 @@ final class Store {
             if withConfetti { showConfetti = true }
         }
 
-        // Auto-dismiss this specific quote after 2.8s
+        // Auto-dismiss this specific quote after 5s
         let quoteId = quote.id
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.8) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) { [weak self] in
             withAnimation(.smooth(duration: 0.5)) {
                 self?.activeCelebrations.removeAll { $0.id == quoteId }
             }
