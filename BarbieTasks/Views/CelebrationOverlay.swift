@@ -264,6 +264,45 @@ struct CheckmarkRipple: View {
     }
 }
 
+// MARK: - Ripple Text (character-by-character wave)
+
+struct RippleText: View {
+    let text: String
+    let font: Font
+    let colors: [Color]
+    @State private var animated = false
+
+    init(_ text: String, font: Font = .system(size: 13, weight: .bold, design: .rounded),
+         colors: [Color] = [.barbieDeep, .barbiePink, .barbieRose]) {
+        self.text = text
+        self.font = font
+        self.colors = colors
+    }
+
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(Array(text.enumerated()), id: \.offset) { index, char in
+                Text(String(char))
+                    .font(font)
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: colors,
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .offset(y: animated ? 0 : -6)
+                    .opacity(animated ? 1 : 0)
+                    .animation(
+                        .smooth(duration: 0.4).delay(Double(index) * 0.018),
+                        value: animated
+                    )
+            }
+        }
+        .onAppear { animated = true }
+    }
+}
+
 // MARK: - Sparkle Burst (small, for inline use)
 
 struct SparkleBurst: View {

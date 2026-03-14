@@ -385,15 +385,7 @@ struct TaskListView: View {
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundStyle(Color.barbiePink)
                             .symbolEffect(.bounce, value: quote.id)
-                        Text(quote.text)
-                            .font(.system(size: 13, weight: .bold, design: .rounded))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [Color.barbieDeep, Color.barbiePink, Color.barbieRose],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
+                        RippleText(quote.text)
                             .lineLimit(2)
                         Spacer(minLength: 0)
                         Image(systemName: "sparkles")
