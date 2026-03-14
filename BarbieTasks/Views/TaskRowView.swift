@@ -58,7 +58,6 @@ struct TaskRowView: View {
             }
         }
         .contextMenu { contextMenuItems }
-        .draggable(task.id.uuidString)
         .confirmationDialog("Delete permanently?", isPresented: $showDeleteConfirm) {
             Button("Delete Forever", role: .destructive) {
                 store.permanentlyDelete(task.id)
@@ -99,6 +98,7 @@ struct TaskRowView: View {
             }
         }
         .contentShape(Rectangle())
+        .draggable(task.id.uuidString)
         .onTapGesture {
             // This ONLY handles selection — never completion.
             // Checkbox is a separate view with its own Button.

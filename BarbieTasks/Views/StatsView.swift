@@ -9,6 +9,29 @@ struct StatsView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
+                // Motivational header
+                HStack(spacing: 10) {
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(Color.barbiePink)
+                        .symbolEffect(.pulse)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(statsGreeting)
+                            .font(.system(size: 16, weight: .bold, design: .rounded))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [.barbieDeep, .barbiePink, .barbieRose],
+                                    startPoint: .leading, endPoint: .trailing
+                                )
+                            )
+                        Text(statsSubtitle)
+                            .font(.system(size: 12, weight: .semibold, design: .rounded))
+                            .foregroundStyle(Color.inkMuted)
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 4)
+
                 // Top stat cards row
                 HStack(spacing: 12) {
                     statCard(
@@ -79,6 +102,9 @@ struct StatsView: View {
                     )
                 }
 
+                // Achievements
+                achievementsSection
+
                 // Daily completion chart
                 dailyCompletionCard
 
@@ -97,6 +123,7 @@ struct StatsView: View {
             Image(systemName: icon)
                 .font(.system(size: 20, weight: .medium))
                 .foregroundStyle(color)
+                .symbolEffect(.pulse, options: .repeating, value: icon == "flame.fill" && store.currentStreak >= 3)
 
             Text(value)
                 .font(.system(size: 28, weight: .bold, design: .rounded))
@@ -121,6 +148,105 @@ struct StatsView: View {
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(Color.petal, lineWidth: 1)
                 )
+        )
+    }
+
+    // MARK: - Achievements
+
+    private var achievementsSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Image(systemName: "trophy.fill")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(Color.gold)
+                Text("Achievements")
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color.inkPrimary)
+                Spacer()
+            }
+
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
+                achievementBadge(
+                    icon: "flame.fill",
+                    title: "On Fire",
+                    description: "3-day streak",
+                    unlocked: store.currentStreak >= 3,
+                    color: .barbiePink
+                )
+                achievementBadge(
+                    icon: "bolt.fill",
+                    title: "Unstoppable",
+                    description: "7-day streak",
+                    unlocked: store.bestStreak >= 7,
+                    color: .barbieDeep
+                )
+                achievementBadge(
+                    icon: "star.fill",
+                    title: "First Ten",
+                    description: "10 tasks done",
+                    unlocked: totalCompleted >= 10,
+                    color: .gold
+                )
+                achievementBadge(
+                    icon: "crown.fill",
+                    title: "Queen",
+                    description: "50 tasks done",
+                    unlocked: totalCompleted >= 50,
+                    color: .barbiePink
+                )
+                achievementBadge(
+                    icon: "sparkles",
+                    title: "Century",
+                    description: "100 tasks done",
+                    unlocked: totalCompleted >= 100,
+                    color: .barbieRose
+                )
+                achievementBadge(
+                    icon: "checkmark.seal.fill",
+                    title: "Perfect Day",
+                    description: "5+ in one day",
+                    unlocked: store.completedToday >= 5,
+                    color: .barbieDeep
+                )
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.blushMid)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.petal, lineWidth: 1)
+                )
+        )
+    }
+
+    private func achievementBadge(icon: String, title: String, description: String, unlocked: Bool, color: Color) -> some View {
+        VStack(spacing: 6) {
+            ZStack {
+                Circle()
+                    .fill(unlocked ? color.opacity(0.15) : Color.petal.opacity(0.2))
+                    .frame(width: 44, height: 44)
+                Image(systemName: icon)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(unlocked ? color : Color.inkMuted.opacity(0.3))
+            }
+            Text(title)
+                .font(.system(size: 11, weight: .bold, design: .rounded))
+                .foregroundStyle(unlocked ? Color.inkPrimary : Color.inkMuted.opacity(0.4))
+            Text(description)
+                .font(.system(size: 9, weight: .medium, design: .rounded))
+                .foregroundStyle(unlocked ? Color.inkSecondary : Color.inkMuted.opacity(0.3))
+        }
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(unlocked ? color.opacity(0.06) : Color.clear)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .strokeBorder(unlocked ? color.opacity(0.2) : Color.clear, lineWidth: 1)
         )
     }
 
@@ -261,6 +387,23 @@ struct StatsView: View {
     }
 
     // MARK: - Computed Data
+
+    private var statsGreeting: String {
+        let today = store.completedToday
+        if today >= 10 { return "You're a productivity LEGEND today!" }
+        if today >= 5 { return "You're absolutely SLAYING it!" }
+        if today >= 3 { return "Great momentum, keep going!" }
+        if today >= 1 { return "You've started strong!" }
+        return "Ready to slay some tasks?"
+    }
+
+    private var statsSubtitle: String {
+        let streak = store.currentStreak
+        if streak >= 7 { return "\(streak)-day streak! You're unstoppable!" }
+        if streak >= 3 { return "\(streak)-day streak! Keep the fire going!" }
+        if streak >= 1 { return "\(streak)-day streak active" }
+        return "Complete a task to start your streak"
+    }
 
     private var totalCompleted: Int {
         store.tasks.filter { $0.isDone }.count

@@ -533,10 +533,19 @@ final class Store {
 
         if tasks[idx].isDone {
             completionStreak += 1
+            let totalDone = tasks.filter { $0.isDone && !$0.isTrashed }.count
 
-            // Every completion gets a quote, streaks get confetti
+            // Every completion gets a quote AND confetti!
             if othersUndone == 0 {
-                triggerCelebration(message: "Every. Single. Task. DONE. You absolute legend.", withConfetti: true)
+                triggerCelebration(message: "Every. Single. Task. DONE. You absolute legend! \u{1F451}", withConfetti: true)
+            } else if completionStreak.isMultiple(of: 5) {
+                let streakMessages = [
+                    "FIVE STREAK! You're absolutely UNSTOPPABLE!",
+                    "5 in a row?! The AUDACITY of being this productive!",
+                    "Streak x5! Someone call the press!",
+                    "PENTAKILL! Five tasks slayed in a row!",
+                ]
+                triggerCelebration(message: streakMessages.randomElement()!, withConfetti: true)
             } else if completionStreak.isMultiple(of: 3) {
                 let streakMessages = [
                     "HAT TRICK! Three in a row, you're on FIRE!",
@@ -545,8 +554,15 @@ final class Store {
                     "Streak mode: ACTIVATED. You're slaying!",
                 ]
                 triggerCelebration(message: streakMessages.randomElement()!, withConfetti: true)
+            } else if totalDone == 10 || totalDone == 25 || totalDone == 50 || totalDone == 100 {
+                let milestoneMessages = [
+                    "\(totalDone) tasks SLAYED! You're making history!",
+                    "Milestone: \(totalDone) tasks done! You're a LEGEND!",
+                    "\(totalDone) down! At this rate you'll conquer the WORLD!",
+                ]
+                triggerCelebration(message: milestoneMessages.randomElement()!, withConfetti: true)
             } else {
-                triggerCelebration()
+                triggerCelebration(withConfetti: true)
             }
 
             NotificationService.shared.cancelReminder(taskId: id)
@@ -1279,14 +1295,18 @@ final class Store {
     }
 
     private func showCelebration(_ quote: Quote, confetti: Bool) {
-        celebrationQuote = quote
-        if confetti {
-            showConfetti = true
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+            celebrationQuote = quote
+            if confetti {
+                showConfetti = true
+            }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
-            withAnimation(.smooth(duration: 0.5)) { self?.celebrationQuote = nil }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) { [weak self] in
+            withAnimation(.smooth(duration: 0.6)) {
+                self?.celebrationQuote = nil
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
                 self?.showConfetti = false
                 self?.showNextCelebration()
             }

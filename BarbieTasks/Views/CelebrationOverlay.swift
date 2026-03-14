@@ -125,22 +125,22 @@ struct ConfettiView: View {
     }
 
     private func spawnParticles() {
-        let count = 100
+        let count = 120
         let now = Date.timeIntervalSinceReferenceDate
         particles = (0..<count).map { i in
-            let shapes: [ConfettiShape] = [.rect, .rect, .circle, .heart, .star, .diamond]
+            let shapes: [ConfettiShape] = [.rect, .rect, .circle, .heart, .heart, .star, .diamond]
             return ConfettiParticle(
-                x: Double.random(in: 0.05...0.95),
-                vx: Double.random(in: -60...60),
-                vy: Double.random(in: -380 ... -120),
-                size: Double.random(in: 5...12),
+                x: Double.random(in: 0.02...0.98),
+                vx: Double.random(in: -80...80),
+                vy: Double.random(in: -420 ... -100),
+                size: Double.random(in: 6...14),
                 color: Self.colors.randomElement()!,
-                spin: Double.random(in: -4...4),
-                lifetime: Double.random(in: 2.0...3.5),
-                startTime: now + Double(i) * 0.025,
+                spin: Double.random(in: -5...5),
+                lifetime: Double.random(in: 2.5...4.0),
+                startTime: now + Double(i) * 0.018,
                 shape: shapes.randomElement()!,
                 wobbleSpeed: Double.random(in: 3...8),
-                wobbleAmount: Double.random(in: 5...20)
+                wobbleAmount: Double.random(in: 8...25)
             )
         }
     }
