@@ -1,8 +1,10 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct KanbanView: View {
     @Environment(Store.self) private var store
-    @State private var columnDropTargets: Set<BarbieTask.Status> = []
+    @State private var draggingTaskId: UUID?
+    @State private var dropTargetStatus: BarbieTask.Status?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -53,7 +55,7 @@ struct KanbanView: View {
     @ViewBuilder
     private func kanbanColumn(for status: BarbieTask.Status) -> some View {
         let tasks = store.kanbanTasks(for: status)
-        let isColumnDropTarget = columnDropTargets.contains(status)
+        let isDropTarget = dropTargetStatus == status
 
         VStack(alignment: .leading, spacing: 0) {
             columnHeader(status: status, count: tasks.count)
@@ -61,40 +63,57 @@ struct KanbanView: View {
 
             ScrollView(.vertical) {
                 LazyVStack(spacing: 8) {
-                    if tasks.isEmpty {
+                    if tasks.isEmpty && draggingTaskId == nil {
                         emptyState(for: status)
                     } else {
                         ForEach(tasks) { task in
-                            KanbanCard(task: task, isSelected: store.selectedTaskId == task.id) {
+                            KanbanCard(
+                                task: task,
+                                isSelected: store.selectedTaskId == task.id,
+                                isDragging: draggingTaskId == task.id
+                            ) {
                                 store.selectedTaskId = task.id
+                            } onDragStart: {
+                                draggingTaskId = task.id
                             }
                         }
                     }
                 }
                 .padding(.vertical, 4)
+                .animation(.smooth(duration: 0.35), value: tasks.map(\.id))
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .clipped()
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(isColumnDropTarget ? Color.barbiePink.opacity(0.5) : Color.clear, lineWidth: 2)
+                .stroke(isDropTarget ? Color.barbiePink.opacity(0.5) : Color.clear, lineWidth: 2)
+                .animation(.smooth(duration: 0.2), value: isDropTarget)
         )
         .accessibilityElement(children: .contain)
         .accessibilityLabel("\(status.label) column, \(tasks.count) tasks")
-        .dropDestination(for: String.self) { droppedItems, _ in
-            guard let idString = droppedItems.first,
-                  let id = UUID(uuidString: idString) else { return false }
-            withAnimation(.smooth(duration: 0.4)) {
-                store.setTaskStatus(id, to: status)
+        .onDrop(of: [.plainText], isTargeted: Binding(
+            get: { dropTargetStatus == status },
+            set: { targeted in
+                if targeted {
+                    dropTargetStatus = status
+                } else if dropTargetStatus == status {
+                    dropTargetStatus = nil
+                }
+            }
+        )) { providers in
+            guard let provider = providers.first else { return false }
+            provider.loadObject(ofClass: NSString.self) { nsString, _ in
+                guard let idString = nsString as? String,
+                      let id = UUID(uuidString: idString) else { return }
+                DispatchQueue.main.async {
+                    withAnimation(.smooth(duration: 0.35)) {
+                        store.setTaskStatus(id, to: status)
+                        draggingTaskId = nil
+                    }
+                }
             }
             return true
-        } isTargeted: { isTargeted in
-            if isTargeted {
-                columnDropTargets.insert(status)
-            } else {
-                columnDropTargets.remove(status)
-            }
         }
     }
 
@@ -131,7 +150,9 @@ struct KanbanView: View {
         @Environment(Store.self) private var store
         let task: BarbieTask
         let isSelected: Bool
+        let isDragging: Bool
         let onTap: () -> Void
+        let onDragStart: () -> Void
         @State private var isHovered = false
 
         var body: some View {
@@ -176,14 +197,19 @@ struct KanbanView: View {
                 RoundedRectangle(cornerRadius: 8)
                     .strokeBorder(isHovered && !isSelected ? Color.barbiePink.opacity(0.3) : Color.clear, lineWidth: 1)
             )
+            .opacity(isDragging ? 0 : 1)
             .animation(.smooth(duration: 0.25), value: isHovered)
+            .animation(.smooth(duration: 0.2), value: isDragging)
             .contentShape(RoundedRectangle(cornerRadius: 8))
             .onHover { isHovered = $0 }
             .onTapGesture { onTap() }
             .accessibilityElement(children: .combine)
             .accessibilityLabel(kanbanCardAccessibilityLabel)
             .accessibilityHint("Drag to move between columns, or double tap to select")
-            .draggable(task.id.uuidString)
+            .onDrag {
+                onDragStart()
+                return NSItemProvider(object: task.id.uuidString as NSString)
+            }
         }
 
         private var kanbanCardAccessibilityLabel: String {
@@ -220,15 +246,6 @@ struct KanbanView: View {
         case .todo: .inkMuted
         case .inProgress: .barbiePink
         case .done: .barbieRose
-        }
-    }
-
-    private func priorityColor(_ p: BarbieTask.Priority) -> Color {
-        switch p {
-        case .high: .priHigh
-        case .medium: .priMed
-        case .low: .priLow
-        case .none: .petal
         }
     }
 }
