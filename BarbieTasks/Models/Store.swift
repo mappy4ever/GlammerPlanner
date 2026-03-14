@@ -1380,7 +1380,20 @@ final class Store {
     func setTaskStatus(_ id: UUID, to status: BarbieTask.Status) {
         guard let idx = tasks.firstIndex(where: { $0.id == id }) else { return }
         let snapshot = tasks[idx]
+        let wasDone = tasks[idx].status == .done
         tasks[idx].status = status
+
+        // Celebrate when moving to Done column
+        if status == .done && !wasDone {
+            tasks[idx].isDone = true
+            tasks[idx].doneAt = Date()
+            completionStreak += 1
+            triggerCelebration(withConfetti: true)
+        } else if status != .done && wasDone {
+            // Moving out of Done — uncomplete
+            tasks[idx].isDone = false
+            tasks[idx].doneAt = nil
+        }
 
         let newStatus = status
         registerUndo(name: "Change Status") { [weak self] in
