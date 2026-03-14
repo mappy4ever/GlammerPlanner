@@ -42,12 +42,25 @@ struct KanbanView: View {
 
             inlineCelebrations
 
-            HStack(alignment: .top, spacing: 16) {
-                ForEach(BarbieTask.Status.allCases) { status in
+            HStack(alignment: .top, spacing: 0) {
+                ForEach(Array(BarbieTask.Status.allCases.enumerated()), id: \.element) { index, status in
+                    if index > 0 {
+                        // Divider between columns — glows when dragging over adjacent column
+                        Rectangle()
+                            .fill(
+                                dropTargetStatus == status || (index > 0 && dropTargetStatus == BarbieTask.Status.allCases[index - 1])
+                                ? Color.barbiePink.opacity(0.5)
+                                : Color.petal.opacity(0.4)
+                            )
+                            .frame(width: 1)
+                            .padding(.vertical, 8)
+                            .animation(.smooth(duration: 0.25), value: dropTargetStatus)
+                    }
                     kanbanColumn(for: status)
+                        .padding(.horizontal, 8)
                 }
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 8)
             .padding(.bottom, 16)
         }
     }

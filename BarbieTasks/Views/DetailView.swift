@@ -2,6 +2,7 @@ import SwiftUI
 
 struct DetailView: View {
     @Environment(Store.self) private var store
+    @Environment(AppSettings.self) private var settings
     let task: BarbieTask
 
     @State private var editTitle = ""
@@ -105,6 +106,19 @@ struct DetailView: View {
                 dateShortcut("Next Week", date: Calendar.current.date(byAdding: .weekOfYear, value: 1, to: Calendar.current.startOfDay(for: Date()))!)
             }
             .padding(.leading, 30)
+
+            // Completed at
+            if task.isDone, let doneAt = task.doneAt, settings.autoCompletionTimestamp {
+                fieldRow(icon: "checkmark.circle", label: "Done") {
+                    Text(doneAt.formatted(.dateTime.month(.abbreviated).day().year().hour().minute()))
+                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                        .foregroundStyle(Color.barbieRose)
+                    Spacer()
+                    Button { store.update(task.id) { $0.doneAt = nil } } label: {
+                        Image(systemName: "xmark.circle.fill").foregroundStyle(Color.inkMuted).font(.system(size: 14))
+                    }.buttonStyle(.plain).help("Remove timestamp")
+                }
+            }
 
             // Recurrence
             fieldRow(icon: "repeat", label: "Repeat") {

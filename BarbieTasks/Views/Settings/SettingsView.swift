@@ -36,6 +36,13 @@ struct SettingsView: View {
                 ))
             }
 
+            Section("Completion") {
+                Toggle("Show completion timestamp", isOn: Binding(
+                    get: { settings.autoCompletionTimestamp },
+                    set: { settings.autoCompletionTimestamp = $0 }
+                ))
+            }
+
             Section("Notifications") {
                 Toggle("Enable notifications", isOn: Binding(
                     get: { settings.notificationsEnabled },

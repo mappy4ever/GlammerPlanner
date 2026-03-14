@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TaskRowView: View {
     @Environment(Store.self) private var store
+    @Environment(AppSettings.self) private var settings
     let task: BarbieTask
 
     private var isSelected: Bool { store.selectedTaskIds.contains(task.id) }
@@ -265,6 +266,7 @@ struct TaskRowView: View {
         || task.subtaskProgress != nil
         || !task.tagIds.isEmpty
         || task.isInProgress
+        || (task.isDone && task.doneAt != nil && settings.autoCompletionTimestamp)
     }
 
     private var isProjectView: Bool {
@@ -283,6 +285,17 @@ struct TaskRowView: View {
                 .foregroundStyle(.white)
                 .padding(.horizontal, 6).padding(.vertical, 2)
                 .background(Color.barbiePink, in: Capsule())
+            }
+
+            if task.isDone, let doneAt = task.doneAt, settings.autoCompletionTimestamp {
+                HStack(spacing: 3) {
+                    Image(systemName: "checkmark.circle").font(.system(size: 9))
+                    Text(doneAt.formatted(.dateTime.month(.abbreviated).day().hour().minute()))
+                }
+                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                .foregroundStyle(Color.barbieRose)
+                .padding(.horizontal, 6).padding(.vertical, 2)
+                .background(Color.barbieRose.opacity(0.1), in: Capsule())
             }
 
             if let due = task.formattedDue, !task.isDone {

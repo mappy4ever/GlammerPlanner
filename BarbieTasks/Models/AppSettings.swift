@@ -24,6 +24,9 @@ final class AppSettings {
     @ObservationIgnored @AppStorage("calendarSyncEnabled") var calendarSyncEnabled: Bool = false
     @ObservationIgnored @AppStorage("remindersSyncEnabled") var remindersSyncEnabled: Bool = false
 
+    // Completion
+    @ObservationIgnored @AppStorage("autoCompletionTimestamp") var autoCompletionTimestamp: Bool = true
+
     // General
     var hasCompletedOnboarding: Bool {
         get { UserDefaults.standard.bool(forKey: "hasCompletedOnboarding") }
