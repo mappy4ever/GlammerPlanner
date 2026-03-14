@@ -115,47 +115,21 @@ struct TaskListView: View {
 
                 Spacer()
 
-                // List / Kanban toggle
-                HStack(spacing: 2) {
-                    Button {
-                        withAnimation(.smooth(duration: 0.35)) { store.viewMode = .list }
-                    } label: {
-                        Group {
-                            if store.viewMode == .list {
-                                Image(systemName: "list.bullet")
-                                    .font(.system(size: 11, weight: .bold))
-                                    .foregroundStyle(.white)
-                            } else {
-                                BarbieIcon.AllTasks(size: 11)
-                            }
-                        }
-                        .padding(5)
-                        .background(store.viewMode == .list ? Color.barbiePink : Color.clear, in: RoundedRectangle(cornerRadius: 5))
+                Button {
+                    withAnimation(.smooth(duration: 0.4)) { store.viewMode = .kanban }
+                } label: {
+                    HStack(spacing: 5) {
+                        Image(systemName: "rectangle.split.3x1")
+                            .font(.system(size: 11, weight: .bold))
+                        Text("Kanban View")
+                            .font(.system(size: 11, weight: .bold, design: .rounded))
                     }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("List view")
-                    .accessibilityAddTraits(store.viewMode == .list ? .isSelected : [])
-
-                    Button {
-                        withAnimation(.smooth(duration: 0.35)) { store.viewMode = .kanban }
-                    } label: {
-                        Group {
-                            if store.viewMode == .kanban {
-                                Image(systemName: "rectangle.split.3x1")
-                                    .font(.system(size: 11, weight: .bold))
-                                    .foregroundStyle(.white)
-                            } else {
-                                BarbieIcon.Kanban(size: 11)
-                            }
-                        }
-                        .padding(5)
-                        .background(store.viewMode == .kanban ? Color.barbiePink : Color.clear, in: RoundedRectangle(cornerRadius: 5))
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel("Kanban view")
-                    .accessibilityAddTraits(store.viewMode == .kanban ? .isSelected : [])
+                    .foregroundStyle(Color.barbiePink)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(Color.blushMid, in: Capsule())
                 }
-                .background(Color.blushMid, in: RoundedRectangle(cornerRadius: 6))
+                .buttonStyle(.plain)
 
                 if store.isEditableView {
                     Button {

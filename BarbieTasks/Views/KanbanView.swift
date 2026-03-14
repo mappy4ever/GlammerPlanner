@@ -46,14 +46,15 @@ struct KanbanView: View {
                 ForEach(Array(BarbieTask.Status.allCases.enumerated()), id: \.element) { index, status in
                     if index > 0 {
                         // Divider between columns — glows when dragging over adjacent column
+                        let isDividerActive = dropTargetStatus == status || dropTargetStatus == BarbieTask.Status.allCases[index - 1]
                         Rectangle()
                             .fill(
-                                dropTargetStatus == status || (index > 0 && dropTargetStatus == BarbieTask.Status.allCases[index - 1])
-                                ? Color.barbiePink.opacity(0.5)
-                                : Color.petal.opacity(0.4)
+                                isDividerActive
+                                ? Color.barbiePink.opacity(0.6)
+                                : Color.petal.opacity(0.35)
                             )
-                            .frame(width: 1)
-                            .padding(.vertical, 8)
+                            .frame(width: isDividerActive ? 2 : 1)
+                            .padding(.vertical, 6)
                             .animation(.smooth(duration: 0.25), value: dropTargetStatus)
                     }
                     kanbanColumn(for: status)
@@ -138,25 +139,50 @@ struct KanbanView: View {
     private func columnHeader(status: BarbieTask.Status, count: Int) -> some View {
         let color = headerColor(for: status)
 
-        HStack(spacing: 6) {
-            Image(systemName: status.icon)
-                .font(.system(size: 13, design: .rounded))
-                .foregroundStyle(color)
+        VStack(spacing: 0) {
+            HStack(spacing: 7) {
+                Image(systemName: status.icon)
+                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .foregroundStyle(color)
 
-            Text(status.label)
-                .font(.system(size: 13, weight: .semibold, design: .rounded))
-                .foregroundStyle(color)
+                Text(status.label.uppercased())
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .foregroundStyle(color)
+                    .tracking(0.8)
 
-            Spacer()
+                Spacer()
 
-            Text("\(count)")
-                .font(.system(size: 11, weight: .medium, design: .rounded))
-                .foregroundStyle(color.opacity(0.7))
-                .padding(.horizontal, 6)
-                .padding(.vertical, 2)
-                .background(color.opacity(0.1), in: Capsule())
+                Text("\(count)")
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .foregroundStyle(color)
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 3)
+                    .background(color.opacity(0.12), in: Capsule())
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(color.opacity(0.06))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(color.opacity(0.15), lineWidth: 1)
+                    )
+            )
+
+            // Separator line below header
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [color.opacity(0.05), color.opacity(0.2), color.opacity(0.05)],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .frame(height: 1)
+                .padding(.horizontal, 4)
+                .padding(.top, 8)
         }
-        .padding(.horizontal, 8)
     }
 
     // MARK: - Task Card
@@ -171,47 +197,83 @@ struct KanbanView: View {
         @State private var isHovered = false
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 6) {
-                HStack(spacing: 6) {
-                    if task.priority != .none {
-                        BarbieIcon.Priority(priority: task.priority, size: 9)
+            HStack(alignment: .top, spacing: 8) {
+                // Completion indicator
+                ZStack {
+                    Circle()
+                        .stroke(task.isDone ? Color.barbieRose : checkboxBorderColor, lineWidth: 1.5)
+                        .frame(width: 16, height: 16)
+
+                    if task.isDone {
+                        Circle()
+                            .fill(
+                                LinearGradient(
+                                    colors: [.barbiePink, .barbieDeep],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(width: 16, height: 16)
+
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 8, weight: .bold))
+                            .foregroundStyle(.white)
                     }
-                    Text(task.title)
-                        .font(.system(size: 12, weight: .medium, design: .rounded))
-                        .foregroundStyle(Color.inkPrimary)
-                        .lineLimit(2)
-                    Spacer(minLength: 0)
                 }
-                HStack(spacing: 8) {
-                    if let due = task.formattedDue {
-                        Label(due, systemImage: "calendar")
-                            .font(.system(size: 10, weight: .regular, design: .rounded))
-                            .foregroundStyle(task.isOverdue ? Color.priHigh : Color.inkMuted)
+                .padding(.top, 1)
+
+                VStack(alignment: .leading, spacing: 5) {
+                    HStack(spacing: 6) {
+                        if task.priority != .none && !task.isDone {
+                            BarbieIcon.Priority(priority: task.priority, size: 9)
+                        }
+                        Text(task.title)
+                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                            .foregroundStyle(task.isDone ? Color.inkMuted : Color.inkPrimary)
+                            .strikethrough(task.isDone, color: .inkMuted.opacity(0.5))
+                            .lineLimit(2)
+                        Spacer(minLength: 0)
                     }
-                    if let project = store.project(for: task) {
-                        Text(project.title)
-                            .font(.system(size: 10, weight: .regular, design: .rounded))
-                            .foregroundStyle(Color.inkSecondary)
-                    }
-                    Spacer(minLength: 0)
-                    if let progress = task.subtaskProgress {
-                        Text(progress)
-                            .font(.system(size: 10, weight: .regular, design: .rounded))
-                            .foregroundStyle(Color.inkMuted)
+                    HStack(spacing: 8) {
+                        if let due = task.formattedDue {
+                            Label(due, systemImage: "calendar")
+                                .font(.system(size: 10, weight: .regular, design: .rounded))
+                                .foregroundStyle(task.isOverdue ? Color.priHigh : Color.inkMuted)
+                        }
+                        if let project = store.project(for: task) {
+                            Text(project.title)
+                                .font(.system(size: 10, weight: .regular, design: .rounded))
+                                .foregroundStyle(Color.inkSecondary)
+                        }
+                        Spacer(minLength: 0)
+                        if let progress = task.subtaskProgress {
+                            Text(progress)
+                                .font(.system(size: 10, weight: .regular, design: .rounded))
+                                .foregroundStyle(Color.inkMuted)
+                        }
                     }
                 }
             }
             .padding(10)
-            .background(Color.blushMid, in: RoundedRectangle(cornerRadius: 8))
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(task.isDone ? Color.blushMid.opacity(0.6) : Color.blushMid)
+            )
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .strokeBorder(isSelected ? Color.barbiePink : Color.petal, lineWidth: isSelected ? 1.5 : 0.5)
+                    .strokeBorder(
+                        isSelected ? Color.barbiePink
+                        : task.isDone ? Color.petal.opacity(0.4)
+                        : Color.petal,
+                        lineWidth: isSelected ? 1.5 : 0.5
+                    )
             )
             .shadow(color: isHovered ? Color.barbiePink.opacity(0.15) : Color.clear, radius: 6, y: 2)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
                     .strokeBorder(isHovered && !isSelected ? Color.barbiePink.opacity(0.3) : Color.clear, lineWidth: 1)
             )
+            .opacity(task.isDone ? 0.75 : 1.0)
             .opacity(isDragging ? 0 : 1)
             .animation(.smooth(duration: 0.25), value: isHovered)
             .animation(.smooth(duration: 0.2), value: isDragging)
@@ -227,8 +289,18 @@ struct KanbanView: View {
             }
         }
 
+        private var checkboxBorderColor: Color {
+            switch task.priority {
+            case .high: .priHigh
+            case .medium: .priMed
+            case .low: .priLow
+            case .none: .petal
+            }
+        }
+
         private var kanbanCardAccessibilityLabel: String {
             var parts: [String] = [task.title]
+            parts.append(task.isDone ? "Completed" : "Incomplete")
             if task.priority != .none {
                 parts.append("\(task.priority.label) priority")
             }
