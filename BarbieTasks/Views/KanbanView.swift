@@ -75,6 +75,7 @@ struct KanbanView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .clipped()
         .overlay(
             RoundedRectangle(cornerRadius: 12)
                 .stroke(isColumnDropTarget ? Color.barbiePink.opacity(0.5) : Color.clear, lineWidth: 2)
@@ -84,7 +85,7 @@ struct KanbanView: View {
         .dropDestination(for: String.self) { droppedItems, _ in
             guard let idString = droppedItems.first,
                   let id = UUID(uuidString: idString) else { return false }
-            withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
+            withAnimation(.smooth(duration: 0.15)) {
                 store.setTaskStatus(id, to: status)
             }
             return true
@@ -181,9 +182,12 @@ struct KanbanView: View {
                 RoundedRectangle(cornerRadius: 8)
                     .strokeBorder(isSelected ? Color.barbiePink : Color.petal, lineWidth: isSelected ? 1.5 : 0.5)
             )
-            .shadow(color: isHovered ? Color.barbiePink.opacity(0.15) : Color.clear, radius: 8, y: 3)
-            .scaleEffect(isHovered ? 1.04 : 1.0)
-            .animation(.smooth(duration: 0.2), value: isHovered)
+            .shadow(color: isHovered ? Color.barbiePink.opacity(0.15) : Color.clear, radius: 6, y: 2)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(isHovered && !isSelected ? Color.barbiePink.opacity(0.3) : Color.clear, lineWidth: 1)
+            )
+            .animation(.smooth(duration: 0.15), value: isHovered)
             .contentShape(RoundedRectangle(cornerRadius: 8))
             .onHover { isHovered = $0 }
             .onTapGesture { onTap() }
