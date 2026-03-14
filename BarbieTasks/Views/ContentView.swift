@@ -173,10 +173,6 @@ struct ContentView: View {
 
     @ViewBuilder
     private var overlayViews: some View {
-        // Celebration banner
-        celebrationBanner
-            .allowsHitTesting(false)
-
         // Confetti particles
         if store.showConfetti {
             ConfettiView()
@@ -203,69 +199,6 @@ struct ContentView: View {
         }
     }
 
-    @ViewBuilder
-    private var celebrationBanner: some View {
-        if !store.activeCelebrations.isEmpty {
-            VStack(spacing: 6) {
-                ForEach(store.activeCelebrations) { quote in
-                    HStack(spacing: 12) {
-                        Image(systemName: "sparkles")
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundStyle(Color.barbiePink)
-                            .symbolEffect(.bounce, value: quote.id)
-                        Text(quote.text)
-                            .font(.system(size: 17, weight: .bold, design: .rounded))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [Color.barbieDeep, Color.barbiePink, Color.barbieRose],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .lineLimit(2)
-                        Spacer(minLength: 0)
-                        Image(systemName: "sparkles")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(Color.barbiePink.opacity(0.6))
-                            .symbolEffect(.bounce, value: quote.id)
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 14)
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color.blushMid, Color.blushMid.opacity(0.95)],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 14)
-                                    .strokeBorder(
-                                        LinearGradient(
-                                            colors: [Color.barbiePink.opacity(0.4), Color.barbieRose.opacity(0.2)],
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        ),
-                                        lineWidth: 1.5
-                                    )
-                            )
-                            .shadow(color: Color.barbiePink.opacity(0.15), radius: 12, y: 4)
-                    )
-                    .transition(
-                        .asymmetric(
-                            insertion: .move(edge: .top).combined(with: .opacity).combined(with: .scale(scale: 0.95)),
-                            removal: .opacity.combined(with: .scale(scale: 0.98))
-                        )
-                    )
-                }
-                Spacer()
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 8)
-        }
-    }
 }
 
 // MARK: - Detail Placeholder

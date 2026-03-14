@@ -40,6 +40,8 @@ struct KanbanView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
 
+            inlineCelebrations
+
             HStack(alignment: .top, spacing: 16) {
                 ForEach(BarbieTask.Status.allCases) { status in
                     kanbanColumn(for: status)
@@ -221,6 +223,65 @@ struct KanbanView: View {
                 parts.append("Due \(due)")
             }
             return parts.joined(separator: ", ")
+        }
+    }
+
+    // MARK: - Inline Celebrations
+
+    @ViewBuilder
+    private var inlineCelebrations: some View {
+        if !store.activeCelebrations.isEmpty {
+            VStack(spacing: 4) {
+                ForEach(store.activeCelebrations) { quote in
+                    HStack(spacing: 10) {
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(Color.barbiePink)
+                            .symbolEffect(.bounce, value: quote.id)
+                        Text(quote.text)
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [Color.barbieDeep, Color.barbiePink, Color.barbieRose],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .lineLimit(2)
+                        Spacer(minLength: 0)
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(Color.barbiePink.opacity(0.5))
+                            .symbolEffect(.bounce, value: quote.id)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color.blushMid)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .strokeBorder(
+                                        LinearGradient(
+                                            colors: [Color.barbiePink.opacity(0.3), Color.barbieRose.opacity(0.15)],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        ),
+                                        lineWidth: 1
+                                    )
+                            )
+                    )
+                    .transition(
+                        .asymmetric(
+                            insertion: .push(from: .top).combined(with: .opacity),
+                            removal: .push(from: .bottom).combined(with: .opacity)
+                        )
+                    )
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 4)
+            .animation(.smooth(duration: 0.35), value: store.activeCelebrations.map(\.id))
         }
     }
 
