@@ -4,6 +4,7 @@ import Charts
 struct StatsView: View {
     @Environment(Store.self) private var store
 
+    @State private var appeared = false
     private let calendar = Calendar.current
 
     var body: some View {
@@ -31,6 +32,13 @@ struct StatsView: View {
                     Spacer()
                 }
                 .padding(.horizontal, 4)
+                .opacity(appeared ? 1 : 0)
+                .offset(y: appeared ? 0 : 10)
+
+                // Daily goal progress ring
+                dailyGoalCard
+                    .opacity(appeared ? 1 : 0)
+                    .offset(y: appeared ? 0 : 15)
 
                 // Top stat cards row
                 HStack(spacing: 12) {
@@ -101,19 +109,37 @@ struct StatsView: View {
                         color: .barbieDeep
                     )
                 }
+                .opacity(appeared ? 1 : 0)
+                .offset(y: appeared ? 0 : 20)
 
-                // Achievements
-                achievementsSection
+                // Streak calendar (GitHub-style)
+                streakCalendar
+                    .opacity(appeared ? 1 : 0)
+                    .offset(y: appeared ? 0 : 20)
+
+                // Medal Gallery
+                medalGallery
+                    .opacity(appeared ? 1 : 0)
+                    .offset(y: appeared ? 0 : 20)
 
                 // Daily completion chart
                 dailyCompletionCard
+                    .opacity(appeared ? 1 : 0)
+                    .offset(y: appeared ? 0 : 20)
 
                 // Completion by project chart
                 projectCompletionCard
+                    .opacity(appeared ? 1 : 0)
+                    .offset(y: appeared ? 0 : 20)
             }
             .padding(16)
         }
         .background(Color.blush)
+        .onAppear {
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.8).delay(0.1)) {
+                appeared = true
+            }
+        }
     }
 
     // MARK: - Stat Card
@@ -151,63 +177,159 @@ struct StatsView: View {
         )
     }
 
-    // MARK: - Achievements
+    // MARK: - Daily Goal Card
 
-    private var achievementsSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
+    private var dailyGoalCard: some View {
+        let goal = store.profile.dailyGoal
+        let done = store.completedToday
+        let progress = store.dailyGoalProgress
+        let goalMet = done >= goal
+
+        return HStack(spacing: 20) {
+            // Progress ring
+            ZStack {
+                Circle()
+                    .stroke(Color.petal, lineWidth: 6)
+                    .frame(width: 70, height: 70)
+
+                Circle()
+                    .trim(from: 0, to: progress)
+                    .stroke(
+                        LinearGradient(
+                            colors: goalMet ? [.barbieRose, .barbiePink] : [.barbiePink, .barbieDeep],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        style: StrokeStyle(lineWidth: 6, lineCap: .round)
+                    )
+                    .frame(width: 70, height: 70)
+                    .rotationEffect(.degrees(-90))
+                    .animation(.spring(response: 0.6, dampingFraction: 0.7), value: progress)
+
+                VStack(spacing: 0) {
+                    Text("\(done)")
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .foregroundStyle(goalMet ? Color.barbiePink : Color.inkPrimary)
+                    Text("/\(goal)")
+                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .foregroundStyle(Color.inkMuted)
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Daily Goal")
+                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color.inkPrimary)
+
+                if goalMet {
+                    HStack(spacing: 4) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 12))
+                            .foregroundStyle(Color.barbiePink)
+                        Text("Goal reached!")
+                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+                            .foregroundStyle(Color.barbiePink)
+                    }
+                } else {
+                    Text("\(goal - done) more to go")
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .foregroundStyle(Color.inkSecondary)
+                }
+
+                // Mini progress dots
+                HStack(spacing: 3) {
+                    ForEach(0..<min(goal, 20), id: \.self) { i in
+                        Circle()
+                            .fill(i < done ? Color.barbiePink : Color.petal)
+                            .frame(width: 6, height: 6)
+                            .animation(.spring(response: 0.3, dampingFraction: 0.6).delay(Double(i) * 0.03), value: done)
+                    }
+                    if goal > 20 {
+                        Text("+\(goal - 20)")
+                            .font(.system(size: 8, weight: .bold, design: .rounded))
+                            .foregroundStyle(Color.inkMuted)
+                    }
+                }
+            }
+
+            Spacer()
+
+            // Streak flame
+            if store.currentStreak > 0 {
+                VStack(spacing: 2) {
+                    Image(systemName: "flame.fill")
+                        .font(.system(size: 24, weight: .semibold))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [.barbiePink, Color(hex: "#FF6B6B")],
+                                startPoint: .bottom,
+                                endPoint: .top
+                            )
+                        )
+                        .symbolEffect(.bounce, value: store.currentStreak)
+                    Text("\(store.currentStreak)")
+                        .font(.system(size: 16, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color.inkPrimary)
+                    Text("streak")
+                        .font(.system(size: 10, weight: .medium, design: .rounded))
+                        .foregroundStyle(Color.inkMuted)
+                }
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(Color.blushMid)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14)
+                        .stroke(goalMet ? Color.barbiePink.opacity(0.3) : Color.petal, lineWidth: 1)
+                )
+        )
+    }
+
+    // MARK: - Medal Gallery
+
+    private var medalGallery: some View {
+        VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "trophy.fill")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(Color.gold)
-                Text("Achievements")
+                Text("Medals")
                     .font(.system(size: 14, weight: .bold, design: .rounded))
                     .foregroundStyle(Color.inkPrimary)
+
                 Spacer()
+
+                Text("\(store.profile.unlockedCount)/\(store.profile.totalMedals)")
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color.inkMuted)
             }
 
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
-                achievementBadge(
-                    icon: "flame.fill",
-                    title: "On Fire",
-                    description: "3-day streak",
-                    unlocked: store.currentStreak >= 3,
-                    color: .barbiePink
-                )
-                achievementBadge(
-                    icon: "bolt.fill",
-                    title: "Unstoppable",
-                    description: "7-day streak",
-                    unlocked: store.bestStreak >= 7,
-                    color: .barbieDeep
-                )
-                achievementBadge(
-                    icon: "star.fill",
-                    title: "First Ten",
-                    description: "10 tasks done",
-                    unlocked: totalCompleted >= 10,
-                    color: .gold
-                )
-                achievementBadge(
-                    icon: "crown.fill",
-                    title: "Queen",
-                    description: "50 tasks done",
-                    unlocked: totalCompleted >= 50,
-                    color: .barbiePink
-                )
-                achievementBadge(
-                    icon: "sparkles",
-                    title: "Century",
-                    description: "100 tasks done",
-                    unlocked: totalCompleted >= 100,
-                    color: .barbieRose
-                )
-                achievementBadge(
-                    icon: "checkmark.seal.fill",
-                    title: "Perfect Day",
-                    description: "5+ in one day",
-                    unlocked: store.completedToday >= 5,
-                    color: .barbieDeep
-                )
+            ForEach(MedalCategory.allCases, id: \.rawValue) { category in
+                let medals = MedalId.allCases.filter { $0.definition.category == category }
+                let unlockedInCategory = medals.filter { store.profile.hasMedal($0) }.count
+
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 5) {
+                        Image(systemName: category.icon)
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(Color.inkSecondary)
+                        Text(category.label)
+                            .font(.system(size: 12, weight: .bold, design: .rounded))
+                            .foregroundStyle(Color.inkSecondary)
+                        Spacer()
+                        Text("\(unlockedInCategory)/\(medals.count)")
+                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                            .foregroundStyle(Color.inkMuted)
+                    }
+
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 4), spacing: 8) {
+                        ForEach(medals, id: \.rawValue) { medalId in
+                            medalBadge(medalId: medalId)
+                        }
+                    }
+                }
             }
         }
         .padding(16)
@@ -221,33 +343,157 @@ struct StatsView: View {
         )
     }
 
-    private func achievementBadge(icon: String, title: String, description: String, unlocked: Bool, color: Color) -> some View {
-        VStack(spacing: 6) {
+    private func medalBadge(medalId: MedalId) -> some View {
+        let def = medalId.definition
+        let unlocked = store.profile.hasMedal(medalId)
+        let unlock = store.profile.unlockedMedals.first { $0.medalId == medalId }
+
+        return VStack(spacing: 4) {
             ZStack {
                 Circle()
-                    .fill(unlocked ? color.opacity(0.15) : Color.petal.opacity(0.2))
-                    .frame(width: 44, height: 44)
-                Image(systemName: icon)
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(unlocked ? color : Color.inkMuted.opacity(0.3))
+                    .fill(
+                        unlocked
+                        ? LinearGradient(colors: def.tier.colors, startPoint: .topLeading, endPoint: .bottomTrailing)
+                        : LinearGradient(colors: [Color.petal.opacity(0.3), Color.petal.opacity(0.15)], startPoint: .top, endPoint: .bottom)
+                    )
+                    .frame(width: 40, height: 40)
+                    .shadow(color: unlocked ? def.tier.glowColor.opacity(0.3) : .clear, radius: 6, y: 2)
+
+                Image(systemName: unlocked ? def.icon : "lock.fill")
+                    .font(.system(size: unlocked ? 16 : 12, weight: .semibold))
+                    .foregroundStyle(unlocked ? .white : Color.inkMuted.opacity(0.3))
             }
-            Text(title)
-                .font(.system(size: 11, weight: .bold, design: .rounded))
+
+            Text(unlocked ? def.title : "???")
+                .font(.system(size: 9, weight: .bold, design: .rounded))
                 .foregroundStyle(unlocked ? Color.inkPrimary : Color.inkMuted.opacity(0.4))
-            Text(description)
-                .font(.system(size: 9, weight: .medium, design: .rounded))
-                .foregroundStyle(unlocked ? Color.inkSecondary : Color.inkMuted.opacity(0.3))
+                .lineLimit(1)
+
+            Text(unlocked ? def.description : "")
+                .font(.system(size: 7, weight: .medium, design: .rounded))
+                .foregroundStyle(Color.inkMuted)
+                .lineLimit(1)
         }
-        .padding(.vertical, 8)
         .frame(maxWidth: .infinity)
+        .padding(.vertical, 6)
         .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(unlocked ? color.opacity(0.06) : Color.clear)
+            RoundedRectangle(cornerRadius: 8)
+                .fill(unlocked ? def.tier.glowColor.opacity(0.06) : Color.clear)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .strokeBorder(unlocked ? color.opacity(0.2) : Color.clear, lineWidth: 1)
+            RoundedRectangle(cornerRadius: 8)
+                .strokeBorder(unlocked ? def.tier.glowColor.opacity(0.2) : Color.clear, lineWidth: 1)
         )
+        .help(unlocked
+              ? "\(def.title) — \(def.description)\nUnlocked: \(unlock?.unlockedAt.formatted(.dateTime.month(.abbreviated).day().year()) ?? "")"
+              : def.description
+        )
+    }
+
+    // MARK: - Streak Calendar (GitHub-style contribution graph)
+
+    private var streakCalendar: some View {
+        let weeks = 13 // ~3 months
+        let totalDays = weeks * 7
+        let today = calendar.startOfDay(for: Date())
+        let completionMap = buildCompletionMap(days: totalDays)
+
+        // Figure out how many days back from today to the start of the week
+        let todayWeekday = calendar.component(.weekday, from: today)
+        let daysFromWeekStart = (todayWeekday - calendar.firstWeekday + 7) % 7
+
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "square.grid.3x3.fill")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(Color.barbiePink)
+                Text("Activity")
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color.inkPrimary)
+                Spacer()
+                Text("Last \(weeks) weeks")
+                    .font(.system(size: 11, weight: .medium, design: .rounded))
+                    .foregroundStyle(Color.inkMuted)
+            }
+
+            // Day labels on left + grid
+            HStack(alignment: .top, spacing: 4) {
+                // Weekday labels
+                VStack(spacing: 2) {
+                    ForEach(0..<7, id: \.self) { row in
+                        let dayIndex = (calendar.firstWeekday - 1 + row) % 7
+                        let symbols = Calendar.current.veryShortStandaloneWeekdaySymbols
+                        Text(row % 2 == 0 ? symbols[dayIndex] : "")
+                            .font(.system(size: 8, weight: .medium, design: .rounded))
+                            .foregroundStyle(Color.inkMuted)
+                            .frame(width: 14, height: 11)
+                    }
+                }
+
+                // Grid of squares
+                HStack(spacing: 2) {
+                    ForEach(0..<weeks, id: \.self) { weekIndex in
+                        VStack(spacing: 2) {
+                            ForEach(0..<7, id: \.self) { dayIndex in
+                                let daysAgo = (weeks - 1 - weekIndex) * 7 + (6 - dayIndex) - (6 - daysFromWeekStart)
+                                let date = calendar.date(byAdding: .day, value: -daysAgo, to: today)!
+                                let count = completionMap[calendar.startOfDay(for: date)] ?? 0
+                                let isFuture = date > today
+
+                                RoundedRectangle(cornerRadius: 2)
+                                    .fill(isFuture ? Color.clear : streakColor(count: count))
+                                    .frame(width: 11, height: 11)
+                                    .help(isFuture ? "" : "\(count) tasks \u{2013} \(date.formatted(.dateTime.month(.abbreviated).day()))")
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Legend
+            HStack(spacing: 4) {
+                Spacer()
+                Text("Less")
+                    .font(.system(size: 8, weight: .medium, design: .rounded))
+                    .foregroundStyle(Color.inkMuted)
+                ForEach([0, 1, 3, 5, 8], id: \.self) { level in
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(streakColor(count: level))
+                        .frame(width: 11, height: 11)
+                }
+                Text("More")
+                    .font(.system(size: 8, weight: .medium, design: .rounded))
+                    .foregroundStyle(Color.inkMuted)
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.blushMid)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.petal, lineWidth: 1)
+                )
+        )
+    }
+
+    private func streakColor(count: Int) -> Color {
+        if count == 0 { return Color.petal.opacity(0.3) }
+        if count <= 1 { return Color.barbiePink.opacity(0.25) }
+        if count <= 3 { return Color.barbiePink.opacity(0.45) }
+        if count <= 5 { return Color.barbiePink.opacity(0.7) }
+        return Color.barbiePink
+    }
+
+    private func buildCompletionMap(days: Int) -> [Date: Int] {
+        let cal = Calendar.current
+        var map: [Date: Int] = [:]
+        for task in store.tasks where task.isDone {
+            guard let doneAt = task.doneAt else { continue }
+            let day = cal.startOfDay(for: doneAt)
+            map[day, default: 0] += 1
+        }
+        return map
     }
 
     // MARK: - Daily Completion Chart

@@ -9,6 +9,15 @@ final class AppSettings {
     }
     @ObservationIgnored @AppStorage("reduceAnimations") var reduceAnimations: Bool = false
 
+    // Theme — stored property so @Observable tracks changes and triggers view updates
+    var appTheme: String = UserDefaults.standard.string(forKey: "appTheme") ?? "barbie" {
+        didSet {
+            UserDefaults.standard.set(appTheme, forKey: "appTheme")
+            ThemeManager.shared.current = AppThemeId(rawValue: appTheme) ?? .barbie
+        }
+    }
+    @ObservationIgnored @AppStorage("quoteStyle") var quoteStyle: String = "match_theme"  // "match_theme" or theme rawValue
+
     // Pomodoro
     @ObservationIgnored @AppStorage("pomWorkMinutes") var pomWorkMinutes: Int = 25
     @ObservationIgnored @AppStorage("pomShortBreak") var pomShortBreak: Int = 5
@@ -26,6 +35,12 @@ final class AppSettings {
 
     // Completion
     @ObservationIgnored @AppStorage("autoCompletionTimestamp") var autoCompletionTimestamp: Bool = true
+
+    // Calendar
+    @ObservationIgnored @AppStorage("calendarStartDay") var calendarStartDay: Int = 1  // 1=Sunday, 2=Monday, etc.
+
+    // Detail panel behavior
+    @ObservationIgnored @AppStorage("autoOpenDetail") var autoOpenDetail: Bool = true
 
     // General
     var hasCompletedOnboarding: Bool {

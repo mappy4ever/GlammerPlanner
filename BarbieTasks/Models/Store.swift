@@ -35,6 +35,14 @@ final class Store {
     var showConfetti: Bool = false
     private var recentQuoteTexts: [String] = []
     private var completionStreak: Int = 0
+
+    // MARK: - Medals & Daily Goal
+
+    var profile: PlayerProfile = PlayerProfile()
+    var pendingMedalUnlocks: [MedalId] = []
+    var showMedalUnlock: Bool = false
+    var isFirstTaskOfDay: Bool = false
+    var dailyGoalJustReached: Bool = false
     var toastMessage: String?
     var showTemplateManager: Bool = false
     var saveAsTemplateTaskId: UUID?
@@ -157,6 +165,7 @@ final class Store {
         var templates: [TaskTemplate] = []  // default for backward compat
         var savedFilters: [SavedFilter] = []  // default for backward compat
         var routines: [Routine] = []  // default for backward compat
+        var playerProfile: PlayerProfile = PlayerProfile()  // default for backward compat
         var selectedView: ViewSelection
         var sortBy: SortOption
         var showCompleted: Bool
@@ -170,6 +179,7 @@ final class Store {
             templates: templates,
             savedFilters: savedFilters,
             routines: routines,
+            playerProfile: profile,
             selectedView: selectedView, sortBy: sortBy,
             showCompleted: showCompleted
         )
@@ -193,9 +203,24 @@ final class Store {
         store.templates = data.templates
         store.savedFilters = data.savedFilters
         store.routines = data.routines
+        store.profile = data.playerProfile
         store.selectedView = data.selectedView
         store.sortBy = data.sortBy
         store.showCompleted = data.showCompleted
+
+        // Backfill medals on first launch with medal system
+        if store.profile.unlockedMedals.isEmpty && !store.tasks.isEmpty {
+            let _ = MedalEngine.backfill(
+                profile: &store.profile,
+                tasks: store.tasks,
+                projects: store.projects,
+                tags: store.tags,
+                pomodoroSessions: store.pomodoroSessions,
+                currentStreak: store.currentStreak,
+                bestStreak: store.bestStreak
+            )
+        }
+
         return store
     }
 
@@ -446,7 +471,7 @@ final class Store {
 
     // MARK: - Task CRUD
 
-    func addTask(title: String) {
+    func addTask(title: String, explicitDueDate: Date? = nil, explicitPriority: BarbieTask.Priority? = nil) {
         guard !title.trimmingCharacters(in: .whitespaces).isEmpty else { return }
 
         // Natural language parsing
@@ -454,8 +479,8 @@ final class Store {
 
         var task = BarbieTask(title: parsed.title)
         task.sortOrder = (tasks.map(\.sortOrder).max() ?? 0) + 1
-        task.dueDate = parsed.dueDate
-        task.priority = BarbieTask.Priority(rawValue: parsed.priority) ?? .none
+        task.dueDate = explicitDueDate ?? parsed.dueDate
+        task.priority = explicitPriority ?? (BarbieTask.Priority(rawValue: parsed.priority) ?? .none)
 
         // Match project by name
         if let projName = parsed.projectName {
@@ -489,6 +514,7 @@ final class Store {
 
         withAnimation(.smooth(duration: 0.3)) {
             tasks.append(task)
+            selectedTaskId = task.id
         }
 
         // Schedule notification if due date set
@@ -534,16 +560,56 @@ final class Store {
         if tasks[idx].isDone {
             completionStreak += 1
             let totalDone = tasks.filter { $0.isDone && !$0.isTrashed }.count
+            let todayCount = completedToday
 
-            // Every completion gets a quote AND confetti!
-            if othersUndone == 0 {
-                triggerCelebration(message: "Every. Single. Task. DONE. You absolute legend! \u{1F451}", withConfetti: true)
+            // -- First task of the day detection --
+            let todayStr = Self.dayString(Date())
+            if profile.lastFirstTaskDate != todayStr {
+                profile.lastFirstTaskDate = todayStr
+                profile.firstTaskOfDayDone = true
+                isFirstTaskOfDay = true
+                triggerCelebration(message: "First task of the day — you're already winning!", withConfetti: true)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) { [weak self] in
+                    self?.isFirstTaskOfDay = false
+                }
+            }
+            // -- Daily goal detection --
+            else if todayCount == profile.dailyGoal && profile.dailyGoal > 0 {
+                dailyGoalJustReached = true
+                triggerCelebration(message: "DAILY GOAL SMASHED! You hit \(profile.dailyGoal) tasks today!", withConfetti: true)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) { [weak self] in
+                    self?.dailyGoalJustReached = false
+                }
+            }
+            // -- Standard celebrations --
+            else if othersUndone == 0 {
+                let clearMessages = [
+                    "Every. Single. Task. DONE. Absolute legend!",
+                    "CLEAN SWEEP! Not a single task left standing!",
+                    "Task list: EMPTY. You: UNSTOPPABLE.",
+                    "Zero tasks remaining. Maximum bragging rights.",
+                    "You just hit inbox zero on your LIFE.",
+                    "The to-do list has been DEFEATED. Flawless victory.",
+                    "Nothing left to do but celebrate. You earned it!",
+                    "All done! Your to-do list just filed for bankruptcy.",
+                    "Clear board! Someone give this person a trophy.",
+                    "You obliterated every last task. Take a bow.",
+                    "100% completion rate. That's not luck, that's SKILL.",
+                    "Total domination. Every task, handled.",
+                ]
+                triggerCelebration(message: clearMessages.randomElement()!, withConfetti: true)
             } else if completionStreak.isMultiple(of: 5) {
                 let streakMessages = [
                     "FIVE STREAK! You're absolutely UNSTOPPABLE!",
-                    "5 in a row?! The AUDACITY of being this productive!",
+                    "5 in a row?! The AUDACITY of this productivity!",
                     "Streak x5! Someone call the press!",
-                    "PENTAKILL! Five tasks slayed in a row!",
+                    "Five consecutive wins! You're on another level!",
+                    "High five! Literally \u{2014} that's FIVE in a row!",
+                    "Quintuple threat! Five tasks DOWN!",
+                    "5-streak unlocked! Keep the momentum ROLLING!",
+                    "FIVE! You're speed-running your to-do list!",
+                    "Cinco! That's five in a row for the math-challenged!",
+                    "Five-timer club! Membership: exclusive.",
                 ]
                 triggerCelebration(message: streakMessages.randomElement()!, withConfetti: true)
             } else if completionStreak.isMultiple(of: 3) {
@@ -551,18 +617,51 @@ final class Store {
                     "HAT TRICK! Three in a row, you're on FIRE!",
                     "Triple threat energy! Keep that streak going!",
                     "Three down, unstoppable vibes only!",
-                    "Streak mode: ACTIVATED. You're slaying!",
+                    "Streak mode: ACTIVATED. Keep rolling!",
+                    "Three-peat! You're building serious momentum!",
+                    "Trifecta! Three tasks, zero hesitation!",
+                    "Rule of three: start, execute, DOMINATE.",
+                    "Triple combo! The tasks didn't stand a chance!",
+                    "Three in a row! You're in the ZONE!",
+                    "Hat trick energy! What's next?!",
                 ]
                 triggerCelebration(message: streakMessages.randomElement()!, withConfetti: true)
             } else if totalDone == 10 || totalDone == 25 || totalDone == 50 || totalDone == 100 {
                 let milestoneMessages = [
-                    "\(totalDone) tasks SLAYED! You're making history!",
-                    "Milestone: \(totalDone) tasks done! You're a LEGEND!",
+                    "\(totalDone) tasks done! You're making history!",
+                    "Milestone: \(totalDone)! You're on a ROLL!",
                     "\(totalDone) down! At this rate you'll conquer the WORLD!",
+                    "\(totalDone) completed! The momentum is REAL!",
+                    "Look at that \u{2014} \(totalDone) tasks conquered!",
+                    "\(totalDone) and counting! Nothing can stop you!",
+                    "Milestone alert: \(totalDone) tasks CRUSHED!",
+                    "\(totalDone) tasks in the books. You're writing history!",
                 ]
                 triggerCelebration(message: milestoneMessages.randomElement()!, withConfetti: true)
             } else {
                 triggerCelebration(withConfetti: true)
+            }
+
+            // -- Evaluate medals --
+            let newMedals = MedalEngine.evaluate(
+                profile: &profile,
+                tasks: tasks,
+                projects: projects,
+                tags: tags,
+                pomodoroSessions: pomodoroSessions,
+                completedTask: tasks[idx],
+                completedToday: todayCount,
+                currentStreak: currentStreak,
+                bestStreak: bestStreak
+            )
+            if !newMedals.isEmpty {
+                pendingMedalUnlocks.append(contentsOf: newMedals)
+                // Show medal unlock with a delay so it doesn't overlap the celebration
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                        self?.showMedalUnlock = true
+                    }
+                }
             }
 
             NotificationService.shared.cancelReminder(taskId: id)
@@ -1239,6 +1338,17 @@ final class Store {
         }
     }
 
+    private static func dayString(_ date: Date) -> String {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        return f.string(from: date)
+    }
+
+    var dailyGoalProgress: Double {
+        guard profile.dailyGoal > 0 else { return 0 }
+        return min(1.0, Double(completedToday) / Double(profile.dailyGoal))
+    }
+
     func completedPerDay(last days: Int) -> [(Date, Int)] {
         let cal = Calendar.current
         return (0..<days).reversed().map { offset in
@@ -1280,6 +1390,25 @@ final class Store {
         }
     }
 
+    func moveTaskToDate(taskId: UUID, date: Date) {
+        guard let idx = tasks.firstIndex(where: { $0.id == taskId }) else { return }
+        let cal = Calendar.current
+        let old = tasks[idx].dueDate
+
+        // Preserve time-of-day if the task already had a due date
+        if let existing = old {
+            let timeComps = cal.dateComponents([.hour, .minute], from: existing)
+            var dateComps = cal.dateComponents([.year, .month, .day], from: date)
+            dateComps.hour = timeComps.hour
+            dateComps.minute = timeComps.minute
+            tasks[idx].dueDate = cal.date(from: dateComps) ?? date
+        } else {
+            tasks[idx].dueDate = cal.startOfDay(for: date)
+        }
+        invalidateCache()
+        save()
+    }
+
     // MARK: - Celebration
 
     private func pickQuote() -> String {
@@ -1287,8 +1416,8 @@ final class Store {
         let available = inspirationalQuotes.filter { !recentQuoteTexts.contains($0) }
         let text = (available.isEmpty ? inspirationalQuotes : available).randomElement()!
         recentQuoteTexts.append(text)
-        // Keep last 30 to avoid repeats
-        if recentQuoteTexts.count > 30 { recentQuoteTexts.removeFirst() }
+        // Keep last 80 to avoid repeats across 260+ quote pools
+        if recentQuoteTexts.count > 80 { recentQuoteTexts.removeFirst() }
         return text
     }
 

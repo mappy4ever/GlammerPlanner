@@ -77,10 +77,16 @@ struct OnboardingView: View {
                     .buttonStyle(ChicButtonStyle())
                 } else {
                     Button("Start Slaying") {
+                        // Set both the observable property and UserDefaults directly
                         settings.hasCompletedOnboarding = true
-                        dismiss()
+                        UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+                        // Small delay ensures binding updates before dismiss
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                            dismiss()
+                        }
                     }
                     .buttonStyle(ChicButtonStyle())
+                    .keyboardShortcut(.return, modifiers: [])
                 }
             }
             .padding(.horizontal, 28)

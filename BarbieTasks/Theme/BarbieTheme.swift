@@ -1,37 +1,36 @@
 import SwiftUI
 
-// MARK: - Barbie Color Palette
-// Sophisticated, chic — rose gold and blush with pink accents.
-// Dark mode: deep plum, champagne gold, glowing pink.
+// MARK: - Theme-Aware Color Palette
+// Colors now read dynamically from ThemeManager so they adapt to the active theme.
 
 extension Color {
     // Primary
-    static let barbiePink     = Color("BarbiePink",     bundle: nil, default: Color(hex: "#E84887"))
-    static let barbieDeep     = Color("BarbieDeep",     bundle: nil, default: Color(hex: "#D42F74"))
-    static let barbieRose     = Color("BarbieRose",     bundle: nil, default: Color(hex: "#F06098"))
+    static var barbiePink: Color     { ThemeManager.shared.palette.primary }
+    static var barbieDeep: Color     { ThemeManager.shared.palette.primaryDeep }
+    static var barbieRose: Color     { ThemeManager.shared.palette.primaryLight }
 
     // Surfaces
-    static let blush          = Color(light: Color(hex: "#FFF0F6"), dark: Color(hex: "#35102A"))
-    static let blushMid       = Color(light: Color(hex: "#FFD0E5"), dark: Color(hex: "#4D1838"))
-    static let blushDeep      = Color(light: Color(hex: "#FFD4E9"), dark: Color(hex: "#3D1430"))
-    static let roseGold       = Color(hex: "#E8A0B0")
+    static var blush: Color          { ThemeManager.shared.palette.surface }
+    static var blushMid: Color       { ThemeManager.shared.palette.surfaceMid }
+    static var blushDeep: Color      { ThemeManager.shared.palette.surfaceDeep }
+    static var roseGold: Color       { ThemeManager.shared.palette.primaryLight.opacity(0.6) }
 
     // Text
-    static let inkPrimary     = Color(light: Color(hex: "#3D1028"), dark: Color(hex: "#FFD6E8"))
-    static let inkSecondary   = Color(light: Color(hex: "#8A3060"), dark: Color(hex: "#F0A0C0"))
-    static let inkMuted       = Color(light: Color(hex: "#C06888"), dark: Color(hex: "#B06888"))
+    static var inkPrimary: Color     { ThemeManager.shared.palette.textPrimary }
+    static var inkSecondary: Color   { ThemeManager.shared.palette.textSecondary }
+    static var inkMuted: Color       { ThemeManager.shared.palette.textMuted }
 
     // Borders
-    static let petal          = Color(light: Color(hex: "#F5A0C0"), dark: Color(hex: "#6E2850"))
-    static let petalLight     = Color(light: Color(hex: "#FFC4DC"), dark: Color(hex: "#5A2042"))
+    static var petal: Color          { ThemeManager.shared.palette.border }
+    static var petalLight: Color     { ThemeManager.shared.palette.borderLight }
 
     // Priority
-    static let priHigh        = Color(hex: "#D4577A")
-    static let priMed         = Color(hex: "#D4956B")
-    static let priLow         = Color(hex: "#6BA3C9")
+    static var priHigh: Color        { ThemeManager.shared.palette.priorityHigh }
+    static var priMed: Color         { ThemeManager.shared.palette.priorityMed }
+    static var priLow: Color         { ThemeManager.shared.palette.priorityLow }
 
-    // Gold (for accents in dark mode)
-    static let gold           = Color(hex: "#D4A66B")
+    // Gold (for accents)
+    static var gold: Color           { ThemeManager.shared.palette.accent }
 
     // Project presets
     static let projectColors: [String] = [

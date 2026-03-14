@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SidebarView: View {
     @Environment(Store.self) private var store
+    @Environment(AppSettings.self) private var settings
 
     var body: some View {
         @Bindable var store = store
@@ -19,7 +20,7 @@ struct SidebarView: View {
                                 startPoint: .leading, endPoint: .trailing
                             )
                         )
-                    Text("Get it done, gorgeously")
+                    Text(AppThemeId(rawValue: settings.appTheme)?.tagline ?? "Get it done, gorgeously")
                         .font(.system(size: 10, weight: .semibold, design: .rounded))
                         .foregroundStyle(Color.inkMuted)
                 }
@@ -251,15 +252,10 @@ struct SidebarView: View {
                 .listRowSeparator(.hidden)
                 .listRowBackground(Color.clear)
 
-                HStack {
-                    Spacer()
-                    Text("\(store.completedToday) done today")
-                        .font(.system(size: 11, weight: .semibold, design: .rounded))
-                        .foregroundStyle(Color.inkMuted)
-                    Spacer()
-                }
-                .listRowSeparator(.hidden)
-                .listRowBackground(Color.clear)
+                // Daily goal mini ring + streak
+                dailyGoalFooter
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
             }
         }
         .listStyle(.sidebar)
@@ -268,6 +264,72 @@ struct SidebarView: View {
         .onChange(of: store.selectedView) {
             store.selectedTaskIds = []
         }
+    }
+
+    private var dailyGoalFooter: some View {
+        let goal = store.profile.dailyGoal
+        let done = store.completedToday
+        let progress = store.dailyGoalProgress
+
+        return HStack(spacing: 10) {
+            // Mini progress ring
+            ZStack {
+                Circle()
+                    .stroke(Color.petal, lineWidth: 3)
+                    .frame(width: 28, height: 28)
+
+                Circle()
+                    .trim(from: 0, to: progress)
+                    .stroke(
+                        LinearGradient(
+                            colors: done >= goal ? [.barbieRose, .barbiePink] : [.barbiePink, .barbieDeep],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        style: StrokeStyle(lineWidth: 3, lineCap: .round)
+                    )
+                    .frame(width: 28, height: 28)
+                    .rotationEffect(.degrees(-90))
+                    .animation(.spring(response: 0.6, dampingFraction: 0.7), value: progress)
+
+                Text("\(done)")
+                    .font(.system(size: 9, weight: .bold, design: .rounded))
+                    .foregroundStyle(done >= goal ? Color.barbiePink : Color.inkPrimary)
+            }
+
+            VStack(alignment: .leading, spacing: 1) {
+                if done >= goal {
+                    Text("Goal reached!")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color.barbiePink)
+                } else {
+                    Text("\(done)/\(goal) today")
+                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        .foregroundStyle(Color.inkSecondary)
+                }
+            }
+
+            Spacer()
+
+            // Streak flame
+            if store.currentStreak > 0 {
+                HStack(spacing: 3) {
+                    Image(systemName: "flame.fill")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [.barbiePink, Color(hex: "#FF6B6B")],
+                                startPoint: .bottom,
+                                endPoint: .top
+                            )
+                        )
+                    Text("\(store.currentStreak)")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color.inkPrimary)
+                }
+            }
+        }
+        .padding(.vertical, 2)
     }
 
     @ViewBuilder

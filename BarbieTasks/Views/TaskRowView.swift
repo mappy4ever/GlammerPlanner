@@ -109,15 +109,24 @@ struct TaskRowView: View {
                 } else {
                     store.selectedTaskIds.insert(task.id)
                 }
-            } else {
+            } else if settings.autoOpenDetail {
+                // Auto-open: clicking toggles the detail panel
                 withAnimation(.smooth(duration: 0.3)) {
                     store.selectedTaskId = (store.selectedTaskId == task.id) ? nil : task.id
+                }
+            } else {
+                // Manual mode: clicking just highlights, use detail button to open panel
+                withAnimation(.smooth(duration: 0.3)) {
+                    if store.selectedTaskId == task.id {
+                        store.selectedTaskId = nil
+                    }
+                    // Just highlight the row but don't open detail
                 }
             }
         }
     }
 
-    // MARK: - Action Buttons (trash, restore — separate hit targets)
+    // MARK: - Action Buttons (detail, trash, restore — separate hit targets)
 
     @ViewBuilder
     private var actionButtons: some View {
@@ -129,6 +138,23 @@ struct TaskRowView: View {
                         .foregroundStyle(Color.inkMuted)
                 }
                 .buttonStyle(.plain).help("Restore")
+            }
+
+            // Detail/edit button
+            if !isTrashView {
+                Button {
+                    withAnimation(.smooth(duration: 0.3)) {
+                        store.selectedTaskId = task.id
+                    }
+                } label: {
+                    Image(systemName: "info.circle")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(Color.barbiePink.opacity(0.6))
+                }
+                .buttonStyle(.plain)
+                .opacity(isSelected || isHovered ? 1 : 0)
+                .animation(.smooth(duration: 0.25), value: isHovered)
+                .help("Open details")
             }
 
             Button {

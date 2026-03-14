@@ -15,6 +15,23 @@ struct DetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
+                // Close button
+                HStack {
+                    Spacer()
+                    Button {
+                        withAnimation(.smooth(duration: 0.25)) {
+                            store.selectedTaskId = nil
+                        }
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundStyle(Color.inkMuted.opacity(0.5))
+                    }
+                    .buttonStyle(.plain)
+                    .help("Close details")
+                }
+                .padding(.bottom, 4)
+
                 titleSection
                 Divider().padding(.vertical, 12)
                 fieldsSection

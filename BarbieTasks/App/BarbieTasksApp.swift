@@ -15,7 +15,7 @@ struct BarbieTasksApp: App {
             ContentView()
                 .environment(store)
                 .environment(settings)
-                .frame(minWidth: 780, minHeight: 480)
+                .frame(minWidth: 860, minHeight: 520)
                 .preferredColorScheme(settings.preferredColorScheme)
                 .onAppear {
                     NotificationService.shared.registerActions()

@@ -12,13 +12,84 @@ struct SettingsView: View {
             integrationsTab.tabItem { Label("Integrations", systemImage: "link") }
             dataTab.tabItem { Label("Data", systemImage: "externaldrive") }
         }
-        .frame(width: 480, height: 380)
+        .frame(width: 480, height: 520)
     }
 
     // MARK: - General
 
     private var generalTab: some View {
         Form {
+            Section("Theme") {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
+                    ForEach(AppThemeId.allCases) { theme in
+                        let isSelected = settings.appTheme == theme.rawValue
+                        Button {
+                            settings.appTheme = theme.rawValue
+                        } label: {
+                            HStack(spacing: 10) {
+                                // Color preview circles — show full palette rainbow
+                                HStack(spacing: -3) {
+                                    Circle().fill(theme.palette.primary)
+                                        .frame(width: 14, height: 14)
+                                    Circle().fill(theme.palette.priorityHigh)
+                                        .frame(width: 14, height: 14)
+                                    Circle().fill(theme.palette.accent)
+                                        .frame(width: 14, height: 14)
+                                    Circle().fill(theme.palette.priorityMed)
+                                        .frame(width: 14, height: 14)
+                                    Circle().fill(theme.palette.priorityLow)
+                                        .frame(width: 14, height: 14)
+                                }
+
+                                VStack(alignment: .leading, spacing: 1) {
+                                    Text(theme.name)
+                                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                                        .foregroundStyle(isSelected ? theme.palette.primary : Color.primary)
+                                    Text(theme.tagline)
+                                        .font(.system(size: 9, weight: .medium, design: .rounded))
+                                        .foregroundStyle(.secondary)
+                                        .lineLimit(1)
+                                }
+
+                                Spacer()
+
+                                if isSelected {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .font(.system(size: 14))
+                                        .foregroundStyle(theme.palette.primary)
+                                }
+                            }
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(isSelected ? theme.palette.primary.opacity(0.1) : Color.clear)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(isSelected ? theme.palette.primary : Color.clear, lineWidth: 1.5)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+
+            Section("Quote Style") {
+                Picker("Celebration quotes", selection: Binding(
+                    get: { settings.quoteStyle },
+                    set: { settings.quoteStyle = $0 }
+                )) {
+                    Text("Match theme").tag("match_theme")
+                    ForEach(AppThemeId.allCases) { theme in
+                        Text(theme.name).tag(theme.rawValue)
+                    }
+                }
+                Text("Choose which quote style plays when you complete tasks.")
+                    .font(.system(size: 11, design: .rounded))
+                    .foregroundStyle(.secondary)
+            }
+
             Section("Appearance") {
                 Picker("Theme", selection: Binding(
                     get: { settings.appearance },
@@ -41,6 +112,39 @@ struct SettingsView: View {
                     get: { settings.autoCompletionTimestamp },
                     set: { settings.autoCompletionTimestamp = $0 }
                 ))
+            }
+
+            Section("Task Details") {
+                Toggle("Auto-open detail panel on click", isOn: Binding(
+                    get: { settings.autoOpenDetail },
+                    set: { settings.autoOpenDetail = $0 }
+                ))
+                Text("When off, click the detail button on a task to open the side panel.")
+                    .font(.system(size: 11, design: .rounded))
+                    .foregroundStyle(.secondary)
+            }
+
+            Section("Daily Goal") {
+                Stepper("Target: \(store.profile.dailyGoal) tasks/day",
+                        value: Binding(
+                            get: { store.profile.dailyGoal },
+                            set: { store.profile.dailyGoal = $0; store.save() }
+                        ),
+                        in: 1...50)
+                Text("Get a special celebration when you hit your daily target.")
+                    .font(.system(size: 11, design: .rounded))
+                    .foregroundStyle(.secondary)
+            }
+
+            Section("Calendar") {
+                Picker("Week starts on", selection: Binding(
+                    get: { settings.calendarStartDay },
+                    set: { settings.calendarStartDay = $0 }
+                )) {
+                    Text("Sunday").tag(1)
+                    Text("Monday").tag(2)
+                    Text("Saturday").tag(7)
+                }
             }
 
             Section("Notifications") {

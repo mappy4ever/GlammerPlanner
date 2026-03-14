@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		02208B1E6B284485A8CBF0FE /* CelebrationOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F93F80C88A3804B11682DE /* CelebrationOverlay.swift */; };
+		0CF34B29F0E082DBA199094F /* MedalEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA82851B65AA0EB6F6C5C2A /* MedalEngine.swift */; };
 		1012F79C6644B3D7FBED728D /* TaskTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD811FEE35A96D3BDF6A644 /* TaskTemplate.swift */; };
 		16288BFBD563B944229C62D9 /* BarbieTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29F3C191C935D2CD12064B64 /* BarbieTask.swift */; };
 		1954A4C7095810285AA7E34C /* SavedFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15B84E26B362ADB4F1C1199D /* SavedFilter.swift */; };
@@ -21,10 +22,12 @@
 		49C41B1B0A0AEEC8D725C6FA /* BarbieTasksApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7616AE0078CEACCE1BF9B503 /* BarbieTasksApp.swift */; };
 		52C0D7C77F0A36C9126401D9 /* Routine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B16BD56D6445CE25A18E27CD /* Routine.swift */; };
 		549DFF44FBF3D2AC65BDC8FD /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEA14BFA5F8BAAE592050193 /* CalendarView.swift */; };
+		5AE0AFC4B4C90559D9DE0DB8 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C035D8B2638D0ADD6E801ADD /* AppTheme.swift */; };
 		5B621F49BEA9362927E73684 /* TaskRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42A64217470BCFD484BBC8C8 /* TaskRowView.swift */; };
 		5EEF3CFA8EE5A1BFD759DB1B /* BarbieTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15134DF5115F0EA5BDBAECCD /* BarbieTheme.swift */; };
 		66A6D5D3C8D6B23DED64D338 /* FilterEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C232C4CE1EB9BE84E38D5C0 /* FilterEditorView.swift */; };
 		6EB6210FA2E037B4F519A7E4 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 704A24E0CAF5AC7646430571 /* AppSettings.swift */; };
+		72A3B902DF2A574483F1BC9E /* Medal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741145835C428A88AED11EAE /* Medal.swift */; };
 		74681ECE26848D35B1FEFAA4 /* RemindersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 132E2A4EC73C265CE091432E /* RemindersService.swift */; };
 		768CDD530480CBC655F1700A /* TaskListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21F368AD48293781254709C8 /* TaskListView.swift */; };
 		773F54B9ED0E5986EB95E30E /* RecurrenceRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3B98A532036B369B839E6D5 /* RecurrenceRule.swift */; };
@@ -33,7 +36,10 @@
 		87279FC78F7BCD063171FC51 /* BulkActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966F2F9380559D6F8D0E306B /* BulkActionBar.swift */; };
 		8ED7C50A97AA1C6B214A4A96 /* QuickAddPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C35AE79097CE399A5F1B16 /* QuickAddPanel.swift */; };
 		937FEDC664F2CCB3428CEBF7 /* TemplateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67A87C9FEBCCA207B7F94D8 /* TemplateManager.swift */; };
+		9B1EFFBCD2953F11055BAE22 /* MedalUnlockOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72A2425226A16606514B9CA3 /* MedalUnlockOverlay.swift */; };
 		A2F6640CC77C91DB7832EDDE /* RippleModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB381EC6DE263462361C5E /* RippleModifier.swift */; };
+		A3FF4245CDBE947608FD1E5B /* ThemeQuotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB2298B7720286FE7DEEFF1 /* ThemeQuotes.swift */; };
+		A5435BA2DE98C90A1C5D1504 /* BarbieTasksWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 46722173673A410E9829DA07 /* BarbieTasksWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A9F00DE430C69CA854B4CABC /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357FEAB2DFCE2AD72FBC0DF /* DetailView.swift */; };
 		AA6A93C493BBF1A85BD0676A /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E4ADB40E2C746207CA5EC8A /* Store.swift */; };
 		ACCE6FD406A432FAC9FE57E9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D305978C0A54B0A7C9DAA26D /* Assets.xcassets */; };
@@ -45,6 +51,7 @@
 		D2B09A50458F4FD062E090B9 /* RoutinesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C81F1C34530C44DB1E0B3BA /* RoutinesView.swift */; };
 		D4252CDF3A424282343C2A4D /* CommandPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3F912D12B1146BFD3E7DC6 /* CommandPalette.swift */; };
 		D440F5E9A1CA15B640C91853 /* PomodoroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42DAFA2DAB2EED744242AB64 /* PomodoroView.swift */; };
+		D4708E61F609891CF4FBAA89 /* BarbieTasksWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2A7B45CBBFB0F5E6441F76 /* BarbieTasksWidget.swift */; };
 		E1AD5D210D0348AF9A07A56F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A6E5BE2D07ABDC3D9406C41 /* SettingsView.swift */; };
 		E49DAAC796775C17EA78D087 /* NewProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78496CC078A708E36BF797C4 /* NewProjectView.swift */; };
 		EABA671C559EC8918C33D4FE /* UpdaterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A614604B9566B331C17E9B /* UpdaterService.swift */; };
@@ -54,8 +61,33 @@
 		F9E8291C145E41FE8C339214 /* SmartList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45A1FF276D9A56BA6C944C5D /* SmartList.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		9EF390F476531D27DF90A012 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 263579C12E3056EF6652977E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CEE0DEC9618044672C697F89;
+			remoteInfo = BarbieTasksWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		2BACA55E2FD7C7AE38BA6EE4 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				A5435BA2DE98C90A1C5D1504 /* BarbieTasksWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		0A3F912D12B1146BFD3E7DC6 /* CommandPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandPalette.swift; sourceTree = "<group>"; };
+		0DA82851B65AA0EB6F6C5C2A /* MedalEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedalEngine.swift; sourceTree = "<group>"; };
 		0E4ADB40E2C746207CA5EC8A /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		132E2A4EC73C265CE091432E /* RemindersService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersService.swift; sourceTree = "<group>"; };
 		15134DF5115F0EA5BDBAECCD /* BarbieTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarbieTheme.swift; sourceTree = "<group>"; };
@@ -74,13 +106,17 @@
 		42A64217470BCFD484BBC8C8 /* TaskRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRowView.swift; sourceTree = "<group>"; };
 		42DAFA2DAB2EED744242AB64 /* PomodoroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PomodoroView.swift; sourceTree = "<group>"; };
 		45A1FF276D9A56BA6C944C5D /* SmartList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartList.swift; sourceTree = "<group>"; };
+		46722173673A410E9829DA07 /* BarbieTasksWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BarbieTasksWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A050B18A0DAEFE98985ED38 /* HotkeyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyService.swift; sourceTree = "<group>"; };
 		5A6E5BE2D07ABDC3D9406C41 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		608154ACF5F714CC8ADBB383 /* KanbanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KanbanView.swift; sourceTree = "<group>"; };
+		6AB2298B7720286FE7DEEFF1 /* ThemeQuotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeQuotes.swift; sourceTree = "<group>"; };
 		6C232C4CE1EB9BE84E38D5C0 /* FilterEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterEditorView.swift; sourceTree = "<group>"; };
 		6CB326E61F07BDFA3C2BD2FF /* PomodoroSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PomodoroSession.swift; sourceTree = "<group>"; };
 		704A24E0CAF5AC7646430571 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		72191E9DFEEDB984CD06CCC4 /* BarbieTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarbieTag.swift; sourceTree = "<group>"; };
+		72A2425226A16606514B9CA3 /* MedalUnlockOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedalUnlockOverlay.swift; sourceTree = "<group>"; };
+		741145835C428A88AED11EAE /* Medal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Medal.swift; sourceTree = "<group>"; };
 		7616AE0078CEACCE1BF9B503 /* BarbieTasksApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarbieTasksApp.swift; sourceTree = "<group>"; };
 		78496CC078A708E36BF797C4 /* NewProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewProjectView.swift; sourceTree = "<group>"; };
 		81FAA33B28F2A4AB6121CCAB /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
@@ -95,8 +131,10 @@
 		B7E9B54B52918139B040649C /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
 		B945A07305E42D15B257D415 /* BarbieTasks.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BarbieTasks.entitlements; sourceTree = "<group>"; };
 		BCF8A81B58A532F0531599CC /* TaskAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskAttachment.swift; sourceTree = "<group>"; };
+		C035D8B2638D0ADD6E801ADD /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		C28850102014102D3FA9927B /* Ripple.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Ripple.metal; sourceTree = "<group>"; };
 		C5CD5277E9E802177B5C1C55 /* BarbieTasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BarbieTasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF2A7B45CBBFB0F5E6441F76 /* BarbieTasksWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarbieTasksWidget.swift; sourceTree = "<group>"; };
 		D305978C0A54B0A7C9DAA26D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E0FE7B16F840464307F7A5C0 /* TagEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagEditor.swift; sourceTree = "<group>"; };
 		E67A87C9FEBCCA207B7F94D8 /* TemplateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemplateManager.swift; sourceTree = "<group>"; };
@@ -119,9 +157,11 @@
 			isa = PBXGroup;
 			children = (
 				704A24E0CAF5AC7646430571 /* AppSettings.swift */,
+				C035D8B2638D0ADD6E801ADD /* AppTheme.swift */,
 				41BECBE8937374E4E9652876 /* BarbieProject.swift */,
 				72191E9DFEEDB984CD06CCC4 /* BarbieTag.swift */,
 				29F3C191C935D2CD12064B64 /* BarbieTask.swift */,
+				741145835C428A88AED11EAE /* Medal.swift */,
 				6CB326E61F07BDFA3C2BD2FF /* PomodoroSession.swift */,
 				A3B98A532036B369B839E6D5 /* RecurrenceRule.swift */,
 				B16BD56D6445CE25A18E27CD /* Routine.swift */,
@@ -130,6 +170,7 @@
 				0E4ADB40E2C746207CA5EC8A /* Store.swift */,
 				BCF8A81B58A532F0531599CC /* TaskAttachment.swift */,
 				1CD811FEE35A96D3BDF6A644 /* TaskTemplate.swift */,
+				6AB2298B7720286FE7DEEFF1 /* ThemeQuotes.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -138,6 +179,7 @@
 			isa = PBXGroup;
 			children = (
 				C5CD5277E9E802177B5C1C55 /* BarbieTasks.app */,
+				46722173673A410E9829DA07 /* BarbieTasksWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -146,6 +188,7 @@
 			isa = PBXGroup;
 			children = (
 				8B5FCE70B7F84CE5383EB044 /* BarbieTasks */,
+				E0E203838887C7C8372FC5FF /* BarbieTasksWidget */,
 				2F903C4D65EEFD55126B1043 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -211,6 +254,7 @@
 				B357FEAB2DFCE2AD72FBC0DF /* DetailView.swift */,
 				6C232C4CE1EB9BE84E38D5C0 /* FilterEditorView.swift */,
 				608154ACF5F714CC8ADBB383 /* KanbanView.swift */,
+				72A2425226A16606514B9CA3 /* MedalUnlockOverlay.swift */,
 				78496CC078A708E36BF797C4 /* NewProjectView.swift */,
 				81FAA33B28F2A4AB6121CCAB /* OnboardingView.swift */,
 				42DAFA2DAB2EED744242AB64 /* PomodoroView.swift */,
@@ -232,11 +276,20 @@
 			children = (
 				2AD634844AAA66D9E7D13D4B /* CalendarService.swift */,
 				4A050B18A0DAEFE98985ED38 /* HotkeyService.swift */,
+				0DA82851B65AA0EB6F6C5C2A /* MedalEngine.swift */,
 				B2F78492937FB85A1BF75EDC /* NotificationService.swift */,
 				132E2A4EC73C265CE091432E /* RemindersService.swift */,
 				82A614604B9566B331C17E9B /* UpdaterService.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		E0E203838887C7C8372FC5FF /* BarbieTasksWidget */ = {
+			isa = PBXGroup;
+			children = (
+				CF2A7B45CBBFB0F5E6441F76 /* BarbieTasksWidget.swift */,
+			);
+			path = BarbieTasksWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -249,11 +302,13 @@
 				354ECFF723D214D6E9FA304A /* Sources */,
 				06E1BF827106EC291525B311 /* Resources */,
 				A349AEDAC378E12633805536 /* Frameworks */,
+				2BACA55E2FD7C7AE38BA6EE4 /* Embed Foundation Extensions */,
 				997790BDD3803C02D0171CFE /* Inject Sparkle Keys into Info.plist */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				C555FCDB8735DC99F2B9CA62 /* PBXTargetDependency */,
 			);
 			name = BarbieTasks;
 			packageProductDependencies = (
@@ -262,6 +317,23 @@
 			productName = BarbieTasks;
 			productReference = C5CD5277E9E802177B5C1C55 /* BarbieTasks.app */;
 			productType = "com.apple.product-type.application";
+		};
+		CEE0DEC9618044672C697F89 /* BarbieTasksWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FF352176AFFB594D237D461C /* Build configuration list for PBXNativeTarget "BarbieTasksWidget" */;
+			buildPhases = (
+				7A647B95C4861015FDD396B4 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BarbieTasksWidget;
+			packageProductDependencies = (
+			);
+			productName = BarbieTasksWidget;
+			productReference = 46722173673A410E9829DA07 /* BarbieTasksWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -292,6 +364,7 @@
 			projectRoot = "";
 			targets = (
 				20620FE19178D4F1F5A1B1BC /* BarbieTasks */,
+				CEE0DEC9618044672C697F89 /* BarbieTasksWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -334,6 +407,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6EB6210FA2E037B4F519A7E4 /* AppSettings.swift in Sources */,
+				5AE0AFC4B4C90559D9DE0DB8 /* AppTheme.swift in Sources */,
 				B50F67C8BAF54D34A8293C1A /* BarbieIcons.swift in Sources */,
 				326F142DB0031ECCB19F25D2 /* BarbieProject.swift in Sources */,
 				C90B2CE9F4E8B0DFFF391EC3 /* BarbieTag.swift in Sources */,
@@ -350,6 +424,9 @@
 				66A6D5D3C8D6B23DED64D338 /* FilterEditorView.swift in Sources */,
 				F527A83E1C5FC6489192F8AA /* HotkeyService.swift in Sources */,
 				7F7111C7F415FB3E524CEDD6 /* KanbanView.swift in Sources */,
+				72A3B902DF2A574483F1BC9E /* Medal.swift in Sources */,
+				0CF34B29F0E082DBA199094F /* MedalEngine.swift in Sources */,
+				9B1EFFBCD2953F11055BAE22 /* MedalUnlockOverlay.swift in Sources */,
 				1A9722DCA09A65E9CEAAB031 /* NaturalDateParser.swift in Sources */,
 				E49DAAC796775C17EA78D087 /* NewProjectView.swift in Sources */,
 				78DC4DF8F36B524D5040CCA9 /* NotificationService.swift in Sources */,
@@ -375,11 +452,28 @@
 				5B621F49BEA9362927E73684 /* TaskRowView.swift in Sources */,
 				1012F79C6644B3D7FBED728D /* TaskTemplate.swift in Sources */,
 				937FEDC664F2CCB3428CEBF7 /* TemplateManager.swift in Sources */,
+				A3FF4245CDBE947608FD1E5B /* ThemeQuotes.swift in Sources */,
 				EABA671C559EC8918C33D4FE /* UpdaterService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7A647B95C4861015FDD396B4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D4708E61F609891CF4FBAA89 /* BarbieTasksWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C555FCDB8735DC99F2B9CA62 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CEE0DEC9618044672C697F89 /* BarbieTasksWidget */;
+			targetProxy = 9EF390F476531D27DF90A012 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		34E669B88C01B2890D491FED /* Debug */ = {
@@ -402,6 +496,24 @@
 				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mappy4ever.BarbieTasks;
 				PRODUCT_NAME = "Slay List";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		55CFE8C142B8D12D01888555 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 202603130331;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Slay List Widgets";
+				INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mappy4ever.BarbieTasksWidget;
+				PRODUCT_NAME = "Slay List Widgets";
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.9;
 			};
@@ -551,6 +663,24 @@
 			};
 			name = Release;
 		};
+		CE8C62C1B5B3B0F949E1E40C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 202603130331;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Slay List Widgets";
+				INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mappy4ever.BarbieTasksWidget;
+				PRODUCT_NAME = "Slay List Widgets";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -568,6 +698,15 @@
 			buildConfigurations = (
 				61A85019B19DB1862D5014D9 /* Debug */,
 				958170F91A55362C7A6F83F0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FF352176AFFB594D237D461C /* Build configuration list for PBXNativeTarget "BarbieTasksWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				55CFE8C142B8D12D01888555 /* Debug */,
+				CE8C62C1B5B3B0F949E1E40C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

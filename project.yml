@@ -21,6 +21,7 @@ targets:
           - "**/.DS_Store"
     dependencies:
       - package: Sparkle
+      - target: BarbieTasksWidget
     settings:
       base:
         MARKETING_VERSION: "1.1"
@@ -40,3 +41,22 @@ targets:
           PLIST="${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}"
           /usr/libexec/PlistBuddy -c "Add :SUPublicEDKey string 'EHEH4xRuex6WuC1pPc9iVzUtveF9FGOLoRP+3zkscZ8='" "$PLIST" 2>/dev/null || /usr/libexec/PlistBuddy -c "Set :SUPublicEDKey 'EHEH4xRuex6WuC1pPc9iVzUtveF9FGOLoRP+3zkscZ8='" "$PLIST"
           /usr/libexec/PlistBuddy -c "Add :SUFeedURL string 'https://raw.githubusercontent.com/mappy4ever/GlammerPlanner/main/appcast.xml'" "$PLIST" 2>/dev/null || /usr/libexec/PlistBuddy -c "Set :SUFeedURL 'https://raw.githubusercontent.com/mappy4ever/GlammerPlanner/main/appcast.xml'" "$PLIST"
+
+  BarbieTasksWidget:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: BarbieTasksWidget
+        excludes:
+          - "**/.DS_Store"
+    settings:
+      base:
+        MARKETING_VERSION: "1.1"
+        CURRENT_PROJECT_VERSION: "202603130331"
+        SWIFT_VERSION: "5.9"
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: "Slay List Widgets"
+        PRODUCT_NAME: "Slay List Widgets"
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks"
+        INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier: "com.apple.widgetkit-extension"

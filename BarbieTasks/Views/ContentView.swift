@@ -84,16 +84,38 @@ struct ContentView: View {
             }
             .onChange(of: store.selectedView) {
                 NSApp.mainWindow?.title = "\(store.currentViewLabel) \u{2014} Slay List"
-                if case .stats = store.selectedView {
+                if !isDetailRelevant {
                     store.selectedTaskId = nil
+                    withAnimation(.smooth(duration: 0.3)) {
+                        columnVisibility = .doubleColumn
+                    }
+                } else if store.selectedTaskId != nil {
+                    withAnimation(.smooth(duration: 0.3)) {
+                        columnVisibility = .all
+                    }
                 }
-                if case .smartList(.calendar) = store.selectedView {
-                    store.selectedTaskId = nil
+            }
+            .onChange(of: store.selectedTaskId) {
+                withAnimation(.smooth(duration: 0.3)) {
+                    if store.selectedTaskId != nil && isDetailRelevant {
+                        columnVisibility = .all
+                    } else {
+                        columnVisibility = .doubleColumn
+                    }
                 }
             }
             .onAppear {
                 NSApp.mainWindow?.title = "\(store.currentViewLabel) \u{2014} Slay List"
             }
+    }
+
+    /// Detail panel is only relevant for task-based views (not stats, calendar)
+    private var isDetailRelevant: Bool {
+        switch store.selectedView {
+        case .stats: return false
+        case .smartList(.calendar): return false
+        default: return true
+        }
     }
 
     @ViewBuilder
@@ -103,17 +125,17 @@ struct ContentView: View {
         ZStack {
             NavigationSplitView(columnVisibility: $columnVisibility) {
                 SidebarView()
-                    .navigationSplitViewColumnWidth(min: 200, ideal: 230, max: 280)
+                    .navigationSplitViewColumnWidth(min: 210, ideal: 240, max: 280)
             } content: {
                 contentColumn
                     .animation(.smooth(duration: 0.45), value: store.selectedView)
                     .animation(.smooth(duration: 0.4), value: store.viewMode)
-                    .navigationSplitViewColumnWidth(min: 300, ideal: 420, max: .infinity)
+                    .navigationSplitViewColumnWidth(min: 380, ideal: 480, max: .infinity)
             } detail: {
-                if let task = store.selectedTask {
+                if let task = store.selectedTask, isDetailRelevant {
                     DetailView(task: task)
                 } else {
-                    DetailPlaceholder()
+                    Color.blush
                 }
             }
             .searchable(text: $store.searchText, placement: .toolbar, prompt: "Search tasks...")
@@ -145,6 +167,7 @@ struct ContentView: View {
             // --- Overlays (all non-interactive ones MUST pass through hits) ---
             overlayViews
         }
+        .id(settings.appTheme) // Force full re-render when theme changes
     }
 
     @ViewBuilder
@@ -179,6 +202,9 @@ struct ContentView: View {
                 .allowsHitTesting(false)
                 .transition(.opacity)
         }
+
+        // Medal unlock overlay (interactive — tap to dismiss)
+        MedalUnlockOverlay()
 
         // Command palette (interactive — no hit-testing bypass)
         if store.showCommandPalette {

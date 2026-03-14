@@ -21,6 +21,9 @@ struct KanbanView: View {
 
                 Spacer()
 
+                // Progress ring
+                progressRing
+
                 Button {
                     withAnimation(.smooth(duration: 0.4)) { store.viewMode = .list }
                 } label: {
@@ -99,7 +102,7 @@ struct KanbanView: View {
                 .animation(.smooth(duration: 0.35), value: tasks.map(\.id))
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .frame(minWidth: 160, maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .clipped()
         .overlay(
             RoundedRectangle(cornerRadius: 12)
@@ -149,6 +152,8 @@ struct KanbanView: View {
                     .font(.system(size: 12, weight: .bold, design: .rounded))
                     .foregroundStyle(color)
                     .tracking(0.8)
+                    .lineLimit(1)
+                    .fixedSize(horizontal: true, vertical: false)
 
                 Spacer()
 
@@ -384,6 +389,29 @@ struct KanbanView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 24)
+    }
+
+    // MARK: - Progress Ring
+
+    private var progressRing: some View {
+        let total = store.currentViewTasks.count
+        let done = store.currentViewTasks.filter(\.isDone).count
+        let pct = total > 0 ? Double(done) / Double(total) : 0
+        return ZStack {
+            Circle().stroke(Color.petalLight, lineWidth: 5)
+            Circle()
+                .trim(from: 0, to: pct)
+                .stroke(Color.barbiePink, style: StrokeStyle(lineWidth: 5, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+                .animation(.smooth(duration: 0.4), value: pct)
+            Text("\(Int(pct * 100))%")
+                .font(.system(size: 10, weight: .bold, design: .rounded))
+                .foregroundStyle(Color.inkSecondary)
+        }
+        .frame(width: 42, height: 42)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Progress")
+        .accessibilityValue("\(done) of \(total) tasks completed, \(Int(pct * 100)) percent")
     }
 
     // MARK: - Helpers

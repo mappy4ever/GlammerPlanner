@@ -3,15 +3,29 @@ import EventKit
 
 struct CalendarView: View {
     @Environment(Store.self) private var store
+    @Environment(AppSettings.self) private var settings
 
     @State private var displayedMonth: Date = Calendar.current.startOfDay(for: Date())
     @State private var selectedDate: Date = Calendar.current.startOfDay(for: Date())
     @State private var showCalendarEvents: Bool = true
     @State private var calendarEvents: [Date: [EKEvent]] = [:]
+    @State private var monthTransitionDirection: Edge = .trailing
+    @State private var monthId = UUID()
+    @State private var dropTargetDate: Date?
 
-    private let calendar = Calendar.current
+    private var calendar: Calendar {
+        var cal = Calendar.current
+        cal.firstWeekday = settings.calendarStartDay
+        return cal
+    }
+
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 7)
-    private let weekdaySymbols = Calendar.current.veryShortStandaloneWeekdaySymbols
+
+    private var orderedWeekdaySymbols: [String] {
+        let symbols = Calendar.current.veryShortStandaloneWeekdaySymbols
+        let startIndex = settings.calendarStartDay - 1
+        return Array(symbols[startIndex...]) + Array(symbols[..<startIndex])
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -29,6 +43,11 @@ struct CalendarView: View {
             calendarGrid
                 .padding(.horizontal, 16)
                 .padding(.bottom, 12)
+                .id(monthId)
+                .transition(.asymmetric(
+                    insertion: .move(edge: monthTransitionDirection).combined(with: .opacity),
+                    removal: .move(edge: monthTransitionDirection == .trailing ? .leading : .trailing).combined(with: .opacity)
+                ))
 
             Divider()
                 .foregroundStyle(Color.petal)
@@ -59,8 +78,10 @@ struct CalendarView: View {
     private var monthHeader: some View {
         HStack {
             Button {
-                withAnimation(.easeInOut(duration: 0.25)) {
+                monthTransitionDirection = .leading
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
                     displayedMonth = calendar.date(byAdding: .month, value: -1, to: displayedMonth)!
+                    monthId = UUID()
                 }
             } label: {
                 Image(systemName: "chevron.left")
@@ -73,15 +94,39 @@ struct CalendarView: View {
 
             Spacer()
 
-            Text(monthYearString)
-                .font(.system(size: 16, weight: .bold, design: .rounded))
-                .foregroundStyle(Color.inkPrimary)
+            VStack(spacing: 1) {
+                Text(monthYearString)
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color.inkPrimary)
+            }
 
             Spacer()
 
+            // Today button
+            if !calendar.isDate(displayedMonth, equalTo: Date(), toGranularity: .month) {
+                Button {
+                    monthTransitionDirection = displayedMonth > Date() ? .leading : .trailing
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+                        displayedMonth = calendar.startOfDay(for: Date())
+                        selectedDate = displayedMonth
+                        monthId = UUID()
+                    }
+                } label: {
+                    Text("Today")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color.barbiePink)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.barbiePink.opacity(0.1), in: Capsule())
+                }
+                .buttonStyle(.plain)
+            }
+
             Button {
-                withAnimation(.easeInOut(duration: 0.25)) {
+                monthTransitionDirection = .trailing
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
                     displayedMonth = calendar.date(byAdding: .month, value: 1, to: displayedMonth)!
+                    monthId = UUID()
                 }
             } label: {
                 Image(systemName: "chevron.right")
@@ -102,7 +147,7 @@ struct CalendarView: View {
 
     private var weekdayHeader: some View {
         LazyVGrid(columns: columns, spacing: 2) {
-            ForEach(weekdaySymbols, id: \.self) { symbol in
+            ForEach(orderedWeekdaySymbols, id: \.self) { symbol in
                 Text(symbol)
                     .font(.system(size: 11, weight: .semibold, design: .rounded))
                     .foregroundStyle(Color.inkMuted)
@@ -117,12 +162,12 @@ struct CalendarView: View {
     private var calendarGrid: some View {
         let days = daysInMonth()
         return LazyVGrid(columns: columns, spacing: 2) {
-            ForEach(days, id: \.self) { date in
+            ForEach(Array(days.enumerated()), id: \.offset) { _, date in
                 if let date {
                     dayCellView(date)
                 } else {
                     Color.clear
-                        .frame(height: 40)
+                        .frame(height: 44)
                 }
             }
         }
@@ -133,38 +178,75 @@ struct CalendarView: View {
         let isSelected = calendar.isDate(date, inSameDayAs: selectedDate)
         let dayTasks = store.tasksForDay(date)
         let dayEvents = calendarEvents[calendar.startOfDay(for: date)] ?? []
+        let isDropTarget = dropTargetDate.map { calendar.isDate($0, inSameDayAs: date) } ?? false
+        let completedCount = dayTasks.filter(\.isDone).count
+        let totalCount = dayTasks.count
 
-        return Button {
-            withAnimation(.easeOut(duration: 0.15)) {
-                selectedDate = date
-            }
-        } label: {
-            VStack(spacing: 2) {
-                Text("\(calendar.component(.day, from: date))")
-                    .font(.system(size: 13, weight: isToday ? .bold : .medium, design: .rounded))
-                    .foregroundStyle(dayCellTextColor(isToday: isToday, isSelected: isSelected))
+        return VStack(spacing: 2) {
+            Text("\(calendar.component(.day, from: date))")
+                .font(.system(size: 13, weight: isToday ? .bold : .medium, design: .rounded))
+                .foregroundStyle(dayCellTextColor(isToday: isToday, isSelected: isSelected))
 
-                // Indicator dots
-                HStack(spacing: 2) {
-                    if !dayTasks.isEmpty {
+            // Indicator dots
+            HStack(spacing: 2) {
+                if totalCount > 0 {
+                    // Show completion as mini bar
+                    if totalCount <= 3 {
                         taskDots(for: dayTasks)
-                    }
-                    if showCalendarEvents && !dayEvents.isEmpty {
-                        Circle()
-                            .fill(Color.gold)
-                            .frame(width: 4, height: 4)
+                    } else {
+                        // Compact count badge for busy days
+                        Text("\(totalCount)")
+                            .font(.system(size: 7, weight: .bold, design: .rounded))
+                            .foregroundStyle(completedCount == totalCount ? Color.barbiePink : Color.inkMuted)
+                            .padding(.horizontal, 3)
+                            .background(
+                                Capsule()
+                                    .fill(completedCount == totalCount ? Color.barbiePink.opacity(0.15) : Color.petal.opacity(0.5))
+                            )
                     }
                 }
-                .frame(height: 5)
+                if showCalendarEvents && !dayEvents.isEmpty {
+                    Circle()
+                        .fill(Color.gold)
+                        .frame(width: 4, height: 4)
+                }
             }
-            .frame(maxWidth: .infinity)
-            .frame(height: 40)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(dayCellBackground(isToday: isToday, isSelected: isSelected))
-            )
+            .frame(height: 6)
         }
-        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
+        .frame(height: 44)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(dayCellBackground(isToday: isToday, isSelected: isSelected))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(
+                            isDropTarget ? Color.barbiePink : Color.clear,
+                            lineWidth: isDropTarget ? 2 : 0
+                        )
+                )
+        )
+        .scaleEffect(isDropTarget ? 1.08 : 1.0)
+        .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isDropTarget)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            withAnimation(.spring(response: 0.25, dampingFraction: 0.8)) {
+                selectedDate = date
+            }
+        }
+        .dropDestination(for: String.self) { items, _ in
+            guard let idString = items.first, let taskId = UUID(uuidString: idString) else { return false }
+            store.moveTaskToDate(taskId: taskId, date: date)
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                selectedDate = date
+                dropTargetDate = nil
+            }
+            return true
+        } isTargeted: { targeted in
+            withAnimation(.spring(response: 0.2, dampingFraction: 0.8)) {
+                dropTargetDate = targeted ? date : nil
+            }
+        }
     }
 
     private func taskDots(for tasks: [BarbieTask]) -> some View {
@@ -179,7 +261,9 @@ struct CalendarView: View {
     private func tasksColors(_ tasks: [BarbieTask]) -> [Color] {
         var colors: [Color] = []
         for task in tasks {
-            if let proj = store.project(for: task) {
+            if task.isDone {
+                if !colors.contains(.barbiePink) { colors.append(.barbiePink.opacity(0.4)) }
+            } else if let proj = store.project(for: task) {
                 if !colors.contains(proj.color) { colors.append(proj.color) }
             } else {
                 if !colors.contains(.barbiePink) { colors.append(.barbiePink) }
@@ -230,12 +314,23 @@ struct CalendarView: View {
         return ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
                 // Date label
-                Text(selectedDateLabel)
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
-                    .foregroundStyle(Color.inkPrimary)
-                    .padding(.horizontal, 16)
-                    .padding(.top, 12)
-                    .padding(.bottom, 8)
+                HStack {
+                    Text(selectedDateLabel)
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color.inkPrimary)
+
+                    Spacer()
+
+                    if !dayTasks.isEmpty {
+                        let done = dayTasks.filter(\.isDone).count
+                        Text("\(done)/\(dayTasks.count) done")
+                            .font(.system(size: 11, weight: .bold, design: .rounded))
+                            .foregroundStyle(done == dayTasks.count ? Color.barbiePink : Color.inkMuted)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .padding(.bottom, 8)
 
                 // Tasks section
                 if !dayTasks.isEmpty {
@@ -243,6 +338,7 @@ struct CalendarView: View {
 
                     ForEach(dayTasks) { task in
                         TaskRowView(task: task)
+                            .draggable(task.id.uuidString)
                     }
                 }
 
@@ -343,6 +439,9 @@ struct CalendarView: View {
             Text("Nothing scheduled")
                 .font(.system(size: 14, weight: .medium, design: .rounded))
                 .foregroundStyle(Color.inkMuted)
+            Text("Drag tasks here to schedule them")
+                .font(.system(size: 11, weight: .medium, design: .rounded))
+                .foregroundStyle(Color.inkMuted.opacity(0.6))
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
@@ -357,8 +456,8 @@ struct CalendarView: View {
         else { return [] }
 
         let firstWeekday = calendar.component(.weekday, from: firstOfMonth)
-        // Sunday = 1 in the default calendar
-        let leadingBlanks = (firstWeekday - calendar.firstWeekday + 7) % 7
+        let startDay = settings.calendarStartDay
+        let leadingBlanks = (firstWeekday - startDay + 7) % 7
 
         var days: [Date?] = Array(repeating: nil, count: leadingBlanks)
         for day in range {
