@@ -133,8 +133,9 @@ struct KanbanView: View {
         let isSelected: Bool
         let onTap: () -> Void
         @State private var isHovered = false
+        @State private var isDragging = false
 
-        var body: some View {
+        private var cardContent: some View {
             VStack(alignment: .leading, spacing: 6) {
                 // Title row with priority icon
                 HStack(spacing: 6) {
@@ -182,19 +183,32 @@ struct KanbanView: View {
                 RoundedRectangle(cornerRadius: 8)
                     .strokeBorder(isSelected ? Color.barbiePink : Color.petal, lineWidth: isSelected ? 1.5 : 0.5)
             )
+        }
+
+        var body: some View {
+            cardContent
             .shadow(color: isHovered ? Color.barbiePink.opacity(0.15) : Color.clear, radius: 6, y: 2)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
                     .strokeBorder(isHovered && !isSelected ? Color.barbiePink.opacity(0.3) : Color.clear, lineWidth: 1)
             )
+            .opacity(isDragging ? 0.3 : 1.0)
             .animation(.smooth(duration: 0.15), value: isHovered)
+            .animation(.smooth(duration: 0.15), value: isDragging)
             .contentShape(RoundedRectangle(cornerRadius: 8))
             .onHover { isHovered = $0 }
             .onTapGesture { onTap() }
             .accessibilityElement(children: .combine)
             .accessibilityLabel(kanbanCardAccessibilityLabel)
             .accessibilityHint("Drag to move between columns, or double tap to select")
-            .draggable(task.id.uuidString)
+            .draggable(task.id.uuidString) {
+                // Custom drag preview — card follows the cursor
+                cardContent
+                    .frame(width: 200)
+                    .shadow(color: Color.barbiePink.opacity(0.25), radius: 12, y: 4)
+                    .onAppear { isDragging = true }
+                    .onDisappear { isDragging = false }
+            }
         }
 
         private var kanbanCardAccessibilityLabel: String {
