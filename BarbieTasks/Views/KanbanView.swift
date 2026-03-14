@@ -272,7 +272,6 @@ struct KanbanView: View {
                                     )
                             )
                     )
-                    .rippleEffect()
                     .transition(
                         .asymmetric(
                             insertion: .push(from: .top).combined(with: .opacity),
