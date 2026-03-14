@@ -31,9 +31,9 @@ final class Store {
     var showNewProject: Bool = false
     var showNewTag: Bool = false
     var showCommandPalette: Bool = false
-    var celebrationQuote: Quote?
+    var activeCelebrations: [Quote] = []
     var showConfetti: Bool = false
-    private var celebrationQueue: [(quote: Quote, confetti: Bool)] = []
+    private var recentQuoteTexts: [String] = []
     private var completionStreak: Int = 0
     var toastMessage: String?
     var showTemplateManager: Bool = false
@@ -1282,43 +1282,35 @@ final class Store {
 
     // MARK: - Celebration
 
+    private func pickQuote() -> String {
+        // Avoid repeating recent quotes
+        let available = inspirationalQuotes.filter { !recentQuoteTexts.contains($0) }
+        let text = (available.isEmpty ? inspirationalQuotes : available).randomElement()!
+        recentQuoteTexts.append(text)
+        // Keep last 30 to avoid repeats
+        if recentQuoteTexts.count > 30 { recentQuoteTexts.removeFirst() }
+        return text
+    }
+
     private func triggerCelebration(message: String? = nil, withConfetti: Bool = false) {
-        let q = message.map { Quote(text: $0) } ?? inspirationalQuotes.randomElement()!
+        let text = message ?? pickQuote()
+        let quote = Quote(text: text)
 
-        if celebrationQuote != nil {
-            // Queue it
-            celebrationQueue.append((quote: q, confetti: withConfetti))
-            return
-        }
-
-        showCelebration(q, confetti: withConfetti)
-    }
-
-    private func showCelebration(_ quote: Quote, confetti: Bool) {
         withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-            celebrationQuote = quote
-            if confetti {
-                showConfetti = true
-            }
+            activeCelebrations.append(quote)
+            if withConfetti { showConfetti = true }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) { [weak self] in
-            withAnimation(.smooth(duration: 0.6)) {
-                self?.celebrationQuote = nil
+        // Auto-dismiss this specific quote after 2.8s
+        let quoteId = quote.id
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.8) { [weak self] in
+            withAnimation(.smooth(duration: 0.5)) {
+                self?.activeCelebrations.removeAll { $0.id == quoteId }
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
-                self?.showConfetti = false
-                self?.showNextCelebration()
-            }
-        }
-    }
-
-    private func showNextCelebration() {
-        guard !celebrationQueue.isEmpty else { return }
-        let next = celebrationQueue.removeFirst()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                self?.showCelebration(next.quote, confetti: next.confetti)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                if self?.activeCelebrations.isEmpty == true {
+                    self?.showConfetti = false
+                }
             }
         }
     }
