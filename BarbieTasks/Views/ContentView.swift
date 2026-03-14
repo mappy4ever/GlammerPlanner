@@ -106,8 +106,8 @@ struct ContentView: View {
                     .navigationSplitViewColumnWidth(min: 200, ideal: 230, max: 280)
             } content: {
                 contentColumn
-                    .animation(.spring(response: 0.35, dampingFraction: 0.85), value: store.selectedView)
-                    .animation(.spring(response: 0.3, dampingFraction: 0.8), value: store.viewMode)
+                    .animation(.smooth(duration: 0.35), value: store.selectedView)
+                    .animation(.smooth(duration: 0.3), value: store.viewMode)
                     .navigationSplitViewColumnWidth(min: 300, ideal: 420, max: .infinity)
             } detail: {
                 if let task = store.selectedTask {

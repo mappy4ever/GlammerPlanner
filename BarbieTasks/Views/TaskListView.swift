@@ -23,8 +23,8 @@ struct TaskListView: View {
                         ForEach(tasks) { task in
                             TaskRowView(task: task)
                                 .transition(.asymmetric(
-                                    insertion: .scale(scale: 0.8).combined(with: .opacity).combined(with: .offset(y: -12)),
-                                    removal: .scale(scale: 0.9).combined(with: .opacity).combined(with: .offset(x: 40))
+                                    insertion: .scale(scale: 0.92).combined(with: .opacity),
+                                    removal: .scale(scale: 0.95).combined(with: .opacity).combined(with: .offset(x: 20))
                                 ))
                         }
                     }
@@ -32,7 +32,7 @@ struct TaskListView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 4)
                 .padding(.bottom, 60)
-                .animation(.spring(response: 0.4, dampingFraction: 0.7), value: tasks.count)
+                .animation(.smooth(duration: 0.4), value: tasks.count)
             }
         }
         .background(Color.blush)
@@ -354,7 +354,7 @@ struct TaskListView: View {
 
     private func submitQuickAdd() {
         guard !quickAddText.isEmpty else { return }
-        withAnimation(.spring(response: 0.35, dampingFraction: 0.65)) {
+        withAnimation(.smooth(duration: 0.35)) {
             store.addTask(title: quickAddText)
             quickAddText = ""
         }

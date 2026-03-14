@@ -47,11 +47,11 @@ struct TaskRowView: View {
         .accessibilityAction(.default) { completeTask() }
         .onChange(of: task.isDone) { old, new in
             if new && !old {
-                withAnimation(.spring(response: 0.15, dampingFraction: 0.5)) {
+                withAnimation(.smooth(duration: 0.25)) {
                     completionFlash = 0.3
                     rowScale = 0.97
                 }
-                withAnimation(.spring(response: 0.4, dampingFraction: 0.6).delay(0.15)) {
+                withAnimation(.smooth(duration: 0.5).delay(0.2)) {
                     completionFlash = 0
                     rowScale = 1.0
                 }
@@ -134,7 +134,7 @@ struct TaskRowView: View {
                 if isTrashView {
                     showDeleteConfirm = true
                 } else {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    withAnimation(.smooth(duration: 0.35)) {
                         store.trashTask(task.id)
                     }
                 }
@@ -179,7 +179,7 @@ struct TaskRowView: View {
     private func completeTask() {
         let wasDone = task.isDone
 
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.65)) {
+        withAnimation(.smooth(duration: 0.35)) {
             store.toggleTask(task.id)
         }
 
@@ -187,10 +187,10 @@ struct TaskRowView: View {
             showRipple = true
             showSparkle = true
 
-            withAnimation(.spring(response: 0.12, dampingFraction: 0.3)) {
-                checkBounce = 1.5
+            withAnimation(.spring(response: 0.2, dampingFraction: 0.4)) {
+                checkBounce = 1.35
             }
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.5).delay(0.08)) {
+            withAnimation(.smooth(duration: 0.35).delay(0.12)) {
                 checkBounce = 1.0
             }
 
