@@ -133,9 +133,8 @@ struct KanbanView: View {
         let isSelected: Bool
         let onTap: () -> Void
         @State private var isHovered = false
-        @State private var isDragging = false
 
-        private var cardContent: some View {
+        var body: some View {
             VStack(alignment: .leading, spacing: 6) {
                 // Title row with priority icon
                 HStack(spacing: 6) {
@@ -153,14 +152,12 @@ struct KanbanView: View {
 
                 // Metadata row
                 HStack(spacing: 8) {
-                    // Due date
                     if let due = task.formattedDue {
                         Label(due, systemImage: "calendar")
                             .font(.system(size: 10, weight: .regular, design: .rounded))
                             .foregroundStyle(task.isOverdue ? Color.priHigh : Color.inkMuted)
                     }
 
-                    // Project name
                     if let project = store.project(for: task) {
                         Text(project.title)
                             .font(.system(size: 10, weight: .regular, design: .rounded))
@@ -169,7 +166,6 @@ struct KanbanView: View {
 
                     Spacer(minLength: 0)
 
-                    // Subtask progress
                     if let progress = task.subtaskProgress {
                         Text(progress)
                             .font(.system(size: 10, weight: .regular, design: .rounded))
@@ -183,18 +179,12 @@ struct KanbanView: View {
                 RoundedRectangle(cornerRadius: 8)
                     .strokeBorder(isSelected ? Color.barbiePink : Color.petal, lineWidth: isSelected ? 1.5 : 0.5)
             )
-        }
-
-        var body: some View {
-            cardContent
             .shadow(color: isHovered ? Color.barbiePink.opacity(0.15) : Color.clear, radius: 6, y: 2)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
                     .strokeBorder(isHovered && !isSelected ? Color.barbiePink.opacity(0.3) : Color.clear, lineWidth: 1)
             )
-            .opacity(isDragging ? 0.3 : 1.0)
             .animation(.smooth(duration: 0.15), value: isHovered)
-            .animation(.smooth(duration: 0.15), value: isDragging)
             .contentShape(RoundedRectangle(cornerRadius: 8))
             .onHover { isHovered = $0 }
             .onTapGesture { onTap() }
@@ -202,12 +192,19 @@ struct KanbanView: View {
             .accessibilityLabel(kanbanCardAccessibilityLabel)
             .accessibilityHint("Drag to move between columns, or double tap to select")
             .draggable(task.id.uuidString) {
-                // Custom drag preview — card follows the cursor
-                cardContent
-                    .frame(width: 200)
+                // Standalone drag preview — no Store dependency
+                Text(task.title)
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .foregroundStyle(Color.inkPrimary)
+                    .lineLimit(2)
+                    .padding(10)
+                    .frame(width: 200, alignment: .leading)
+                    .background(Color.blushMid, in: RoundedRectangle(cornerRadius: 8))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(Color.barbiePink, lineWidth: 1.5)
+                    )
                     .shadow(color: Color.barbiePink.opacity(0.25), radius: 12, y: 4)
-                    .onAppear { isDragging = true }
-                    .onDisappear { isDragging = false }
             }
         }
 
