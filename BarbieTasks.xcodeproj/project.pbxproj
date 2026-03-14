@@ -16,6 +16,7 @@
 		326F142DB0031ECCB19F25D2 /* BarbieProject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41BECBE8937374E4E9652876 /* BarbieProject.swift */; };
 		339DE7CEEBE66BBA4A61E27A /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E8831E1CD42ABB7E6360873 /* StatsView.swift */; };
 		34B6D239AD20C6DA24A524CB /* CalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD634844AAA66D9E7D13D4B /* CalendarService.swift */; };
+		37DB5F8697B07F153F0C996A /* Ripple.metal in Sources */ = {isa = PBXBuildFile; fileRef = C28850102014102D3FA9927B /* Ripple.metal */; };
 		3824A0E623628C439EC09B6B /* TaskAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF8A81B58A532F0531599CC /* TaskAttachment.swift */; };
 		49C41B1B0A0AEEC8D725C6FA /* BarbieTasksApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7616AE0078CEACCE1BF9B503 /* BarbieTasksApp.swift */; };
 		52C0D7C77F0A36C9126401D9 /* Routine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B16BD56D6445CE25A18E27CD /* Routine.swift */; };
@@ -32,6 +33,7 @@
 		87279FC78F7BCD063171FC51 /* BulkActionBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966F2F9380559D6F8D0E306B /* BulkActionBar.swift */; };
 		8ED7C50A97AA1C6B214A4A96 /* QuickAddPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C35AE79097CE399A5F1B16 /* QuickAddPanel.swift */; };
 		937FEDC664F2CCB3428CEBF7 /* TemplateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67A87C9FEBCCA207B7F94D8 /* TemplateManager.swift */; };
+		A2F6640CC77C91DB7832EDDE /* RippleModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FCB381EC6DE263462361C5E /* RippleModifier.swift */; };
 		A9F00DE430C69CA854B4CABC /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357FEAB2DFCE2AD72FBC0DF /* DetailView.swift */; };
 		AA6A93C493BBF1A85BD0676A /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E4ADB40E2C746207CA5EC8A /* Store.swift */; };
 		ACCE6FD406A432FAC9FE57E9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D305978C0A54B0A7C9DAA26D /* Assets.xcassets */; };
@@ -84,6 +86,7 @@
 		81FAA33B28F2A4AB6121CCAB /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		82A614604B9566B331C17E9B /* UpdaterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdaterService.swift; sourceTree = "<group>"; };
 		966F2F9380559D6F8D0E306B /* BulkActionBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkActionBar.swift; sourceTree = "<group>"; };
+		9FCB381EC6DE263462361C5E /* RippleModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RippleModifier.swift; sourceTree = "<group>"; };
 		A3B98A532036B369B839E6D5 /* RecurrenceRule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecurrenceRule.swift; sourceTree = "<group>"; };
 		A716CB6036E4E3F234EE5B00 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B16BD56D6445CE25A18E27CD /* Routine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Routine.swift; sourceTree = "<group>"; };
@@ -92,6 +95,7 @@
 		B7E9B54B52918139B040649C /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
 		B945A07305E42D15B257D415 /* BarbieTasks.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BarbieTasks.entitlements; sourceTree = "<group>"; };
 		BCF8A81B58A532F0531599CC /* TaskAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskAttachment.swift; sourceTree = "<group>"; };
+		C28850102014102D3FA9927B /* Ripple.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Ripple.metal; sourceTree = "<group>"; };
 		C5CD5277E9E802177B5C1C55 /* BarbieTasks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BarbieTasks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D305978C0A54B0A7C9DAA26D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E0FE7B16F840464307F7A5C0 /* TagEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagEditor.swift; sourceTree = "<group>"; };
@@ -159,6 +163,8 @@
 			children = (
 				356944FAAE7B72875BA47762 /* BarbieIcons.swift */,
 				15134DF5115F0EA5BDBAECCD /* BarbieTheme.swift */,
+				C28850102014102D3FA9927B /* Ripple.metal */,
+				9FCB381EC6DE263462361C5E /* RippleModifier.swift */,
 			);
 			path = Theme;
 			sourceTree = "<group>";
@@ -353,6 +359,8 @@
 				8ED7C50A97AA1C6B214A4A96 /* QuickAddPanel.swift in Sources */,
 				773F54B9ED0E5986EB95E30E /* RecurrenceRule.swift in Sources */,
 				74681ECE26848D35B1FEFAA4 /* RemindersService.swift in Sources */,
+				37DB5F8697B07F153F0C996A /* Ripple.metal in Sources */,
+				A2F6640CC77C91DB7832EDDE /* RippleModifier.swift in Sources */,
 				52C0D7C77F0A36C9126401D9 /* Routine.swift in Sources */,
 				D2B09A50458F4FD062E090B9 /* RoutinesView.swift in Sources */,
 				1954A4C7095810285AA7E34C /* SavedFilter.swift in Sources */,
