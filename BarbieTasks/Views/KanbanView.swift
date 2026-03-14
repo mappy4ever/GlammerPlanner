@@ -133,33 +133,8 @@ struct KanbanView: View {
         let isSelected: Bool
         let onTap: () -> Void
         @State private var isHovered = false
-        @State private var isDragging = false
-
-        /// Cached project name — captured once so drag preview doesn't need Store
-        private var projectName: String? {
-            store.project(for: task)?.title
-        }
 
         var body: some View {
-            cardBody
-            .opacity(isDragging ? 0 : 1)
-            .animation(.smooth(duration: 0.15), value: isHovered)
-            .animation(.smooth(duration: 0.1), value: isDragging)
-            .contentShape(RoundedRectangle(cornerRadius: 8))
-            .onHover { isHovered = $0 }
-            .onTapGesture { onTap() }
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel(kanbanCardAccessibilityLabel)
-            .accessibilityHint("Drag to move between columns, or double tap to select")
-            .draggable(task.id.uuidString) {
-                // Full card preview that follows the cursor
-                dragPreview
-                    .onAppear { isDragging = true }
-                    .onDisappear { isDragging = false }
-            }
-        }
-
-        private var cardBody: some View {
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 6) {
                     if task.priority != .none {
@@ -177,8 +152,8 @@ struct KanbanView: View {
                             .font(.system(size: 10, weight: .regular, design: .rounded))
                             .foregroundStyle(task.isOverdue ? Color.priHigh : Color.inkMuted)
                     }
-                    if let proj = projectName {
-                        Text(proj)
+                    if let project = store.project(for: task) {
+                        Text(project.title)
                             .font(.system(size: 10, weight: .regular, design: .rounded))
                             .foregroundStyle(Color.inkSecondary)
                     }
@@ -201,42 +176,14 @@ struct KanbanView: View {
                 RoundedRectangle(cornerRadius: 8)
                     .strokeBorder(isHovered && !isSelected ? Color.barbiePink.opacity(0.3) : Color.clear, lineWidth: 1)
             )
-        }
-
-        /// Drag preview — looks like the real card, no Store dependency
-        private var dragPreview: some View {
-            VStack(alignment: .leading, spacing: 6) {
-                HStack(spacing: 6) {
-                    Text(task.title)
-                        .font(.system(size: 12, weight: .medium, design: .rounded))
-                        .foregroundStyle(Color.inkPrimary)
-                        .lineLimit(2)
-                    Spacer(minLength: 0)
-                }
-                if task.formattedDue != nil || projectName != nil {
-                    HStack(spacing: 8) {
-                        if let due = task.formattedDue {
-                            Label(due, systemImage: "calendar")
-                                .font(.system(size: 10, weight: .regular, design: .rounded))
-                                .foregroundStyle(Color.inkMuted)
-                        }
-                        if let proj = projectName {
-                            Text(proj)
-                                .font(.system(size: 10, weight: .regular, design: .rounded))
-                                .foregroundStyle(Color.inkSecondary)
-                        }
-                        Spacer(minLength: 0)
-                    }
-                }
-            }
-            .padding(10)
-            .frame(width: 200, alignment: .leading)
-            .background(Color.blushMid, in: RoundedRectangle(cornerRadius: 8))
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .strokeBorder(Color.barbiePink, lineWidth: 1.5)
-            )
-            .shadow(color: Color.barbiePink.opacity(0.3), radius: 10, y: 3)
+            .animation(.smooth(duration: 0.15), value: isHovered)
+            .contentShape(RoundedRectangle(cornerRadius: 8))
+            .onHover { isHovered = $0 }
+            .onTapGesture { onTap() }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(kanbanCardAccessibilityLabel)
+            .accessibilityHint("Drag to move between columns, or double tap to select")
+            .draggable(task.id.uuidString)
         }
 
         private var kanbanCardAccessibilityLabel: String {
