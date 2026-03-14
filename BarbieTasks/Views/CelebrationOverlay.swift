@@ -252,11 +252,11 @@ struct CheckmarkRipple: View {
                 .opacity(ripple2Opacity)
         }
         .onAppear {
-            withAnimation(.smooth(duration: 0.45)) {
+            withAnimation(.smooth(duration: 0.6)) {
                 ripple1Scale = 3.0
                 ripple1Opacity = 0
             }
-            withAnimation(.smooth(duration: 0.6).delay(0.08)) {
+            withAnimation(.smooth(duration: 0.8).delay(0.1)) {
                 ripple2Scale = 4.0
                 ripple2Opacity = 0
             }
@@ -297,7 +297,7 @@ struct SparkleBurst: View {
             }
         }
         .onAppear {
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.55)) {
                 fired = true
             }
         }

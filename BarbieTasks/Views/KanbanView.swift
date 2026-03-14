@@ -20,7 +20,7 @@ struct KanbanView: View {
                 Spacer()
 
                 Button {
-                    withAnimation(.smooth(duration: 0.25)) { store.viewMode = .list }
+                    withAnimation(.smooth(duration: 0.4)) { store.viewMode = .list }
                 } label: {
                     HStack(spacing: 5) {
                         Image(systemName: "list.bullet")
@@ -85,7 +85,7 @@ struct KanbanView: View {
         .dropDestination(for: String.self) { droppedItems, _ in
             guard let idString = droppedItems.first,
                   let id = UUID(uuidString: idString) else { return false }
-            withAnimation(.smooth(duration: 0.15)) {
+            withAnimation(.smooth(duration: 0.4)) {
                 store.setTaskStatus(id, to: status)
             }
             return true
@@ -176,7 +176,7 @@ struct KanbanView: View {
                 RoundedRectangle(cornerRadius: 8)
                     .strokeBorder(isHovered && !isSelected ? Color.barbiePink.opacity(0.3) : Color.clear, lineWidth: 1)
             )
-            .animation(.smooth(duration: 0.15), value: isHovered)
+            .animation(.smooth(duration: 0.25), value: isHovered)
             .contentShape(RoundedRectangle(cornerRadius: 8))
             .onHover { isHovered = $0 }
             .onTapGesture { onTap() }

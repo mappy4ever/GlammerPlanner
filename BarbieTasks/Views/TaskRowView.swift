@@ -41,17 +41,17 @@ struct TaskRowView: View {
         .scaleEffect(rowScale)
         .shadow(color: isHovered ? Color.barbiePink.opacity(0.08) : .clear, radius: 8, y: 2)
         .onHover { isHovered = $0 }
-        .animation(.smooth(duration: 0.2), value: isHovered)
+        .animation(.smooth(duration: 0.3), value: isHovered)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(taskAccessibilityLabel)
         .accessibilityAction(.default) { completeTask() }
         .onChange(of: task.isDone) { old, new in
             if new && !old {
-                withAnimation(.smooth(duration: 0.25)) {
+                withAnimation(.smooth(duration: 0.4)) {
                     completionFlash = 0.3
                     rowScale = 0.97
                 }
-                withAnimation(.smooth(duration: 0.5).delay(0.2)) {
+                withAnimation(.smooth(duration: 0.7).delay(0.25)) {
                     completionFlash = 0
                     rowScale = 1.0
                 }
@@ -78,7 +78,7 @@ struct TaskRowView: View {
                     .foregroundStyle(task.isDone ? Color.inkMuted : Color.inkPrimary)
                     .strikethrough(task.isDone, color: .inkMuted)
                     .lineLimit(2)
-                    .animation(.smooth(duration: 0.3), value: task.isDone)
+                    .animation(.smooth(duration: 0.45), value: task.isDone)
 
                 if hasMeta { metaBadges }
             }
@@ -109,7 +109,7 @@ struct TaskRowView: View {
                     store.selectedTaskIds.insert(task.id)
                 }
             } else {
-                withAnimation(.smooth(duration: 0.2)) {
+                withAnimation(.smooth(duration: 0.3)) {
                     store.selectedTaskId = (store.selectedTaskId == task.id) ? nil : task.id
                 }
             }
@@ -134,7 +134,7 @@ struct TaskRowView: View {
                 if isTrashView {
                     showDeleteConfirm = true
                 } else {
-                    withAnimation(.smooth(duration: 0.35)) {
+                    withAnimation(.smooth(duration: 0.5)) {
                         store.trashTask(task.id)
                     }
                 }
@@ -145,7 +145,7 @@ struct TaskRowView: View {
             }
             .buttonStyle(.plain)
             .opacity(isSelected || isHovered ? 1 : 0)
-            .animation(.smooth(duration: 0.15), value: isHovered)
+            .animation(.smooth(duration: 0.25), value: isHovered)
             .help(isTrashView ? "Delete" : "Trash")
         }
     }
@@ -156,7 +156,7 @@ struct TaskRowView: View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
                 .fill(isSelected ? Color.blush : (isHovered ? Color.blush.opacity(0.5) : Color.clear))
-                .animation(.smooth(duration: 0.15), value: isHovered)
+                .animation(.smooth(duration: 0.25), value: isHovered)
 
             RoundedRectangle(cornerRadius: 10)
                 .fill(Color.barbiePink.opacity(completionFlash))
@@ -179,7 +179,7 @@ struct TaskRowView: View {
     private func completeTask() {
         let wasDone = task.isDone
 
-        withAnimation(.smooth(duration: 0.35)) {
+        withAnimation(.smooth(duration: 0.5)) {
             store.toggleTask(task.id)
         }
 
@@ -187,10 +187,10 @@ struct TaskRowView: View {
             showRipple = true
             showSparkle = true
 
-            withAnimation(.spring(response: 0.2, dampingFraction: 0.4)) {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.45)) {
                 checkBounce = 1.35
             }
-            withAnimation(.smooth(duration: 0.35).delay(0.12)) {
+            withAnimation(.smooth(duration: 0.5).delay(0.18)) {
                 checkBounce = 1.0
             }
 

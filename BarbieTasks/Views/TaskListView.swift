@@ -32,7 +32,7 @@ struct TaskListView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 4)
                 .padding(.bottom, 60)
-                .animation(.smooth(duration: 0.4), value: tasks.count)
+                .animation(.smooth(duration: 0.55), value: tasks.count)
             }
         }
         .background(Color.blush)
@@ -98,7 +98,7 @@ struct TaskListView: View {
             HStack(spacing: 6) {
                 ForEach(SortOption.allCases) { opt in
                     Button {
-                        withAnimation(.smooth(duration: 0.25)) { store.sortBy = opt; store.save() }
+                        withAnimation(.smooth(duration: 0.35)) { store.sortBy = opt; store.save() }
                     } label: {
                         Text(opt.label)
                             .font(.system(size: 11, weight: .bold, design: .rounded))
@@ -116,7 +116,7 @@ struct TaskListView: View {
                 // List / Kanban toggle
                 HStack(spacing: 2) {
                     Button {
-                        withAnimation(.smooth(duration: 0.25)) { store.viewMode = .list }
+                        withAnimation(.smooth(duration: 0.35)) { store.viewMode = .list }
                     } label: {
                         Group {
                             if store.viewMode == .list {
@@ -135,7 +135,7 @@ struct TaskListView: View {
                     .accessibilityAddTraits(store.viewMode == .list ? .isSelected : [])
 
                     Button {
-                        withAnimation(.smooth(duration: 0.25)) { store.viewMode = .kanban }
+                        withAnimation(.smooth(duration: 0.35)) { store.viewMode = .kanban }
                     } label: {
                         Group {
                             if store.viewMode == .kanban {
@@ -157,7 +157,7 @@ struct TaskListView: View {
 
                 if store.isEditableView {
                     Button {
-                        withAnimation(.smooth(duration: 0.25)) { store.showCompleted.toggle(); store.save() }
+                        withAnimation(.smooth(duration: 0.35)) { store.showCompleted.toggle(); store.save() }
                     } label: {
                         HStack(spacing: 4) {
                             if store.showCompleted { Image(systemName: "checkmark").font(.system(size: 9, weight: .bold)) }
@@ -354,7 +354,7 @@ struct TaskListView: View {
 
     private func submitQuickAdd() {
         guard !quickAddText.isEmpty else { return }
-        withAnimation(.smooth(duration: 0.35)) {
+        withAnimation(.smooth(duration: 0.45)) {
             store.addTask(title: quickAddText)
             quickAddText = ""
         }
