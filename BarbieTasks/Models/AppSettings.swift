@@ -10,7 +10,7 @@ final class AppSettings {
     @ObservationIgnored @AppStorage("reduceAnimations") var reduceAnimations: Bool = false
 
     // Theme — stored property so @Observable tracks changes and triggers view updates
-    var appTheme: String = UserDefaults.standard.string(forKey: "appTheme") ?? "barbie" {
+    var appTheme: String = UserDefaults.standard.string(forKey: "appTheme") ?? "classic" {
         didSet {
             UserDefaults.standard.set(appTheme, forKey: "appTheme")
             ThemeManager.shared.current = AppThemeId(rawValue: appTheme) ?? .barbie
@@ -47,9 +47,11 @@ final class AppSettings {
         get { UserDefaults.standard.bool(forKey: "hasCompletedOnboarding") }
         set { UserDefaults.standard.set(newValue, forKey: "hasCompletedOnboarding") }
     }
-    @ObservationIgnored @AppStorage("defaultView") var defaultView: String = "inbox"
+    @ObservationIgnored @AppStorage("defaultView") var defaultView: String = "calendar"
 
     var preferredColorScheme: ColorScheme? {
+        // Midnight theme must always use dark mode — its surfaces are dark regardless
+        if appTheme == "midnight" { return .dark }
         switch appearance {
         case "light": return .light
         case "dark": return .dark

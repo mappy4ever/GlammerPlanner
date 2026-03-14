@@ -22,7 +22,7 @@ final class NotificationService {
         center.removePendingNotificationRequests(withIdentifiers: [taskId.uuidString])
 
         let content = UNMutableNotificationContent()
-        content.title = "Slay List"
+        content.title = "Small Wins"
         content.body = title
         content.sound = .default
         content.categoryIdentifier = "TASK_REMINDER"

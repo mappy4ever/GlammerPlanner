@@ -12,7 +12,7 @@ struct SidebarView: View {
             HStack {
                 Spacer()
                 VStack(spacing: 1) {
-                    Text("Slay List")
+                    Text("Small Wins")
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundStyle(
                             LinearGradient(
@@ -261,6 +261,8 @@ struct SidebarView: View {
         .listStyle(.sidebar)
         .scrollContentBackground(.hidden)
         .background(Color.blush)
+        .foregroundStyle(Color.inkPrimary)
+        .tint(Color.barbiePink)
         .onChange(of: store.selectedView) {
             store.selectedTaskIds = []
         }

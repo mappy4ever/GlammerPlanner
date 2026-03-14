@@ -83,7 +83,7 @@ struct ContentView: View {
                 return .ignored
             }
             .onChange(of: store.selectedView) {
-                NSApp.mainWindow?.title = "\(store.currentViewLabel) \u{2014} Slay List"
+                NSApp.mainWindow?.title = "\(store.currentViewLabel) \u{2014} Small Wins"
                 if !isDetailRelevant {
                     store.selectedTaskId = nil
                     withAnimation(.smooth(duration: 0.3)) {
@@ -105,7 +105,7 @@ struct ContentView: View {
                 }
             }
             .onAppear {
-                NSApp.mainWindow?.title = "\(store.currentViewLabel) \u{2014} Slay List"
+                NSApp.mainWindow?.title = "\(store.currentViewLabel) \u{2014} Small Wins"
             }
     }
 
@@ -113,7 +113,7 @@ struct ContentView: View {
     private var isDetailRelevant: Bool {
         switch store.selectedView {
         case .stats: return false
-        case .smartList(.calendar): return false
+        case .smartList(.calendar): return true
         default: return true
         }
     }
@@ -130,7 +130,7 @@ struct ContentView: View {
                 contentColumn
                     .animation(.smooth(duration: 0.45), value: store.selectedView)
                     .animation(.smooth(duration: 0.4), value: store.viewMode)
-                    .navigationSplitViewColumnWidth(min: 380, ideal: 480, max: .infinity)
+                    .navigationSplitViewColumnWidth(min: 440, ideal: 520, max: .infinity)
             } detail: {
                 if let task = store.selectedTask, isDetailRelevant {
                     DetailView(task: task)

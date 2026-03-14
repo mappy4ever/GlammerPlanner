@@ -637,10 +637,10 @@ struct StatsView: View {
     private var statsGreeting: String {
         let today = store.completedToday
         if today >= 10 { return "You're a productivity LEGEND today!" }
-        if today >= 5 { return "You're absolutely SLAYING it!" }
+        if today >= 5 { return "You're on fire today!" }
         if today >= 3 { return "Great momentum, keep going!" }
         if today >= 1 { return "You've started strong!" }
-        return "Ready to slay some tasks?"
+        return "Ready to win today?"
     }
 
     private var statsSubtitle: String {

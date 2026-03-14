@@ -109,21 +109,21 @@ enum AppThemeId: String, CaseIterable, Identifiable {
     // MARK: - Classic Palette (Pastel Rainbow / Grey-White Base)
 
     private static let classicPalette = ThemePalette(
-        primary:      Color(light: Color(hex: "#8B7EC8"), dark: Color(hex: "#A898E0")),   // soft purple
-        primaryDeep:  Color(light: Color(hex: "#7068B0"), dark: Color(hex: "#8B7EC8")),   // deeper purple
-        primaryLight: Color(light: Color(hex: "#B0A8E0"), dark: Color(hex: "#C8C0F0")),   // light lavender
-        surface:      Color(light: Color(hex: "#F7F6F9"), dark: Color(hex: "#1C1C20")),   // warm white/grey
-        surfaceMid:   Color(light: Color(hex: "#EEEDF3"), dark: Color(hex: "#28272E")),   // light grey
-        surfaceDeep:  Color(light: Color(hex: "#E4E2EC"), dark: Color(hex: "#222128")),   // grey
+        primary:      Color(light: Color(hex: "#7B6CC8"), dark: Color(hex: "#9B8CE8")),   // pastel violet (rainbow anchor)
+        primaryDeep:  Color(light: Color(hex: "#E07888"), dark: Color(hex: "#F08898")),   // pastel rose-red
+        primaryLight: Color(light: Color(hex: "#7CBCE8"), dark: Color(hex: "#90D0F8")),   // pastel sky blue
+        surface:      Color(light: Color(hex: "#F8F7FA"), dark: Color(hex: "#1C1C22")),   // warm white/grey
+        surfaceMid:   Color(light: Color(hex: "#F0EEF5"), dark: Color(hex: "#28272E")),   // light grey
+        surfaceDeep:  Color(light: Color(hex: "#E8E5F0"), dark: Color(hex: "#222128")),   // grey
         textPrimary:  Color(light: Color(hex: "#3A3540"), dark: Color(hex: "#EAE8F0")),
         textSecondary: Color(light: Color(hex: "#6A6575"), dark: Color(hex: "#B0A8C0")),
         textMuted:    Color(light: Color(hex: "#9A95A8"), dark: Color(hex: "#706888")),
         border:       Color(light: Color(hex: "#D8D4E2"), dark: Color(hex: "#3A3640")),
         borderLight:  Color(light: Color(hex: "#E8E5F0"), dark: Color(hex: "#2E2B35")),
         priorityHigh: Color(hex: "#E8818A"),  // pastel red
-        priorityMed:  Color(hex: "#F0C070"),  // pastel orange/yellow
+        priorityMed:  Color(hex: "#F0C070"),  // pastel amber
         priorityLow:  Color(hex: "#7EB8D8"),  // pastel blue
-        accent:       Color(light: Color(hex: "#90D4A0"), dark: Color(hex: "#A0E0B0"))  // pastel green
+        accent:       Color(light: Color(hex: "#88D4A0"), dark: Color(hex: "#A0E8B8"))  // pastel green
     )
 
     // MARK: - Wizarding Palette (Harry Potter: Burgundy + Gold + Midnight Blue)
@@ -233,7 +233,7 @@ final class ThemeManager {
     static let shared = ThemeManager()
 
     var current: AppThemeId {
-        get { AppThemeId(rawValue: UserDefaults.standard.string(forKey: "appTheme") ?? "barbie") ?? .barbie }
+        get { AppThemeId(rawValue: UserDefaults.standard.string(forKey: "appTheme") ?? "classic") ?? .classic }
         set { UserDefaults.standard.set(newValue.rawValue, forKey: "appTheme") }
     }
 

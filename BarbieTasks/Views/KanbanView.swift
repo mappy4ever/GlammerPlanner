@@ -30,7 +30,7 @@ struct KanbanView: View {
                     HStack(spacing: 5) {
                         Image(systemName: "list.bullet")
                             .font(.system(size: 11, weight: .bold))
-                        Text("List View")
+                        Text("List")
                             .font(.system(size: 11, weight: .bold, design: .rounded))
                     }
                     .foregroundStyle(Color.barbiePink)
@@ -205,19 +205,14 @@ struct KanbanView: View {
             HStack(alignment: .top, spacing: 8) {
                 // Completion indicator
                 ZStack {
+                    let doneColor = Color.accentColor(for: task.id)
                     Circle()
-                        .stroke(task.isDone ? Color.barbieRose : checkboxBorderColor, lineWidth: 1.5)
+                        .stroke(task.isDone ? doneColor : checkboxBorderColor, lineWidth: 1.5)
                         .frame(width: 16, height: 16)
 
                     if task.isDone {
                         Circle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [.barbiePink, .barbieDeep],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
+                            .fill(doneColor)
                             .frame(width: 16, height: 16)
 
                         Image(systemName: "checkmark")
@@ -316,13 +311,29 @@ struct KanbanView: View {
         }
     }
 
+    // MARK: - Celebration Colors
+
+    private static let classicRainbow: [Color] = [
+        Color(hex: "#D86878"), Color(hex: "#E89850"), Color(hex: "#D8B840"),
+        Color(hex: "#58B878"), Color(hex: "#58A0D0"), Color(hex: "#7868B8"),
+        Color(hex: "#A068C0"),
+    ]
+
+    private func celebrationColor(for index: Int) -> some ShapeStyle {
+        if ThemeManager.shared.current == .classic {
+            return AnyShapeStyle(Self.classicRainbow[index % Self.classicRainbow.count])
+        } else {
+            return AnyShapeStyle(Color.barbieDeep)
+        }
+    }
+
     // MARK: - Inline Celebrations
 
     @ViewBuilder
     private var inlineCelebrations: some View {
         if !store.activeCelebrations.isEmpty {
             VStack(spacing: 4) {
-                ForEach(store.activeCelebrations) { quote in
+                ForEach(Array(store.activeCelebrations.enumerated()), id: \.element.id) { index, quote in
                     HStack(spacing: 10) {
                         Image(systemName: "sparkles")
                             .font(.system(size: 14, weight: .semibold))
@@ -330,19 +341,13 @@ struct KanbanView: View {
                             .symbolEffect(.bounce, value: quote.id)
                         Text(quote.text)
                             .font(.system(size: 13, weight: .bold, design: .rounded))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [Color.barbieDeep, Color.barbiePink, Color.barbieRose],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
+                            .foregroundStyle(celebrationColor(for: index))
                             .lineLimit(2)
                             .contentTransition(.interpolate)
                         Spacer(minLength: 0)
                         Image(systemName: "sparkles")
                             .font(.system(size: 11, weight: .semibold))
-                            .foregroundStyle(Color.barbiePink.opacity(0.5))
+                            .foregroundStyle(Color.barbiePink.opacity(0.7))
                             .symbolEffect(.bounce, value: quote.id)
                     }
                     .padding(.horizontal, 16)
@@ -394,24 +399,7 @@ struct KanbanView: View {
     // MARK: - Progress Ring
 
     private var progressRing: some View {
-        let total = store.currentViewTasks.count
-        let done = store.currentViewTasks.filter(\.isDone).count
-        let pct = total > 0 ? Double(done) / Double(total) : 0
-        return ZStack {
-            Circle().stroke(Color.petalLight, lineWidth: 5)
-            Circle()
-                .trim(from: 0, to: pct)
-                .stroke(Color.barbiePink, style: StrokeStyle(lineWidth: 5, lineCap: .round))
-                .rotationEffect(.degrees(-90))
-                .animation(.smooth(duration: 0.4), value: pct)
-            Text("\(Int(pct * 100))%")
-                .font(.system(size: 10, weight: .bold, design: .rounded))
-                .foregroundStyle(Color.inkSecondary)
-        }
-        .frame(width: 42, height: 42)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Progress")
-        .accessibilityValue("\(done) of \(total) tasks completed, \(Int(pct * 100)) percent")
+        ProgressRingView()
     }
 
     // MARK: - Helpers

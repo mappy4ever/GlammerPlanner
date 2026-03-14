@@ -150,7 +150,7 @@ struct BarbieTasksApp: App {
     // MARK: - URL Scheme
 
     private func handleURL(_ url: URL) {
-        guard url.scheme == "barbietasks" || url.scheme == "slaylist" else { return }
+        guard url.scheme == "barbietasks" || url.scheme == "slaylist" || url.scheme == "smallwins" else { return }
         switch url.host {
         case "add":
             if let title = url.queryValue(for: "title") {
@@ -178,7 +178,7 @@ struct MenuBarView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Slay List")
+            Text("Small Wins")
                 .font(.system(size: 13, weight: .bold, design: .rounded))
 
             TextField("Quick add...", text: $quickText)
@@ -212,7 +212,7 @@ struct MenuBarView: View {
 
             Divider()
 
-            Button("Open Slay List") {
+            Button("Open Small Wins") {
                 NSApplication.shared.activate(ignoringOtherApps: true)
             }
 

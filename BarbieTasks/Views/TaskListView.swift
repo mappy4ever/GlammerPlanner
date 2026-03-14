@@ -70,6 +70,11 @@ struct TaskListView: View {
             }
             Spacer()
 
+            // Progress ring
+            if taskCount > 0 {
+                progressRing
+            }
+
             Button {
                 withAnimation(.smooth(duration: 0.4)) { store.viewMode = .kanban }
             } label: {
@@ -85,11 +90,6 @@ struct TaskListView: View {
                 .background(Color.blushMid, in: Capsule())
             }
             .buttonStyle(.plain)
-
-            // Progress ring
-            if taskCount > 0 {
-                progressRing
-            }
         }
         .padding(.horizontal, 20)
         .padding(.top, 16)
@@ -450,24 +450,28 @@ struct TaskListView: View {
     // MARK: - Progress Ring
 
     private var progressRing: some View {
-        let total = store.currentViewTasks.count
-        let done = store.currentViewTasks.filter(\.isDone).count
-        let pct = total > 0 ? Double(done) / Double(total) : 0
-        return ZStack {
-            Circle().stroke(Color.petalLight, lineWidth: 5)
-            Circle()
-                .trim(from: 0, to: pct)
-                .stroke(Color.barbiePink, style: StrokeStyle(lineWidth: 5, lineCap: .round))
-                .rotationEffect(.degrees(-90))
-                .animation(.smooth(duration: 0.4), value: pct)
-            Text("\(Int(pct * 100))%")
-                .font(.system(size: 10, weight: .bold, design: .rounded))
-                .foregroundStyle(Color.inkSecondary)
+        ProgressRingView()
+    }
+
+    // MARK: - Celebration Colors
+
+    private static let classicRainbow: [Color] = [
+        Color(hex: "#D86878"), // pastel red
+        Color(hex: "#E89850"), // pastel orange
+        Color(hex: "#D8B840"), // pastel amber
+        Color(hex: "#58B878"), // pastel green
+        Color(hex: "#58A0D0"), // pastel blue
+        Color(hex: "#7868B8"), // pastel indigo
+        Color(hex: "#A068C0"), // pastel violet
+    ]
+
+    private func celebrationColor(for index: Int) -> some ShapeStyle {
+        if ThemeManager.shared.current == .classic {
+            let color = Self.classicRainbow[index % Self.classicRainbow.count]
+            return AnyShapeStyle(color)
+        } else {
+            return AnyShapeStyle(Color.barbieDeep)
         }
-        .frame(width: 42, height: 42)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Progress")
-        .accessibilityValue("\(done) of \(total) tasks completed, \(Int(pct * 100)) percent")
     }
 
     // MARK: - Inline Celebrations
@@ -476,7 +480,7 @@ struct TaskListView: View {
     private var inlineCelebrations: some View {
         if !store.activeCelebrations.isEmpty {
             VStack(spacing: 4) {
-                ForEach(store.activeCelebrations) { quote in
+                ForEach(Array(store.activeCelebrations.enumerated()), id: \.element.id) { index, quote in
                     HStack(spacing: 10) {
                         Image(systemName: "sparkles")
                             .font(.system(size: 14, weight: .semibold))
@@ -484,19 +488,13 @@ struct TaskListView: View {
                             .symbolEffect(.bounce, value: quote.id)
                         Text(quote.text)
                             .font(.system(size: 13, weight: .bold, design: .rounded))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [Color.barbieDeep, Color.barbiePink, Color.barbieRose],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
+                            .foregroundStyle(celebrationColor(for: index))
                             .lineLimit(2)
                             .contentTransition(.interpolate)
                         Spacer(minLength: 0)
                         Image(systemName: "sparkles")
                             .font(.system(size: 11, weight: .semibold))
-                            .foregroundStyle(Color.barbiePink.opacity(0.5))
+                            .foregroundStyle(Color.barbiePink.opacity(0.7))
                             .symbolEffect(.bounce, value: quote.id)
                     }
                     .padding(.horizontal, 16)
@@ -532,7 +530,7 @@ struct TaskListView: View {
 
     private var emptyContent: (String, String, String) {
         switch store.selectedView {
-        case .smartList(.inbox):    return ("tray",              "Slay List Zero",  "Add a task to get started.")
+        case .smartList(.inbox):    return ("tray",              "All Clear",       "Add a task to get started.")
         case .smartList(.today):    return ("sun.max",           "Free Day",        "Nothing due today.")
         case .smartList(.upcoming): return ("calendar.badge.clock", "All Clear",    "No upcoming deadlines.")
         case .smartList(.anytime):  return ("list.bullet",       "Fresh Start",     "Add something fabulous.")

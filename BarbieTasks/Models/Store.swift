@@ -15,7 +15,7 @@ final class Store {
 
     // MARK: - View State
 
-    var selectedView: ViewSelection = .smartList(.inbox)
+    var selectedView: ViewSelection = .smartList(.calendar)
     var selectedTaskIds: Set<UUID> = []
     var searchText: String = ""
     var sortBy: SortOption = .manual

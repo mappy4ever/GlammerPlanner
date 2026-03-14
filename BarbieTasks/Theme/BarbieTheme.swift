@@ -32,6 +32,30 @@ extension Color {
     // Gold (for accents)
     static var gold: Color           { ThemeManager.shared.palette.accent }
 
+    // Classic rainbow palette — solid pastels for varied UI elements
+    static let classicRainbow: [Color] = [
+        Color(hex: "#D86878"), // rose red
+        Color(hex: "#E89850"), // warm orange
+        Color(hex: "#D8B840"), // golden amber
+        Color(hex: "#58B878"), // fresh green
+        Color(hex: "#58A0D0"), // sky blue
+        Color(hex: "#7868B8"), // indigo
+        Color(hex: "#A068C0"), // violet
+    ]
+
+    /// Returns a rainbow pastel color for Classic theme, or the theme primary for others.
+    static func accentColor(for index: Int) -> Color {
+        if ThemeManager.shared.current == .classic {
+            return classicRainbow[abs(index) % classicRainbow.count]
+        }
+        return barbiePink
+    }
+
+    /// Returns a rainbow pastel color based on a UUID hash, for Classic theme.
+    static func accentColor(for id: UUID) -> Color {
+        accentColor(for: abs(id.hashValue))
+    }
+
     // Project presets
     static let projectColors: [String] = [
         "#D4577A", "#C27BA0", "#8E6BAD", "#6B8FBF",

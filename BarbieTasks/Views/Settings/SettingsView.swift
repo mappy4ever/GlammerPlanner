@@ -288,7 +288,7 @@ struct SettingsView: View {
 
             Section("About") {
                 HStack {
-                    Text("Slay List")
+                    Text("Small Wins")
                         .font(.system(size: 13, weight: .bold, design: .rounded))
                     Spacer()
                     if let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,

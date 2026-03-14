@@ -1,10 +1,33 @@
 import SwiftUI
 import EventKit
 
+// MARK: - Calendar View Mode
+
+private enum CalendarMode: String, CaseIterable {
+    case month, week
+
+    var label: String {
+        switch self {
+        case .month: "Month"
+        case .week:  "Week"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .month: "calendar"
+        case .week:  "calendar.day.timeline.left"
+        }
+    }
+}
+
+// MARK: - Main Calendar View
+
 struct CalendarView: View {
     @Environment(Store.self) private var store
     @Environment(AppSettings.self) private var settings
 
+    @State private var calendarMode: CalendarMode = .week
     @State private var displayedMonth: Date = Calendar.current.startOfDay(for: Date())
     @State private var selectedDate: Date = Calendar.current.startOfDay(for: Date())
     @State private var showCalendarEvents: Bool = true
@@ -12,6 +35,8 @@ struct CalendarView: View {
     @State private var monthTransitionDirection: Edge = .trailing
     @State private var monthId = UUID()
     @State private var dropTargetDate: Date?
+    @State private var weekStart: Date = Calendar.current.startOfDay(for: Date())
+    @State private var useNext7Days: Bool = true
 
     private var calendar: Calendar {
         var cal = Calendar.current
@@ -29,17 +54,86 @@ struct CalendarView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Month navigation header
+            // Mode toggle bar
+            modeToggle
+                .padding(.horizontal, 16)
+                .padding(.top, 10)
+                .padding(.bottom, 6)
+
+            if calendarMode == .month {
+                monthView
+            } else {
+                weeklyView
+            }
+        }
+        .background(Color.blush)
+        .onAppear {
+            requestCalendarAccessIfNeeded()
+            loadCalendarEvents()
+            weekStart = computeWeekStart()
+        }
+        .onChange(of: displayedMonth) { _, _ in
+            loadCalendarEvents()
+        }
+        .animation(.smooth(duration: 0.35), value: calendarMode)
+    }
+
+    // MARK: - Mode Toggle
+
+    private var modeToggle: some View {
+        HStack(spacing: 0) {
+            ForEach(CalendarMode.allCases, id: \.self) { mode in
+                Button {
+                    calendarMode = mode
+                } label: {
+                    HStack(spacing: 5) {
+                        Image(systemName: mode.icon)
+                            .font(.system(size: 11, weight: .semibold))
+                        Text(mode.label)
+                            .font(.system(size: 12, weight: .bold, design: .rounded))
+                    }
+                    .foregroundStyle(calendarMode == mode ? .white : Color.inkSecondary)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 6)
+                    .background(calendarMode == mode ? Color.barbiePink : Color.clear, in: Capsule())
+                }
+                .buttonStyle(.plain)
+            }
+
+            Spacer()
+
+            if calendarMode == .week {
+                // Next 7 Days vs Calendar Week toggle
+                Button {
+                    withAnimation(.smooth(duration: 0.3)) {
+                        useNext7Days.toggle()
+                        weekStart = computeWeekStart()
+                    }
+                } label: {
+                    Text(useNext7Days ? "Next 7 Days" : "This Week")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color.barbiePink)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.barbiePink.opacity(0.1), in: Capsule())
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
+    // MARK: - Month View (existing)
+
+    private var monthView: some View {
+        VStack(spacing: 0) {
             monthHeader
                 .padding(.horizontal, 16)
-                .padding(.top, 12)
+                .padding(.top, 4)
                 .padding(.bottom, 8)
 
-            // Weekday labels
             weekdayHeader
                 .padding(.horizontal, 16)
 
-            // Calendar grid
             calendarGrid
                 .padding(.horizontal, 16)
                 .padding(.bottom, 12)
@@ -49,31 +143,280 @@ struct CalendarView: View {
                     removal: .move(edge: monthTransitionDirection == .trailing ? .leading : .trailing).combined(with: .opacity)
                 ))
 
-            Divider()
-                .foregroundStyle(Color.petal)
+            Divider().foregroundStyle(Color.petal)
 
-            // Toggle for calendar events
             calendarToggle
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
 
-            Divider()
-                .foregroundStyle(Color.petalLight)
+            Divider().foregroundStyle(Color.petalLight)
 
-            // Selected day content
             selectedDayContent
-        }
-        .background(Color.blush)
-        .onAppear {
-            requestCalendarAccessIfNeeded()
-            loadCalendarEvents()
-        }
-        .onChange(of: displayedMonth) { _, _ in
-            loadCalendarEvents()
         }
     }
 
-    // MARK: - Month Header
+    // ============================================================
+    // MARK: - Weekly View (NEW)
+    // ============================================================
+
+    private var weekDays: [Date] {
+        (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: weekStart) }
+    }
+
+    private func computeWeekStart() -> Date {
+        if useNext7Days {
+            return calendar.startOfDay(for: Date())
+        } else {
+            // Start of the current calendar week
+            let comps = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: Date())
+            return calendar.date(from: comps) ?? calendar.startOfDay(for: Date())
+        }
+    }
+
+    private var weeklyView: some View {
+        VStack(spacing: 0) {
+            // Week navigation
+            weekNavHeader
+                .padding(.horizontal, 16)
+                .padding(.top, 4)
+                .padding(.bottom, 8)
+
+            // 7 columns — Kanban-style
+            HStack(alignment: .top, spacing: 0) {
+                ForEach(Array(weekDays.enumerated()), id: \.element) { index, date in
+                    if index > 0 {
+                        Rectangle()
+                            .fill(Color.petal.opacity(0.35))
+                            .frame(width: 1)
+                            .padding(.vertical, 6)
+                    }
+                    weekDayColumn(date)
+                }
+            }
+            .padding(.horizontal, 8)
+            .padding(.bottom, 16)
+        }
+    }
+
+    private var weekNavHeader: some View {
+        HStack {
+            Button {
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+                    weekStart = calendar.date(byAdding: .day, value: -7, to: weekStart)!
+                }
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Color.barbiePink)
+                    .frame(width: 28, height: 28)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+
+            Spacer()
+
+            Text(weekRangeLabel)
+                .font(.system(size: 15, weight: .bold, design: .rounded))
+                .foregroundStyle(Color.inkPrimary)
+
+            Spacer()
+
+            // Today button
+            if !weekDays.contains(where: { calendar.isDateInToday($0) }) {
+                Button {
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+                        weekStart = computeWeekStart()
+                    }
+                } label: {
+                    Text("Today")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color.barbiePink)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.barbiePink.opacity(0.1), in: Capsule())
+                }
+                .buttonStyle(.plain)
+            }
+
+            Button {
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+                    weekStart = calendar.date(byAdding: .day, value: 7, to: weekStart)!
+                }
+            } label: {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Color.barbiePink)
+                    .frame(width: 28, height: 28)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    private var weekRangeLabel: String {
+        guard let first = weekDays.first, let last = weekDays.last else { return "" }
+        let startStr = first.formatted(.dateTime.month(.abbreviated).day())
+        let endStr = last.formatted(.dateTime.month(.abbreviated).day())
+        return "\(startStr) \u{2013} \(endStr)"
+    }
+
+    // MARK: - Week Day Column (Kanban-style)
+
+    @ViewBuilder
+    private func weekDayColumn(_ date: Date) -> some View {
+        let isToday = calendar.isDateInToday(date)
+        let dayTasks = store.tasksForDay(date)
+        let done = dayTasks.filter(\.isDone).count
+        let isDropTarget = dropTargetDate.map { calendar.isDate($0, inSameDayAs: date) } ?? false
+
+        VStack(alignment: .leading, spacing: 0) {
+            // Column header
+            VStack(spacing: 2) {
+                Text(date.formatted(.dateTime.weekday(.abbreviated)).uppercased())
+                    .font(.system(size: 10, weight: .bold, design: .rounded))
+                    .foregroundStyle(isToday ? Color.barbiePink : Color.inkMuted)
+                    .tracking(0.5)
+
+                Text("\(calendar.component(.day, from: date))")
+                    .font(.system(size: 18, weight: isToday ? .bold : .medium, design: .rounded))
+                    .foregroundStyle(isToday ? .white : Color.inkPrimary)
+                    .frame(width: 30, height: 30)
+                    .background(
+                        Circle().fill(isToday ? Color.barbiePink : Color.clear)
+                    )
+
+                if !dayTasks.isEmpty {
+                    Text("\(done)/\(dayTasks.count)")
+                        .font(.system(size: 9, weight: .bold, design: .rounded))
+                        .foregroundStyle(done == dayTasks.count ? Color.barbiePink : Color.inkMuted)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+            .background(isToday ? Color.barbiePink.opacity(0.06) : Color.clear)
+
+            // Separator
+            Rectangle()
+                .fill(isToday ? Color.barbiePink.opacity(0.3) : Color.petal.opacity(0.2))
+                .frame(height: 1)
+                .padding(.horizontal, 4)
+
+            // Tasks
+            ScrollView(.vertical) {
+                LazyVStack(spacing: 4) {
+                    if dayTasks.isEmpty {
+                        Text("\u{2014}")
+                            .font(.system(size: 11))
+                            .foregroundStyle(Color.inkMuted.opacity(0.3))
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, 16)
+                    } else {
+                        ForEach(dayTasks) { task in
+                            weekTaskCard(task: task)
+                        }
+                    }
+                }
+                .padding(.horizontal, 4)
+                .padding(.vertical, 6)
+            }
+        }
+        .frame(minWidth: 50, maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .clipped()
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(isDropTarget ? Color.barbiePink.opacity(0.5) : Color.clear, lineWidth: 2)
+        )
+        .background(isDropTarget ? Color.barbiePink.opacity(0.05) : Color.clear)
+        .animation(.smooth(duration: 0.2), value: isDropTarget)
+        .dropDestination(for: String.self) { items, _ in
+            guard let idString = items.first, let taskId = UUID(uuidString: idString) else { return false }
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                store.moveTaskToDate(taskId: taskId, date: date)
+                dropTargetDate = nil
+            }
+            return true
+        } isTargeted: { targeted in
+            withAnimation(.spring(response: 0.2, dampingFraction: 0.8)) {
+                dropTargetDate = targeted ? date : nil
+            }
+        }
+    }
+
+    // Compact task card for weekly columns
+    private func weekTaskCard(task: BarbieTask) -> some View {
+        HStack(spacing: 5) {
+            // Checkbox
+            Button {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.65)) {
+                    store.toggleTask(task.id)
+                }
+            } label: {
+                ZStack {
+                    let doneColor = Color.accentColor(for: task.id)
+                    Circle()
+                        .stroke(task.isDone ? doneColor : checkboxColor(for: task), lineWidth: 1.5)
+                        .frame(width: 14, height: 14)
+
+                    if task.isDone {
+                        Circle().fill(doneColor).frame(width: 14, height: 14)
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 7, weight: .bold))
+                            .foregroundStyle(.white)
+                    }
+                }
+            }
+            .buttonStyle(.plain)
+
+            Text(task.title)
+                .font(.system(size: 11, weight: .medium, design: .rounded))
+                .foregroundStyle(task.isDone ? Color.inkMuted : Color.inkPrimary)
+                .strikethrough(task.isDone, color: .inkMuted.opacity(0.5))
+                .lineLimit(2)
+        }
+        .padding(.horizontal, 6)
+        .padding(.vertical, 5)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 6)
+                .fill(task.isDone ? Color.blushMid.opacity(0.4) : Color.blushMid)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 6)
+                .strokeBorder(Color.petal.opacity(task.isDone ? 0.3 : 0.5), lineWidth: 0.5)
+        )
+        .opacity(task.isDone ? 0.75 : 1.0)
+        .draggable(task.id.uuidString)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            withAnimation(.smooth(duration: 0.3)) {
+                store.selectedTaskId = task.id
+            }
+        }
+    }
+
+    // MARK: - Week Task Row (compact, with inline toggle)
+
+    private func checkboxColor(for task: BarbieTask) -> Color {
+        switch task.priority {
+        case .high: .priHigh
+        case .medium: .priMed
+        case .low: .priLow
+        case .none: .petal
+        }
+    }
+
+    private func priorityColor(_ priority: BarbieTask.Priority) -> Color {
+        switch priority {
+        case .high: .priHigh
+        case .medium: .priMed
+        case .low: .priLow
+        case .none: .petal
+        }
+    }
+
+    // ============================================================
+    // MARK: - Month View Components
+    // ============================================================
 
     private var monthHeader: some View {
         HStack {
@@ -102,7 +445,6 @@ struct CalendarView: View {
 
             Spacer()
 
-            // Today button
             if !calendar.isDate(displayedMonth, equalTo: Date(), toGranularity: .month) {
                 Button {
                     monthTransitionDirection = displayedMonth > Date() ? .leading : .trailing
@@ -143,8 +485,6 @@ struct CalendarView: View {
         displayedMonth.formatted(.dateTime.month(.wide).year())
     }
 
-    // MARK: - Weekday Header
-
     private var weekdayHeader: some View {
         LazyVGrid(columns: columns, spacing: 2) {
             ForEach(orderedWeekdaySymbols, id: \.self) { symbol in
@@ -156,8 +496,6 @@ struct CalendarView: View {
             }
         }
     }
-
-    // MARK: - Calendar Grid
 
     private var calendarGrid: some View {
         let days = daysInMonth()
@@ -187,14 +525,11 @@ struct CalendarView: View {
                 .font(.system(size: 13, weight: isToday ? .bold : .medium, design: .rounded))
                 .foregroundStyle(dayCellTextColor(isToday: isToday, isSelected: isSelected))
 
-            // Indicator dots
             HStack(spacing: 2) {
                 if totalCount > 0 {
-                    // Show completion as mini bar
                     if totalCount <= 3 {
                         taskDots(for: dayTasks)
                     } else {
-                        // Compact count badge for busy days
                         Text("\(totalCount)")
                             .font(.system(size: 7, weight: .bold, design: .rounded))
                             .foregroundStyle(completedCount == totalCount ? Color.barbiePink : Color.inkMuted)
@@ -285,8 +620,6 @@ struct CalendarView: View {
         return .clear
     }
 
-    // MARK: - Calendar Toggle
-
     private var calendarToggle: some View {
         HStack {
             Image(systemName: "calendar.badge.clock")
@@ -304,8 +637,6 @@ struct CalendarView: View {
         }
     }
 
-    // MARK: - Selected Day Content
-
     private var selectedDayContent: some View {
         let dayTasks = store.tasksForDay(selectedDate)
         let dayEvents = (calendarEvents[calendar.startOfDay(for: selectedDate)] ?? [])
@@ -313,7 +644,6 @@ struct CalendarView: View {
 
         return ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
-                // Date label
                 HStack {
                     Text(selectedDateLabel)
                         .font(.system(size: 14, weight: .bold, design: .rounded))
@@ -332,7 +662,6 @@ struct CalendarView: View {
                 .padding(.top, 12)
                 .padding(.bottom, 8)
 
-                // Tasks section
                 if !dayTasks.isEmpty {
                     sectionHeader(title: "Tasks", count: dayTasks.count)
 
@@ -342,7 +671,6 @@ struct CalendarView: View {
                     }
                 }
 
-                // Calendar events section
                 if showCalendarEvents && !dayEvents.isEmpty {
                     sectionHeader(title: "Calendar Events", count: dayEvents.count)
 
@@ -351,7 +679,6 @@ struct CalendarView: View {
                     }
                 }
 
-                // Empty state
                 if dayTasks.isEmpty && (!showCalendarEvents || dayEvents.isEmpty) {
                     emptyDayView
                 }
@@ -392,7 +719,6 @@ struct CalendarView: View {
 
     private func calendarEventRow(_ event: EKEvent) -> some View {
         HStack(spacing: 10) {
-            // Calendar color dot
             Circle()
                 .fill(Color(cgColor: event.calendar.cgColor))
                 .frame(width: 8, height: 8)

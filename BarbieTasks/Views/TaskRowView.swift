@@ -248,14 +248,9 @@ struct TaskRowView: View {
                     .frame(width: 20, height: 20)
 
                 if task.isDone {
+                    let doneColor = Color.accentColor(for: task.id)
                     Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [.barbiePink, .barbieDeep],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
+                        .fill(doneColor)
                         .frame(width: 20, height: 20)
                         .transition(.scale.combined(with: .opacity))
 
@@ -275,7 +270,7 @@ struct TaskRowView: View {
     }
 
     private var checkboxBorderColor: Color {
-        if task.isDone { return .barbieDeep }
+        if task.isDone { return Color.accentColor(for: task.id) }
         switch task.priority {
         case .high: return .priHigh
         case .medium: return .priMed

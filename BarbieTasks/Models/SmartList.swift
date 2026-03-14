@@ -9,12 +9,12 @@ enum SmartList: String, CaseIterable, Identifiable, Codable, Hashable {
 
     var label: String {
         switch self {
-        case .inbox: "My Slay List"
+        case .inbox: "My Tasks"
         case .today: "Today"
         case .upcoming: "Upcoming"
         case .calendar: "Calendar"
         case .anytime: "All Tasks"
-        case .logbook: "Slayed Tasks"
+        case .logbook: "Completed"
         case .trash: "Trash"
         }
     }

@@ -24,17 +24,17 @@ targets:
       - target: BarbieTasksWidget
     settings:
       base:
-        MARKETING_VERSION: "1.1"
-        CURRENT_PROJECT_VERSION: "202603130331"
+        MARKETING_VERSION: "1.2"
+        CURRENT_PROJECT_VERSION: "202603140001"
         SWIFT_VERSION: "5.9"
         MACOSX_DEPLOYMENT_TARGET: "14.0"
         CODE_SIGN_ENTITLEMENTS: BarbieTasks/BarbieTasks.entitlements
         GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_CFBundleDisplayName: "Slay List"
-        INFOPLIST_KEY_CFBundleName: "Slay List"
-        PRODUCT_NAME: "Slay List"
-        INFOPLIST_KEY_NSCalendarsUsageDescription: "Slay List shows your calendar events alongside tasks."
-        INFOPLIST_KEY_NSRemindersUsageDescription: "Slay List can import and sync with Apple Reminders."
+        INFOPLIST_KEY_CFBundleDisplayName: "Small Wins"
+        INFOPLIST_KEY_CFBundleName: "Small Wins"
+        PRODUCT_NAME: "Small Wins"
+        INFOPLIST_KEY_NSCalendarsUsageDescription: "Small Wins shows your calendar events alongside tasks."
+        INFOPLIST_KEY_NSRemindersUsageDescription: "Small Wins can import and sync with Apple Reminders."
     postBuildScripts:
       - name: "Inject Sparkle Keys into Info.plist"
         script: |
@@ -51,12 +51,12 @@ targets:
           - "**/.DS_Store"
     settings:
       base:
-        MARKETING_VERSION: "1.1"
-        CURRENT_PROJECT_VERSION: "202603130331"
+        MARKETING_VERSION: "1.2"
+        CURRENT_PROJECT_VERSION: "202603140001"
         SWIFT_VERSION: "5.9"
         MACOSX_DEPLOYMENT_TARGET: "14.0"
         GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_CFBundleDisplayName: "Slay List Widgets"
-        PRODUCT_NAME: "Slay List Widgets"
+        INFOPLIST_KEY_CFBundleDisplayName: "Small Wins Widgets"
+        PRODUCT_NAME: "Small Wins Widgets"
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks"
         INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier: "com.apple.widgetkit-extension"

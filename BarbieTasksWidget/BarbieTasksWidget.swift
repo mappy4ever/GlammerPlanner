@@ -482,8 +482,8 @@ struct LargeWeeklyWidgetView: View {
 
 // MARK: - Widget Configurations
 
-struct SlayListTodayWidget: Widget {
-    let kind: String = "SlayListTodayWidget"
+struct SmallWinsTodayWidget: Widget {
+    let kind: String = "SmallWinsTodayWidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: TodayProvider()) { entry in
@@ -495,8 +495,8 @@ struct SlayListTodayWidget: Widget {
     }
 }
 
-struct SlayListWeekWidget: Widget {
-    let kind: String = "SlayListWeekWidget"
+struct SmallWinsWeekWidget: Widget {
+    let kind: String = "SmallWinsWeekWidget"
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: WeekProvider()) { entry in
@@ -509,10 +509,10 @@ struct SlayListWeekWidget: Widget {
 }
 
 @main
-struct SlayListWidgets: WidgetBundle {
+struct SmallWinsWidgets: WidgetBundle {
     var body: some Widget {
-        SlayListTodayWidget()
-        SlayListWeekWidget()
+        SmallWinsTodayWidget()
+        SmallWinsWeekWidget()
     }
 }
 
