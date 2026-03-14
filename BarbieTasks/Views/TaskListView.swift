@@ -419,7 +419,7 @@ struct TaskListView: View {
                                     )
                             )
                     )
-                    .rippleEffect(trigger: quote.id)
+                    .rippleEffect()
                     .transition(
                         .asymmetric(
                             insertion: .push(from: .top).combined(with: .opacity),
