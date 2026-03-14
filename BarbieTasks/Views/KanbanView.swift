@@ -5,12 +5,47 @@ struct KanbanView: View {
     @State private var columnDropTargets: Set<BarbieTask.Status> = []
 
     var body: some View {
-        HStack(alignment: .top, spacing: 16) {
-            ForEach(BarbieTask.Status.allCases) { status in
-                kanbanColumn(for: status)
+        VStack(spacing: 0) {
+            // Top bar with view toggle
+            HStack {
+                HStack(spacing: 8) {
+                    Image(systemName: "rectangle.split.3x1")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(Color.barbiePink)
+                    Text("Kanban")
+                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color.inkPrimary)
+                }
+
+                Spacer()
+
+                Button {
+                    withAnimation(.smooth(duration: 0.25)) { store.viewMode = .list }
+                } label: {
+                    HStack(spacing: 5) {
+                        Image(systemName: "list.bullet")
+                            .font(.system(size: 11, weight: .bold))
+                        Text("List View")
+                            .font(.system(size: 11, weight: .bold, design: .rounded))
+                    }
+                    .foregroundStyle(Color.barbiePink)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(Color.blushMid, in: Capsule())
+                }
+                .buttonStyle(.plain)
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+
+            HStack(alignment: .top, spacing: 16) {
+                ForEach(BarbieTask.Status.allCases) { status in
+                    kanbanColumn(for: status)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
         }
-        .padding()
     }
 
     // MARK: - Column
